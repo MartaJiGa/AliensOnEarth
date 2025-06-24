@@ -3,6 +3,8 @@ package com.svalero.aliensonearth.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +20,8 @@ public class GameScreen implements Screen {
     private Array<BronzeCoin> bronzeCoins;
     private Array<SilverCoin> silverCoins;
     private Array<GoldCoin> goldCoins;
+    private Sound coinSound;
+    private Music aMusic;
 
     //region override
 
@@ -26,6 +30,11 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
 
         player = new Player(new Texture("character_pink_front.png"), 100, 100, Vector2.Zero);
+
+        coinSound = Gdx.audio.newSound(Gdx.files.internal("coin_sound.ogg"));
+        aMusic = Gdx.audio.newMusic(Gdx.files.internal("gameAmbient-funk.mp3"));
+        aMusic.setLooping(true);
+        aMusic.play();
 
         Texture bronzeTexture = new Texture("coin_bronze.png");
         Texture silverTexture = new Texture("coin_silver.png");
@@ -45,7 +54,8 @@ public class GameScreen implements Screen {
             });
 
         goldCoins = new Array<>(new GoldCoin[] {
-            new GoldCoin(goldTexture, new Vector2(400, 400))
+            new GoldCoin(goldTexture, new Vector2(400, 400)),
+            new GoldCoin(goldTexture, new Vector2(500, 50))
         });
     }
 
@@ -96,6 +106,9 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
+
+        aMusic.dispose();
+        coinSound.dispose();
     }
 
     //endregion
@@ -119,7 +132,7 @@ public class GameScreen implements Screen {
                 bronzeCoins.removeIndex(i);
                 player.changeScore(coin.getPoints());
                 System.out.println("Score: " + player.getScore());
-                //TODO: Poner sonido moneda
+                coinSound.play();
             }
         }
 
@@ -129,7 +142,7 @@ public class GameScreen implements Screen {
                 silverCoins.removeIndex(i);
                 player.changeScore(coin.getPoints());
                 System.out.println("Score: " + player.getScore());
-                //TODO: Poner sonido moneda
+                coinSound.play();
             }
         }
 
@@ -139,7 +152,7 @@ public class GameScreen implements Screen {
                 goldCoins.removeIndex(i);
                 player.changeScore(coin.getPoints());
                 System.out.println("Score: " + player.getScore());
-                //TODO: Poner sonido moneda
+                coinSound.play();
             }
         }
     }
