@@ -15,14 +15,6 @@ public abstract class Character {
     protected int height;
     protected Rectangle rectangle;
 
-    public Character(Texture image, int width, int height){
-        this.image = image;
-        this.width = width;
-        this.height = height;
-        this.position = Vector2.Zero;
-        this.rectangle = new Rectangle(position.x, position.y, width, height);
-    }
-
     public Character(Texture image, int width, int height, Vector2 position){
         this.image = image;
         this.width = width;

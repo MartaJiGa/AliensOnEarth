@@ -9,33 +9,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.svalero.aliensonearth.domain.coin.Coin;
-import com.svalero.aliensonearth.domain.coin.CoinType;
+import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.domain.Player;
 
 public class GameScreen implements Screen {
     private SpriteBatch batch;
     private Player player;
-    private Coin bronzeCoin;
-    private Coin silverCoin;
-    private Coin goldCoin;
-
-    private Array<Vector2> bronzeCoinPositions = new Array<>(new Vector2[] {
-        new Vector2(100, 20),
-        new Vector2(100, 150),
-        new Vector2(170, 200),
-        new Vector2(240, 340)
-    });
-
-    private Array<Vector2> silverCoinPositions = new Array<>(new Vector2[] {
-        new Vector2(220, 45),
-        new Vector2(500, 310),
-        new Vector2(600, 200)
-    });
-
-    private Array<Vector2> goldCoinPositions = new Array<>(new Vector2[] {
-        new Vector2(400, 400)
-    });
+    private Array<BronzeCoin> bronzeCoins;
+    private Array<SilverCoin> silverCoins;
+    private Array<GoldCoin> goldCoins;
 
     //region override
 
@@ -43,10 +25,28 @@ public class GameScreen implements Screen {
     public void show() {
         batch = new SpriteBatch();
 
-        player = new Player(new Texture("character_pink_front.png"), 100, 100);
-        bronzeCoin = new Coin(new Texture("coin_bronze.png"), CoinType.BRONZE, 50, 50);
-        silverCoin = new Coin(new Texture("coin_silver.png"), CoinType.SILVER, 50, 50);
-        goldCoin = new Coin(new Texture("coin_gold.png"), CoinType.GOLD, 50, 50);
+        player = new Player(new Texture("character_pink_front.png"), 100, 100, Vector2.Zero);
+
+        Texture bronzeTexture = new Texture("coin_bronze.png");
+        Texture silverTexture = new Texture("coin_silver.png");
+        Texture goldTexture = new Texture("coin_gold.png");
+
+        bronzeCoins = new Array<>(new BronzeCoin[] {
+            new BronzeCoin(bronzeTexture, new Vector2(100, 20)),
+            new BronzeCoin(bronzeTexture, new Vector2(100, 150)),
+            new BronzeCoin(bronzeTexture, new Vector2(170, 200)),
+            new BronzeCoin(bronzeTexture, new Vector2(240, 340))
+        });
+
+        silverCoins = new Array<>(new SilverCoin[] {
+            new SilverCoin(silverTexture, new Vector2(220, 45)),
+            new SilverCoin(silverTexture, new Vector2(500, 310)),
+            new SilverCoin(silverTexture, new Vector2(600, 200))
+            });
+
+        goldCoins = new Array<>(new GoldCoin[] {
+            new GoldCoin(goldTexture, new Vector2(400, 400))
+        });
     }
 
     @Override
@@ -56,14 +56,14 @@ public class GameScreen implements Screen {
 
         batch.begin();
 
-        for (Vector2 position : bronzeCoinPositions) {
-            batch.draw(bronzeCoin.getImage(), position.x, position.y, bronzeCoin.getWidth(), bronzeCoin.getHeight());
+        for (BronzeCoin coin : bronzeCoins) {
+            batch.draw(coin.getImage(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
-        for (Vector2 position : silverCoinPositions) {
-            batch.draw(silverCoin.getImage(), position.x, position.y, silverCoin.getWidth(), silverCoin.getHeight());
+        for (SilverCoin coin : silverCoins) {
+            batch.draw(coin.getImage(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
-        for (Vector2 position : goldCoinPositions) {
-            batch.draw(goldCoin.getImage(), position.x, position.y, goldCoin.getWidth(), goldCoin.getHeight());
+        for (GoldCoin coin : goldCoins) {
+            batch.draw(coin.getImage(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
         batch.draw(player.getImage(), player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
@@ -113,34 +113,31 @@ public class GameScreen implements Screen {
     private void manageCollisions(){
         Rectangle playerRectangle = player.getRectangle();
 
-        for (int i = bronzeCoinPositions.size - 1; i >= 0; i--) {
-            Vector2 position = bronzeCoinPositions.get(i);
-            Rectangle coinRectangle = new Rectangle(position.x, position.y, bronzeCoin.getWidth(), bronzeCoin.getHeight());
-            if (coinRectangle.overlaps(playerRectangle)) {
-                bronzeCoinPositions.removeIndex(i);
-                player.changeScore(bronzeCoin.getPoints());
+        for (int i = bronzeCoins.size - 1; i >= 0; i--) {
+            Coin coin = bronzeCoins.get(i);
+            if (coin.getRectangle().overlaps(playerRectangle)) {
+                bronzeCoins.removeIndex(i);
+                player.changeScore(coin.getPoints());
                 System.out.println("Score: " + player.getScore());
                 //TODO: Poner sonido moneda
             }
         }
 
-        for (int i = silverCoinPositions.size - 1; i >= 0; i--) {
-            Vector2 position = silverCoinPositions.get(i);
-            Rectangle coinRectangle = new Rectangle(position.x, position.y, silverCoin.getWidth(), silverCoin.getHeight());
-            if (coinRectangle.overlaps(playerRectangle)) {
-                silverCoinPositions.removeIndex(i);
-                player.changeScore(silverCoin.getPoints());
+        for (int i = silverCoins.size - 1; i >= 0; i--) {
+            Coin coin = silverCoins.get(i);
+            if (coin.getRectangle().overlaps(playerRectangle)) {
+                silverCoins.removeIndex(i);
+                player.changeScore(coin.getPoints());
                 System.out.println("Score: " + player.getScore());
                 //TODO: Poner sonido moneda
             }
         }
 
-        for (int i = goldCoinPositions.size - 1; i >= 0; i--) {
-            Vector2 position = goldCoinPositions.get(i);
-            Rectangle coinRectangle = new Rectangle(position.x, position.y, goldCoin.getWidth(), goldCoin.getHeight());
-            if (coinRectangle.overlaps(playerRectangle)) {
-                goldCoinPositions.removeIndex(i);
-                player.changeScore(goldCoin.getPoints());
+        for (int i = goldCoins.size - 1; i >= 0; i--) {
+            Coin coin = goldCoins.get(i);
+            if (coin.getRectangle().overlaps(playerRectangle)) {
+                goldCoins.removeIndex(i);
+                player.changeScore(coin.getPoints());
                 System.out.println("Score: " + player.getScore());
                 //TODO: Poner sonido moneda
             }
