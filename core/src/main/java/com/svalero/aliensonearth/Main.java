@@ -15,8 +15,6 @@ public class Main extends Game {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.953f, 0.780f, 0.647f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render();
     }
 
