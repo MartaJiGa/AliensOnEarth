@@ -2,22 +2,24 @@ package com.svalero.aliensonearth.domain;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class Player {
-    private Texture image;
-    private Vector2 position;
+public class Player extends Character {
+    private int score;
+    private int lives;
 
-    public Player(Texture image){
-        this.image = image;
-        position = Vector2.Zero;
+    public Player(Texture image, Vector2 position){
+        super(image, 100, 100, position);
     }
 
     public void move(int movement){
         position.x += movement;
+        rectangle.setPosition(position);
+    }
+
+    public void changeScore(int points){
+        this.score += points;
     }
 
     public float getX(){
