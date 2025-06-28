@@ -9,8 +9,8 @@ public class Player extends Character {
     private int score;
     private int lives;
 
-    public Player(Texture image, int width, int height, Vector2 position){
-        super(image, width, height, position);
+    public Player(Texture image, Vector2 position){
+        super(image, 100, 100, position);
     }
 
     public void move(int movement){

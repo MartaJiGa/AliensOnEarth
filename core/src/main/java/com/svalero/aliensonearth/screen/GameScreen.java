@@ -29,7 +29,7 @@ public class GameScreen implements Screen {
     public void show() {
         batch = new SpriteBatch();
 
-        player = new Player(new Texture("character_pink_front.png"), 100, 100, Vector2.Zero);
+        player = new Player(new Texture("character_pink_front.png"), Vector2.Zero);
 
         coinSound = Gdx.audio.newSound(Gdx.files.internal("coin_sound.ogg"));
         aMusic = Gdx.audio.newMusic(Gdx.files.internal("gameAmbient-funk.mp3"));
