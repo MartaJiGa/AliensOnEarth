@@ -1,5 +1,6 @@
 package com.svalero.aliensonearth.manager;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
@@ -11,6 +12,8 @@ import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.Coin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
+import com.svalero.aliensonearth.screen.GameScreen;
+import com.svalero.aliensonearth.screen.MainMenuScreen;
 
 public class LogicManager {
 
@@ -20,6 +23,8 @@ public class LogicManager {
     public Array<BronzeCoin> bronzeCoins;
     public Array<SilverCoin> silverCoins;
     public Array<GoldCoin> goldCoins;
+
+    private boolean shouldExit = false;
 
     //endregion
 
@@ -56,6 +61,8 @@ public class LogicManager {
             player.move(10);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.move(-10);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            shouldExit = true;
         }
     }
 
@@ -91,6 +98,10 @@ public class LogicManager {
                 ResourceManager.coinSound.play();
             }
         }
+    }
+
+    public boolean shouldExit() {
+        return shouldExit;
     }
 
     public void update(){
