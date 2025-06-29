@@ -1,10 +1,10 @@
 package com.svalero.aliensonearth.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
-import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.RenderManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
@@ -16,6 +16,8 @@ public class GameScreen implements Screen {
     private LogicManager logicManager;
     private RenderManager renderManager;
     private ResourceManager resourceManager;
+
+    Music backgroundMusic;
 
     //endregion
 
@@ -29,7 +31,7 @@ public class GameScreen implements Screen {
         logicManager = new LogicManager();
         renderManager = new RenderManager(logicManager);
 
-        Music backgroundMusic = resourceManager.getBackgroundMusic();
+        backgroundMusic = resourceManager.getBackgroundMusic();
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
     }
@@ -41,6 +43,11 @@ public class GameScreen implements Screen {
 
         logicManager.update();
         renderManager.render();
+
+        if (logicManager.shouldExit()) {
+            dispose();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen());
+        }
     }
 
     @Override
@@ -68,6 +75,8 @@ public class GameScreen implements Screen {
         resourceManager.dispose();
         logicManager.dispose();
         renderManager.dispose();
+
+        backgroundMusic.dispose();
     }
 
     //endregion
