@@ -31,7 +31,7 @@ public class LogicManager {
     //region constructor
 
     public LogicManager(){
-        player = new Player(ResourceManager.playerTexture, Vector2.Zero);
+        player = new Player(ResourceManager.playerTexture, new Vector2(0, 0));
 
         bronzeCoins = new Array<>(new BronzeCoin[] {
             new BronzeCoin(ResourceManager.bronzeTexture, new Vector2(100, 20)),
