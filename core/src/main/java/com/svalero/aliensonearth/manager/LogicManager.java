@@ -1,9 +1,7 @@
 package com.svalero.aliensonearth.manager;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -12,19 +10,17 @@ import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.Coin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
-import com.svalero.aliensonearth.screen.GameScreen;
-import com.svalero.aliensonearth.screen.MainMenuScreen;
 
 public class LogicManager {
 
     //region properties
 
-    public Player player;
-    public Array<BronzeCoin> bronzeCoins;
-    public Array<SilverCoin> silverCoins;
-    public Array<GoldCoin> goldCoins;
+    protected Player player;
+    protected Array<BronzeCoin> bronzeCoins;
+    protected Array<SilverCoin> silverCoins;
+    protected Array<GoldCoin> goldCoins;
 
-    private boolean shouldExit = false;
+    private boolean isPaused = false;
 
     //endregion
 
@@ -62,7 +58,7 @@ public class LogicManager {
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.move(-10);
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            shouldExit = true;
+            pauseGame();
         }
     }
 
@@ -100,13 +96,23 @@ public class LogicManager {
         }
     }
 
-    public boolean shouldExit() {
-        return shouldExit;
+    public void pauseGame(){
+        isPaused = true;
+    }
+
+    public void resumeGame(){
+        isPaused = false;
+    }
+
+    public boolean isPaused(){
+        return isPaused;
     }
 
     public void update(){
-        managePlayerInput();
-        manageCollisions();
+        if(!isPaused){
+            managePlayerInput();
+            manageCollisions();
+        }
     }
 
     public void dispose() {

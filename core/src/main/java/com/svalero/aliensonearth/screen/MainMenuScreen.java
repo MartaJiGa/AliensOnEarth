@@ -20,7 +20,16 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     private ResourceManager resourceManager;
 
-    Music backgroundMusic;
+    private Game game;
+    private Music menuMusic;
+
+    //endregion
+
+    //region constructor
+
+    public MainMenuScreen(Game game){
+        this.game = game;
+    }
 
     //endregion
 
@@ -31,9 +40,9 @@ public class MainMenuScreen implements Screen {
         resourceManager = new ResourceManager();
         resourceManager.loadAllResources();
 
-        backgroundMusic = resourceManager.getMenuMusic();
-        backgroundMusic.setLooping(true);
-        backgroundMusic.play();
+        menuMusic = resourceManager.getMenuMusic();
+        menuMusic.setLooping(true);
+        menuMusic.play();
 
         loadStage();
     }
@@ -71,7 +80,7 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
 
-        backgroundMusic.dispose();
+        menuMusic.dispose();
     }
 
     //endregion
@@ -94,7 +103,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game));
             }
         });
 
@@ -103,7 +112,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new ConfigurationScreen());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new ConfigurationScreen(game));
             }
         });
 

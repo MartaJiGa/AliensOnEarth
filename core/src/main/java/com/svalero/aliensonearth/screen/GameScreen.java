@@ -17,7 +17,17 @@ public class GameScreen implements Screen {
     private RenderManager renderManager;
     private ResourceManager resourceManager;
 
-    Music backgroundMusic;
+    private Game game;
+    private Music backgroundMusic;
+
+    //endregion
+
+    //region constructor
+
+    public GameScreen(Game game){
+        this.game = game;
+        loadManagers();
+    }
 
     //endregion
 
@@ -25,15 +35,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        resourceManager = new ResourceManager();
-        resourceManager.loadAllResources();
-
-        logicManager = new LogicManager();
-        renderManager = new RenderManager(logicManager);
-
-        backgroundMusic = resourceManager.getBackgroundMusic();
-        backgroundMusic.setLooping(true);
-        backgroundMusic.play();
+        if (!backgroundMusic.isPlaying()) {
+            backgroundMusic.play();
+        }
     }
 
     @Override
@@ -41,13 +45,15 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.741f, 0.89f, 0.973f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        logicManager.update();
-        renderManager.render();
-
-        if (logicManager.shouldExit()) {
-            dispose();
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen());
+        if (logicManager.isPaused()) {
+            backgroundMusic.pause();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new PauseScreen(game, this, logicManager, resourceManager));
         }
+        else{
+            logicManager.update();
+        }
+
+        renderManager.render();
     }
 
     @Override
@@ -67,7 +73,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-
     }
 
     @Override
@@ -77,6 +82,22 @@ public class GameScreen implements Screen {
         renderManager.dispose();
 
         backgroundMusic.dispose();
+    }
+
+    //endregion
+
+    //region methods
+
+    public void loadManagers(){
+        resourceManager = new ResourceManager();
+        resourceManager.loadAllResources();
+
+        logicManager = new LogicManager();
+        renderManager = new RenderManager(logicManager);
+
+        backgroundMusic = resourceManager.getBackgroundMusic();
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
     }
 
     //endregion

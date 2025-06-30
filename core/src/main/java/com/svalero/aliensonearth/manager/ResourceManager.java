@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import lombok.Data;
 
 @Data
@@ -27,6 +26,7 @@ public class ResourceManager {
 
     protected static Label aliensLabel;
     protected static Label onEarthLabel;
+    protected static Label pauseLabel;
 
     //endregion
 
@@ -52,25 +52,27 @@ public class ResourceManager {
     }
 
     public void loadFonts(){
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AliensFontTitle.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 80;
-        parameter.color = Color.BLACK;
-        BitmapFont aliensPartTitle = generator.generateFont(parameter);
-        generator.dispose();
+        BitmapFont aliensPartTitle = generateFont("fonts/AliensFontTitle.ttf", 80);
+        BitmapFont onEarthPartTitle = generateFont("fonts/OnEarthFontTitle.ttf", 48);
 
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/OnEarthFontTitle.ttf"));
-        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 48;
-        parameter.color = Color.BLACK;
-        BitmapFont onEarthPartTitle = generator.generateFont(parameter);
-        generator.dispose();
-
-        Label.LabelStyle aliensStyle = new Label.LabelStyle(aliensPartTitle, null);
-        Label.LabelStyle onEarthStyle = new Label.LabelStyle(onEarthPartTitle, null);
+        Label.LabelStyle aliensStyle = new Label.LabelStyle(aliensPartTitle, Color.BLACK);
+        Label.LabelStyle onEarthStyle = new Label.LabelStyle(onEarthPartTitle, Color.BLACK);
+        Label.LabelStyle pauseStyle = new Label.LabelStyle(onEarthPartTitle, Color.WHITE);
 
         aliensLabel = new Label("ALIENS", aliensStyle);
         onEarthLabel = new Label("ON EARTH", onEarthStyle);
+        pauseLabel = new Label("PAUSE", pauseStyle);
+    }
+
+    public BitmapFont generateFont(String fontPathWithFile, int fontSize){
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontPathWithFile));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = fontSize;
+
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+
+        return font;
     }
 
     public Music getBackgroundMusic(){
@@ -83,6 +85,10 @@ public class ResourceManager {
 
     public Label getAliensLabel(){
         return aliensLabel;
+    }
+
+    public Label getPauseLabel(){
+        return pauseLabel;
     }
 
     public Label getOnEarthLabel(){
