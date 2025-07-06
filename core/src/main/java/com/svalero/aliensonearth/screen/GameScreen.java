@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.RenderManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
+import com.svalero.aliensonearth.manager.SettingsManager;
 
 public class GameScreen implements Screen {
 
@@ -27,6 +28,10 @@ public class GameScreen implements Screen {
     public GameScreen(Game game){
         this.game = game;
         loadManagers();
+
+        if(SettingsManager.isMusicEnabled()){
+            loadBackgroundMusic();
+        }
     }
 
     //endregion
@@ -35,7 +40,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        if (!backgroundMusic.isPlaying()) {
+        if (SettingsManager.isMusicEnabled() && !backgroundMusic.isPlaying()) {
             backgroundMusic.play();
         }
     }
@@ -46,7 +51,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (logicManager.isPaused()) {
-            backgroundMusic.pause();
+            if(SettingsManager.isMusicEnabled()){
+                backgroundMusic.pause();
+            }
             ((Game) Gdx.app.getApplicationListener()).setScreen(new PauseScreen(game, this, logicManager, resourceManager));
         }
         else{
@@ -81,7 +88,9 @@ public class GameScreen implements Screen {
         logicManager.dispose();
         renderManager.dispose();
 
-        backgroundMusic.dispose();
+        if(SettingsManager.isMusicEnabled()){
+            backgroundMusic.dispose();
+        }
     }
 
     //endregion
@@ -94,7 +103,9 @@ public class GameScreen implements Screen {
 
         logicManager = new LogicManager();
         renderManager = new RenderManager(logicManager);
+    }
 
+    public void loadBackgroundMusic(){
         backgroundMusic = resourceManager.getBackgroundMusic();
         backgroundMusic.setLooping(true);
         backgroundMusic.play();

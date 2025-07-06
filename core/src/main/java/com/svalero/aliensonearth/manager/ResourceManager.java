@@ -27,6 +27,7 @@ public class ResourceManager {
     protected static Label aliensLabel;
     protected static Label onEarthLabel;
     protected static Label pauseLabel;
+    protected static Label settingsLabel;
 
     //endregion
 
@@ -62,6 +63,7 @@ public class ResourceManager {
         aliensLabel = new Label("ALIENS", aliensStyle);
         onEarthLabel = new Label("ON EARTH", onEarthStyle);
         pauseLabel = new Label("PAUSE", pauseStyle);
+        settingsLabel = new Label("SETTINGS", pauseStyle);
     }
 
     public BitmapFont generateFont(String fontPathWithFile, int fontSize){
@@ -93,6 +95,10 @@ public class ResourceManager {
 
     public Label getOnEarthLabel(){
         return onEarthLabel;
+    }
+
+    public Label getsettingsLabel(){
+        return settingsLabel;
     }
 
     public void dispose() {
