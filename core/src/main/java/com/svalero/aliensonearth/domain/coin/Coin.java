@@ -3,6 +3,7 @@ package com.svalero.aliensonearth.domain.coin;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.svalero.aliensonearth.domain.Character;
+import com.svalero.aliensonearth.util.enums.CoinType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.svalero.aliensonearth.domain.coin;
+package com.svalero.aliensonearth.util.enums;
 
 public enum CoinType {
     BRONZE,

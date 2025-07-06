@@ -12,15 +12,27 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.ResourceManager;
+import com.svalero.aliensonearth.manager.SettingsManager;
+import com.svalero.aliensonearth.util.enums.Labels;
+import com.svalero.aliensonearth.util.enums.Musics;
 
 public class MainMenuScreen implements Screen {
 
     //region properties
 
     private Stage stage;
-    private ResourceManager resourceManager;
+    private SettingsManager settingsManager;
 
-    Music backgroundMusic;
+    private Game game;
+    private Music menuMusic;
+
+    //endregion
+
+    //region constructor
+
+    public MainMenuScreen(Game game){
+        this.game = game;
+    }
 
     //endregion
 
@@ -28,13 +40,9 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        resourceManager = new ResourceManager();
-        resourceManager.loadAllResources();
+        settingsManager = new SettingsManager();
 
-        backgroundMusic = resourceManager.getMenuMusic();
-        backgroundMusic.setLooping(true);
-        backgroundMusic.play();
-
+        loadMenuMusic();
         loadStage();
     }
 
@@ -71,7 +79,8 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
 
-        backgroundMusic.dispose();
+        if(SettingsManager.isMusicEnabled())
+            menuMusic.dispose();
     }
 
     //endregion
@@ -94,16 +103,16 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game));
             }
         });
 
-        VisTextButton configButton = new VisTextButton("Configuration");
+        VisTextButton configButton = new VisTextButton("Settings");
         configButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new ConfigurationScreen());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsScreen(game));
             }
         });
 
@@ -117,9 +126,9 @@ public class MainMenuScreen implements Screen {
         });
 
         table.row();
-        table.add(resourceManager.getAliensLabel()).center();
+        table.add(ResourceManager.getLabel(Labels.ALIEN.name())).center();
         table.row();
-        table.add(resourceManager.getOnEarthLabel()).center();
+        table.add(ResourceManager.getLabel(Labels.ON_EARTH.name())).center();
         table.row().padTop(60);
         table.add(playButton).center();
         table.row().padTop(10);
@@ -128,6 +137,14 @@ public class MainMenuScreen implements Screen {
         table.add(exitButton).center();
 
         Gdx.input.setInputProcessor(stage);
+    }
+
+    public void loadMenuMusic(){
+        if(SettingsManager.isMusicEnabled()){
+            menuMusic = ResourceManager.getMusic(Musics.MENU.name());
+            menuMusic.setLooping(true);
+            menuMusic.play();
+        }
     }
 
     //endregion

@@ -2,36 +2,38 @@ package com.svalero.aliensonearth.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.Labels;
 
-public class PauseScreen implements Screen {
+import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
+
+public class SettingsScreen implements Screen {
 
     //region properties
 
     private Stage stage;
-    private LogicManager logicManager;
+    private Preferences prefs;
 
     private Game game;
-    private GameScreen gameScreen;
 
     //endregion
 
     //region constructor
 
-    public PauseScreen(Game game, GameScreen gameScreen, LogicManager logicManager){
+    public SettingsScreen(Game game){
         this.game = game;
-        this.gameScreen = gameScreen;
-        this.logicManager = logicManager;
+        loadPreferences();
     }
 
     //endregion
@@ -75,13 +77,15 @@ public class PauseScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        logicManager.dispose();
-        gameScreen.dispose();
     }
 
     //endregion
 
     //region methods
+
+    private void loadPreferences(){
+        prefs = Gdx.app.getPreferences(GAME_NAME);
+    }
 
     public void loadStage(){
         if(!VisUI.isLoaded())
@@ -94,17 +98,26 @@ public class PauseScreen implements Screen {
         stage = new Stage();
         stage.addActor(table);
 
-        VisTextButton resumeButton = new VisTextButton("Resume");
-        resumeButton.addListener(new ClickListener() {
+        VisLabel settingsSaved = new VisLabel("Settings saved successfully.");
+        settingsSaved.setFontScale(0.5f);
+        settingsSaved.setVisible(false);
+
+        VisCheckBox musicCheckBox = new VisCheckBox("Music");
+        musicCheckBox.setChecked(prefs.getBoolean("music", true));
+
+        VisTextButton saveButton = new VisTextButton("Save");
+        saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-                logicManager.resumeGame();
-                game.setScreen(gameScreen);
+                prefs.putBoolean("music", musicCheckBox.isChecked());
+
+                prefs.flush();
+                settingsSaved.setVisible(true);
             }
         });
 
-        VisTextButton mainMenuButton = new VisTextButton("Main Menu");
-        mainMenuButton.addListener(new ClickListener() {
+        VisTextButton returnButton = new VisTextButton("Return");
+        returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
@@ -112,23 +125,16 @@ public class PauseScreen implements Screen {
             }
         });
 
-        VisTextButton exitButton = new VisTextButton("Exit");
-        exitButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                VisUI.dispose();
-                Gdx.app.exit();
-            }
-        });
-
         table.row();
-        table.add(ResourceManager.getLabel(Labels.PAUSE.name())).center();
+        table.add(ResourceManager.getLabel(Labels.SETTINGS.name())).center();
         table.row().padTop(60);
-        table.add(resumeButton).center();
+        table.add(musicCheckBox).center();
+        table.row().padTop(30);
+        table.add(settingsSaved).center();
         table.row().padTop(10);
-        table.add(mainMenuButton).center();
+        table.add(saveButton).center();
         table.row().padTop(10);
-        table.add(exitButton).center();
+        table.add(returnButton).center();
 
         Gdx.input.setInputProcessor(stage);
     }
