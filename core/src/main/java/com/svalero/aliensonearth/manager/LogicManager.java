@@ -10,6 +10,8 @@ import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.Coin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
+import com.svalero.aliensonearth.util.enums.Sounds;
+import com.svalero.aliensonearth.util.enums.Textures;
 
 public class LogicManager {
 
@@ -27,24 +29,24 @@ public class LogicManager {
     //region constructor
 
     public LogicManager(){
-        player = new Player(ResourceManager.playerTexture, new Vector2(0, 0));
+        player = new Player(ResourceManager.getTexture(Textures.PLAYER.name()), new Vector2(0, 0));
 
         bronzeCoins = new Array<>(new BronzeCoin[] {
-            new BronzeCoin(ResourceManager.bronzeTexture, new Vector2(100, 20)),
-            new BronzeCoin(ResourceManager.bronzeTexture, new Vector2(100, 150)),
-            new BronzeCoin(ResourceManager.bronzeTexture, new Vector2(170, 200)),
-            new BronzeCoin(ResourceManager.bronzeTexture, new Vector2(240, 340))
+            new BronzeCoin(ResourceManager.getTexture(Textures.BRONZE_COIN.name()), new Vector2(100, 20)),
+            new BronzeCoin(ResourceManager.getTexture(Textures.BRONZE_COIN.name()), new Vector2(100, 150)),
+            new BronzeCoin(ResourceManager.getTexture(Textures.BRONZE_COIN.name()), new Vector2(170, 200)),
+            new BronzeCoin(ResourceManager.getTexture(Textures.BRONZE_COIN.name()), new Vector2(240, 340))
         });
 
         silverCoins = new Array<>(new SilverCoin[] {
-            new SilverCoin(ResourceManager.silverTexture, new Vector2(220, 45)),
-            new SilverCoin(ResourceManager.silverTexture, new Vector2(500, 310)),
-            new SilverCoin(ResourceManager.silverTexture, new Vector2(600, 200))
+            new SilverCoin(ResourceManager.getTexture(Textures.SILVER_COIN.name()), new Vector2(220, 45)),
+            new SilverCoin(ResourceManager.getTexture(Textures.SILVER_COIN.name()), new Vector2(500, 310)),
+            new SilverCoin(ResourceManager.getTexture(Textures.SILVER_COIN.name()), new Vector2(600, 200))
         });
 
         goldCoins = new Array<>(new GoldCoin[] {
-            new GoldCoin(ResourceManager.goldTexture, new Vector2(400, 400)),
-            new GoldCoin(ResourceManager.goldTexture, new Vector2(500, 50))
+            new GoldCoin(ResourceManager.getTexture(Textures.GOLD_COIN.name()), new Vector2(400, 400)),
+            new GoldCoin(ResourceManager.getTexture(Textures.GOLD_COIN.name()), new Vector2(500, 50))
         });
     }
 
@@ -69,9 +71,7 @@ public class LogicManager {
             Coin coin = bronzeCoins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 bronzeCoins.removeIndex(i);
-                player.changeScore(coin.getPoints());
-                System.out.println("Score: " + player.getScore());
-                ResourceManager.coinSound.play();
+                makeCollisionCommonConsecuences(coin);
             }
         }
 
@@ -79,9 +79,7 @@ public class LogicManager {
             Coin coin = silverCoins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 silverCoins.removeIndex(i);
-                player.changeScore(coin.getPoints());
-                System.out.println("Score: " + player.getScore());
-                ResourceManager.coinSound.play();
+                makeCollisionCommonConsecuences(coin);
             }
         }
 
@@ -89,11 +87,15 @@ public class LogicManager {
             Coin coin = goldCoins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 goldCoins.removeIndex(i);
-                player.changeScore(coin.getPoints());
-                System.out.println("Score: " + player.getScore());
-                ResourceManager.coinSound.play();
+                makeCollisionCommonConsecuences(coin);
             }
         }
+    }
+
+    public void makeCollisionCommonConsecuences(Coin coin){
+        player.changeScore(coin.getPoints());
+        System.out.println("Score: " + player.getScore());
+        ResourceManager.getSound(Sounds.COIN.name()).play();
     }
 
     public void pauseGame(){

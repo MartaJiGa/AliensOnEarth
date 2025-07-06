@@ -13,13 +13,14 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.manager.SettingsManager;
+import com.svalero.aliensonearth.util.enums.Labels;
+import com.svalero.aliensonearth.util.enums.Musics;
 
 public class MainMenuScreen implements Screen {
 
     //region properties
 
     private Stage stage;
-    private ResourceManager resourceManager;
     private SettingsManager settingsManager;
 
     private Game game;
@@ -39,12 +40,9 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        resourceManager = new ResourceManager();
-        resourceManager.loadAllResources();
-
         settingsManager = new SettingsManager();
 
-        loadBackgroundMusic();
+        loadMenuMusic();
         loadStage();
     }
 
@@ -81,9 +79,8 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
 
-        if(SettingsManager.isMusicEnabled()){
+        if(SettingsManager.isMusicEnabled())
             menuMusic.dispose();
-        }
     }
 
     //endregion
@@ -129,9 +126,9 @@ public class MainMenuScreen implements Screen {
         });
 
         table.row();
-        table.add(resourceManager.getAliensLabel()).center();
+        table.add(ResourceManager.getLabel(Labels.ALIEN.name())).center();
         table.row();
-        table.add(resourceManager.getOnEarthLabel()).center();
+        table.add(ResourceManager.getLabel(Labels.ON_EARTH.name())).center();
         table.row().padTop(60);
         table.add(playButton).center();
         table.row().padTop(10);
@@ -142,9 +139,9 @@ public class MainMenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
     }
 
-    public void loadBackgroundMusic(){
+    public void loadMenuMusic(){
         if(SettingsManager.isMusicEnabled()){
-            menuMusic = resourceManager.getMenuMusic();
+            menuMusic = ResourceManager.getMusic(Musics.MENU.name());
             menuMusic.setLooping(true);
             menuMusic.play();
         }

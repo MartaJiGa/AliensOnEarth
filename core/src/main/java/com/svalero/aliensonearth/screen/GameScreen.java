@@ -9,6 +9,7 @@ import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.RenderManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.manager.SettingsManager;
+import com.svalero.aliensonearth.util.enums.Musics;
 
 public class GameScreen implements Screen {
 
@@ -16,7 +17,6 @@ public class GameScreen implements Screen {
 
     private LogicManager logicManager;
     private RenderManager renderManager;
-    private ResourceManager resourceManager;
 
     private Game game;
     private Music backgroundMusic;
@@ -29,9 +29,8 @@ public class GameScreen implements Screen {
         this.game = game;
         loadManagers();
 
-        if(SettingsManager.isMusicEnabled()){
+        if(SettingsManager.isMusicEnabled())
             loadBackgroundMusic();
-        }
     }
 
     //endregion
@@ -40,9 +39,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        if (SettingsManager.isMusicEnabled() && !backgroundMusic.isPlaying()) {
+        if (SettingsManager.isMusicEnabled() && !backgroundMusic.isPlaying())
             backgroundMusic.play();
-        }
     }
 
     @Override
@@ -51,10 +49,10 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (logicManager.isPaused()) {
-            if(SettingsManager.isMusicEnabled()){
+            if(SettingsManager.isMusicEnabled())
                 backgroundMusic.pause();
-            }
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new PauseScreen(game, this, logicManager, resourceManager));
+
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new PauseScreen(game, this, logicManager));
         }
         else{
             logicManager.update();
@@ -84,13 +82,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        resourceManager.dispose();
         logicManager.dispose();
         renderManager.dispose();
 
-        if(SettingsManager.isMusicEnabled()){
+        if(SettingsManager.isMusicEnabled())
             backgroundMusic.dispose();
-        }
     }
 
     //endregion
@@ -98,15 +94,12 @@ public class GameScreen implements Screen {
     //region methods
 
     public void loadManagers(){
-        resourceManager = new ResourceManager();
-        resourceManager.loadAllResources();
-
         logicManager = new LogicManager();
         renderManager = new RenderManager(logicManager);
     }
 
     public void loadBackgroundMusic(){
-        backgroundMusic = resourceManager.getBackgroundMusic();
+        backgroundMusic = ResourceManager.getMusic(Musics.BACKGROUND.name());
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
     }

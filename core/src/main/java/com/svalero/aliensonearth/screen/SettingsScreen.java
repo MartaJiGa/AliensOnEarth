@@ -14,6 +14,7 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.ResourceManager;
+import com.svalero.aliensonearth.util.enums.Labels;
 
 import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
 
@@ -22,7 +23,6 @@ public class SettingsScreen implements Screen {
     //region properties
 
     private Stage stage;
-    private ResourceManager resourceManager;
     private Preferences prefs;
 
     private Game game;
@@ -42,9 +42,6 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void show() {
-        resourceManager = new ResourceManager();
-        resourceManager.loadAllResources();
-
         loadStage();
     }
 
@@ -129,7 +126,7 @@ public class SettingsScreen implements Screen {
         });
 
         table.row();
-        table.add(resourceManager.getsettingsLabel()).center();
+        table.add(ResourceManager.getLabel(Labels.SETTINGS.name())).center();
         table.row().padTop(60);
         table.add(musicCheckBox).center();
         table.row().padTop(30);

@@ -3,6 +3,7 @@ package com.svalero.aliensonearth;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.screen.GameScreen;
 import com.svalero.aliensonearth.screen.MainMenuScreen;
 
@@ -11,6 +12,7 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        ResourceManager.loadAllResources();
         setScreen(new MainMenuScreen(this));
     }
 
@@ -22,5 +24,6 @@ public class Main extends Game {
     @Override
     public void dispose() {
         super.dispose();
+        ResourceManager.dispose();
     }
 }

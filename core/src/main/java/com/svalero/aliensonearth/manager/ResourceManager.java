@@ -8,51 +8,53 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.svalero.aliensonearth.util.enums.Labels;
+import com.svalero.aliensonearth.util.enums.Musics;
+import com.svalero.aliensonearth.util.enums.Sounds;
+import com.svalero.aliensonearth.util.enums.Textures;
 import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class ResourceManager {
 
     //region properties
 
-    protected static Texture playerTexture;
-    protected static Texture bronzeTexture;
-    protected static Texture silverTexture;
-    protected static Texture goldTexture;
-
-    protected static Sound coinSound;
-    protected static Music backgroundMusic;
-    protected static Music menuMusic;
-
-    protected static Label aliensLabel;
-    protected static Label onEarthLabel;
-    protected static Label pauseLabel;
-    protected static Label settingsLabel;
+    private static Map<String, Texture> textures = new HashMap<>();
+    private static Map<String, Sound> sounds = new HashMap<>();
+    private static Map<String, Music> musics = new HashMap<>();
+    private static Map<String, Label> labels = new HashMap<>();
 
     //endregion
 
     //region methods
 
-    public void loadAllResources(){
+    public static void loadAllResources(){
+        loadMusic();
         loadSounds();
         loadTextures();
         loadFonts();
     }
 
-    public void loadTextures(){
-        playerTexture = new Texture("textures/character_pink_front.png");
-        bronzeTexture = new Texture("textures/coin_bronze.png");
-        silverTexture = new Texture("textures/coin_silver.png");
-        goldTexture = new Texture("textures/coin_gold.png");
+    public static void loadMusic(){
+        musics.put(Musics.BACKGROUND.name(), Gdx.audio.newMusic(Gdx.files.internal("sounds/gameAmbient-funk.mp3")));
+        musics.put(Musics.MENU.name(), Gdx.audio.newMusic(Gdx.files.internal("sounds/menuSong.mp3")));
     }
 
-    public void loadSounds(){
-        coinSound = Gdx.audio.newSound(Gdx.files.internal("sounds/coin_sound.ogg"));
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/gameAmbient-funk.mp3"));
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/menuSong.mp3"));
+    public static void loadSounds(){
+        sounds.put(Sounds.COIN.name(), Gdx.audio.newSound(Gdx.files.internal("sounds/coin_sound.ogg")));
     }
 
-    public void loadFonts(){
+    public static void loadTextures(){
+        textures.put(Textures.PLAYER.name(), new Texture("textures/character_pink_front.png"));
+        textures.put(Textures.BRONZE_COIN.name(), new Texture("textures/coin_bronze.png"));
+        textures.put(Textures.SILVER_COIN.name(), new Texture("textures/coin_silver.png"));
+        textures.put(Textures.GOLD_COIN.name(), new Texture("textures/coin_gold.png"));
+    }
+
+    public static void loadFonts(){
         BitmapFont aliensPartTitle = generateFont("fonts/AliensFontTitle.ttf", 80);
         BitmapFont onEarthPartTitle = generateFont("fonts/OnEarthFontTitle.ttf", 48);
 
@@ -60,13 +62,13 @@ public class ResourceManager {
         Label.LabelStyle onEarthStyle = new Label.LabelStyle(onEarthPartTitle, Color.BLACK);
         Label.LabelStyle pauseStyle = new Label.LabelStyle(onEarthPartTitle, Color.WHITE);
 
-        aliensLabel = new Label("ALIENS", aliensStyle);
-        onEarthLabel = new Label("ON EARTH", onEarthStyle);
-        pauseLabel = new Label("PAUSE", pauseStyle);
-        settingsLabel = new Label("SETTINGS", pauseStyle);
+        labels.put(Labels.ALIEN.name(), new Label("ALIENS", aliensStyle));
+        labels.put(Labels.ON_EARTH.name(), new Label("ON EARTH", onEarthStyle));
+        labels.put(Labels.PAUSE.name(), new Label("PAUSE", pauseStyle));
+        labels.put(Labels.SETTINGS.name(), new Label("SETTINGS", pauseStyle));
     }
 
-    public BitmapFont generateFont(String fontPathWithFile, int fontSize){
+    public static BitmapFont generateFont(String fontPathWithFile, int fontSize){
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontPathWithFile));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = fontSize;
@@ -77,39 +79,39 @@ public class ResourceManager {
         return font;
     }
 
-    public Music getBackgroundMusic(){
-        return backgroundMusic;
+    public static Music getMusic(String name){
+        return musics.get(name);
     }
 
-    public Music getMenuMusic(){
-        return menuMusic;
+    public static Sound getSound(String name){
+        return sounds.get(name);
     }
 
-    public Label getAliensLabel(){
-        return aliensLabel;
+    public static Texture getTexture(String name){
+        return textures.get(name);
     }
 
-    public Label getPauseLabel(){
-        return pauseLabel;
+    public static Label getLabel(String name){
+        return labels.get(name);
     }
 
-    public Label getOnEarthLabel(){
-        return onEarthLabel;
-    }
+    public static void dispose() {
+        for (Music music : musics.values()) {
+            if (music != null) music.dispose();
+        }
 
-    public Label getsettingsLabel(){
-        return settingsLabel;
-    }
+        for (Sound sound : sounds.values()) {
+            if (sound != null) sound.dispose();
+        }
 
-    public void dispose() {
-        playerTexture.dispose();
-        bronzeTexture.dispose();
-        silverTexture.dispose();
-        goldTexture.dispose();
+        for (Texture texture : textures.values()) {
+            if (texture != null) texture.dispose();
+        }
 
-        backgroundMusic.dispose();
-        menuMusic.dispose();
-        coinSound.dispose();
+        musics.clear();
+        sounds.clear();
+        textures.clear();
+        labels.clear();
     }
 
     //endregion

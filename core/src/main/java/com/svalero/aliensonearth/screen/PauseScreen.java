@@ -12,13 +12,13 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
+import com.svalero.aliensonearth.util.enums.Labels;
 
 public class PauseScreen implements Screen {
 
     //region properties
 
     private Stage stage;
-    private ResourceManager resourceManager;
     private LogicManager logicManager;
 
     private Game game;
@@ -28,11 +28,10 @@ public class PauseScreen implements Screen {
 
     //region constructor
 
-    public PauseScreen(Game game, GameScreen gameScreen, LogicManager logicManager, ResourceManager resourceManager){
+    public PauseScreen(Game game, GameScreen gameScreen, LogicManager logicManager){
         this.game = game;
         this.gameScreen = gameScreen;
         this.logicManager = logicManager;
-        this.resourceManager = resourceManager;
     }
 
     //endregion
@@ -41,7 +40,6 @@ public class PauseScreen implements Screen {
 
     @Override
     public void show() {
-        resourceManager.loadAllResources();
         loadStage();
     }
 
@@ -77,9 +75,8 @@ public class PauseScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-
-        resourceManager.dispose();
         logicManager.dispose();
+        gameScreen.dispose();
     }
 
     //endregion
@@ -125,7 +122,7 @@ public class PauseScreen implements Screen {
         });
 
         table.row();
-        table.add(resourceManager.getPauseLabel()).center();
+        table.add(ResourceManager.getLabel(Labels.PAUSE.name())).center();
         table.row().padTop(60);
         table.add(resumeButton).center();
         table.row().padTop(10);
