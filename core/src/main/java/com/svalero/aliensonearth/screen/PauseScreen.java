@@ -2,17 +2,21 @@ package com.svalero.aliensonearth.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
+
+import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
 
 public class PauseScreen implements Screen {
 
@@ -20,6 +24,7 @@ public class PauseScreen implements Screen {
 
     private Stage stage;
     private LogicManager logicManager;
+    private Preferences prefs;
 
     private Game game;
     private GameScreen gameScreen;
@@ -32,6 +37,8 @@ public class PauseScreen implements Screen {
         this.game = game;
         this.gameScreen = gameScreen;
         this.logicManager = logicManager;
+
+        loadPreferences();
     }
 
     //endregion
@@ -83,6 +90,10 @@ public class PauseScreen implements Screen {
 
     //region methods
 
+    private void loadPreferences(){
+        prefs = Gdx.app.getPreferences(GAME_NAME);
+    }
+
     public void loadStage(){
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
@@ -93,6 +104,16 @@ public class PauseScreen implements Screen {
 
         stage = new Stage();
         stage.addActor(table);
+
+        VisCheckBox musicCheckBox = new VisCheckBox("Music");
+        musicCheckBox.setChecked(prefs.getBoolean("music", true));
+        musicCheckBox.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                prefs.putBoolean("music", musicCheckBox.isChecked());
+                prefs.flush();
+            }
+        });
 
         VisTextButton resumeButton = new VisTextButton("Resume");
         resumeButton.addListener(new ClickListener() {
@@ -124,6 +145,8 @@ public class PauseScreen implements Screen {
         table.row();
         table.add(ResourceManager.getLabel(LabelsEnum.PAUSE)).center();
         table.row().padTop(60);
+        table.add(musicCheckBox).center();
+        table.row().padTop(30);
         table.add(resumeButton).center();
         table.row().padTop(10);
         table.add(mainMenuButton).center();
