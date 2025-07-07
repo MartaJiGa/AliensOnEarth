@@ -3,7 +3,6 @@ package com.svalero.aliensonearth.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,8 +12,8 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.manager.SettingsManager;
-import com.svalero.aliensonearth.util.enums.Labels;
-import com.svalero.aliensonearth.util.enums.Musics;
+import com.svalero.aliensonearth.util.enums.LabelsEnum;
+import com.svalero.aliensonearth.util.enums.MusicEnum;
 
 public class MainMenuScreen implements Screen {
 
@@ -24,7 +23,7 @@ public class MainMenuScreen implements Screen {
     private SettingsManager settingsManager;
 
     private Game game;
-    private Music menuMusic;
+    private com.badlogic.gdx.audio.Music menuMusic;
 
     //endregion
 
@@ -126,9 +125,9 @@ public class MainMenuScreen implements Screen {
         });
 
         table.row();
-        table.add(ResourceManager.getLabel(Labels.ALIEN.name())).center();
+        table.add(ResourceManager.getLabel(LabelsEnum.ALIEN)).center();
         table.row();
-        table.add(ResourceManager.getLabel(Labels.ON_EARTH.name())).center();
+        table.add(ResourceManager.getLabel(LabelsEnum.ON_EARTH)).center();
         table.row().padTop(60);
         table.add(playButton).center();
         table.row().padTop(10);
@@ -141,7 +140,7 @@ public class MainMenuScreen implements Screen {
 
     public void loadMenuMusic(){
         if(SettingsManager.isMusicEnabled()){
-            menuMusic = ResourceManager.getMusic(Musics.MENU.name());
+            menuMusic = ResourceManager.getMusic(MusicEnum.MENU);
             menuMusic.setLooping(true);
             menuMusic.play();
         }

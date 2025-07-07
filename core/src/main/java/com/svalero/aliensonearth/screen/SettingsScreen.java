@@ -14,7 +14,7 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.ResourceManager;
-import com.svalero.aliensonearth.util.enums.Labels;
+import com.svalero.aliensonearth.util.enums.LabelsEnum;
 
 import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
 
@@ -126,7 +126,7 @@ public class SettingsScreen implements Screen {
         });
 
         table.row();
-        table.add(ResourceManager.getLabel(Labels.SETTINGS.name())).center();
+        table.add(ResourceManager.getLabel(LabelsEnum.SETTINGS)).center();
         table.row().padTop(60);
         table.add(musicCheckBox).center();
         table.row().padTop(30);

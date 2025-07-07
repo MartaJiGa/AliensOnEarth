@@ -3,13 +3,12 @@ package com.svalero.aliensonearth.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.RenderManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.manager.SettingsManager;
-import com.svalero.aliensonearth.util.enums.Musics;
+import com.svalero.aliensonearth.util.enums.MusicEnum;
 
 public class GameScreen implements Screen {
 
@@ -19,7 +18,7 @@ public class GameScreen implements Screen {
     private RenderManager renderManager;
 
     private Game game;
-    private Music backgroundMusic;
+    private com.badlogic.gdx.audio.Music backgroundMusic;
 
     //endregion
 
@@ -99,7 +98,7 @@ public class GameScreen implements Screen {
     }
 
     public void loadBackgroundMusic(){
-        backgroundMusic = ResourceManager.getMusic(Musics.BACKGROUND.name());
+        backgroundMusic = ResourceManager.getMusic(MusicEnum.BACKGROUND);
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
     }

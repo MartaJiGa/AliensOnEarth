@@ -12,7 +12,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
-import com.svalero.aliensonearth.util.enums.Labels;
+import com.svalero.aliensonearth.util.enums.LabelsEnum;
 
 public class PauseScreen implements Screen {
 
@@ -122,7 +122,7 @@ public class PauseScreen implements Screen {
         });
 
         table.row();
-        table.add(ResourceManager.getLabel(Labels.PAUSE.name())).center();
+        table.add(ResourceManager.getLabel(LabelsEnum.PAUSE)).center();
         table.row().padTop(60);
         table.add(resumeButton).center();
         table.row().padTop(10);

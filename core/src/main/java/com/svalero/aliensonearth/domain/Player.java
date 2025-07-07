@@ -1,6 +1,6 @@
 package com.svalero.aliensonearth.domain;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ public class Player extends Character {
     private int score;
     private int lives;
 
-    public Player(Texture image, Vector2 position){
+    public Player(TextureRegion image, Vector2 position){
         super(image, 100, 100, position);
     }
 

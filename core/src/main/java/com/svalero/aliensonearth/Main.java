@@ -13,6 +13,10 @@ public class Main extends Game {
     @Override
     public void create() {
         ResourceManager.loadAllResources();
+        while(!ResourceManager.update()){}
+
+        ResourceManager.generateLabels();
+
         setScreen(new MainMenuScreen(this));
     }
 
