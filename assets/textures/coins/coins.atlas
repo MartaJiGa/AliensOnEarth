@@ -1,0 +1,15 @@
+coins.png
+size:1024,256
+repeat:none
+coin_bronze
+bounds:262,2,128,128
+coin_bronze_side
+bounds:392,2,128,128
+coin_gold
+bounds:522,2,128,128
+coin_gold_side
+bounds:132,2,128,128
+coin_silver
+bounds:2,2,128,128
+coin_silver_side
+bounds:652,2,128,128

@@ -11,7 +11,8 @@ import com.svalero.aliensonearth.domain.coin.Coin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
 import com.svalero.aliensonearth.util.enums.SoundsEnum;
-import com.svalero.aliensonearth.util.enums.TexturesEnum;
+import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
+import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
 
 public class LogicManager {
 
@@ -29,24 +30,24 @@ public class LogicManager {
     //region constructor
 
     public LogicManager(){
-        player = new Player(ResourceManager.getTexture(TexturesEnum.PLAYER.getRegionName()), new Vector2(0, 0));
+        player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_PLAYER_FRONT.getRegionName()), new Vector2(0, 0));
 
         bronzeCoins = new Array<>(new BronzeCoin[] {
-            new BronzeCoin(ResourceManager.getTexture(TexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 20)),
-            new BronzeCoin(ResourceManager.getTexture(TexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 150)),
-            new BronzeCoin(ResourceManager.getTexture(TexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(170, 200)),
-            new BronzeCoin(ResourceManager.getTexture(TexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(240, 340))
+            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 20)),
+            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 150)),
+            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(170, 200)),
+            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(240, 340))
         });
 
         silverCoins = new Array<>(new SilverCoin[] {
-            new SilverCoin(ResourceManager.getTexture(TexturesEnum.SILVER_COIN.getRegionName()), new Vector2(220, 45)),
-            new SilverCoin(ResourceManager.getTexture(TexturesEnum.SILVER_COIN.getRegionName()), new Vector2(500, 310)),
-            new SilverCoin(ResourceManager.getTexture(TexturesEnum.SILVER_COIN.getRegionName()), new Vector2(600, 200))
+            new SilverCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.SILVER_COIN.getRegionName()), new Vector2(220, 45)),
+            new SilverCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.SILVER_COIN.getRegionName()), new Vector2(500, 310)),
+            new SilverCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.SILVER_COIN.getRegionName()), new Vector2(600, 200))
         });
 
         goldCoins = new Array<>(new GoldCoin[] {
-            new GoldCoin(ResourceManager.getTexture(TexturesEnum.GOLD_COIN.getRegionName()), new Vector2(400, 400)),
-            new GoldCoin(ResourceManager.getTexture(TexturesEnum.GOLD_COIN.getRegionName()), new Vector2(500, 50))
+            new GoldCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.GOLD_COIN.getRegionName()), new Vector2(400, 400)),
+            new GoldCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.GOLD_COIN.getRegionName()), new Vector2(500, 50))
         });
     }
 

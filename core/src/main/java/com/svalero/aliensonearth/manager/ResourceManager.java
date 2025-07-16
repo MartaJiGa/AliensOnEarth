@@ -33,7 +33,8 @@ public class ResourceManager {
     }
 
     public static void loadAllResources(){
-        assetManager.load("AliensOnEarth.atlas", TextureAtlas.class);
+        assetManager.load("textures/coins/coins.atlas", TextureAtlas.class);
+        assetManager.load("textures/aliens/aliens.atlas", TextureAtlas.class);
 
         loadMusic();
         loadSounds();
@@ -81,8 +82,12 @@ public class ResourceManager {
         return assetManager.get(soundsEnum.getFileName(), Sound.class);
     }
 
-    public static TextureRegion getTexture(String name){
-        return assetManager.get("AliensOnEarth.atlas", TextureAtlas.class).findRegion(name);
+    public static TextureRegion getAlienTexture(String name){
+        return assetManager.get("textures/aliens/aliens.atlas", TextureAtlas.class).findRegion(name);
+    }
+
+    public static TextureRegion getCoinTexture(String name){
+        return assetManager.get("textures/coins/coins.atlas", TextureAtlas.class).findRegion(name);
     }
 
     public static Label getLabel(LabelsEnum labelsEnum){
