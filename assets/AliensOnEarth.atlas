@@ -1,0 +1,11 @@
+AliensOnEarth.png
+size:512,512
+repeat:none
+character_pink_front
+bounds:2,132,256,256
+coin_bronze
+bounds:260,260,128,128
+coin_gold
+bounds:132,2,128,128
+coin_silver
+bounds:2,2,128,128
