@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public abstract class Character {
-    protected TextureRegion image;
+    protected TextureRegion currentFrame;
     protected Vector2 position;
     protected int width;
     protected int height;
     protected Rectangle rectangle;
 
-    public Character(TextureRegion image, int width, int height, Vector2 position){
-        this.image = image;
+    public Character(TextureRegion currentFrame, int width, int height, Vector2 position){
+        this.currentFrame = currentFrame;
         this.width = width;
         this.height = height;
         this.position = position;

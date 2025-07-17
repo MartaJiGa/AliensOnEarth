@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.util.enums.*;
 import lombok.Data;
 
@@ -24,6 +25,9 @@ public class ResourceManager {
     private static AssetManager assetManager = new AssetManager();
     private static Map<String, Label> labels = new HashMap<>();
 
+    private static String TEXTURE_ATLAS_ALIENS = "textures/aliens/aliens.atlas";
+    private static String TEXTURE_ATLAS_COINS = "textures/coins/coins.atlas";
+
     //endregion
 
     //region methods
@@ -33,8 +37,8 @@ public class ResourceManager {
     }
 
     public static void loadAllResources(){
-        assetManager.load("textures/coins/coins.atlas", TextureAtlas.class);
-        assetManager.load("textures/aliens/aliens.atlas", TextureAtlas.class);
+        assetManager.load(TEXTURE_ATLAS_ALIENS, TextureAtlas.class);
+        assetManager.load(TEXTURE_ATLAS_COINS, TextureAtlas.class);
 
         loadMusic();
         loadSounds();
@@ -83,11 +87,19 @@ public class ResourceManager {
     }
 
     public static TextureRegion getAlienTexture(String name){
-        return assetManager.get("textures/aliens/aliens.atlas", TextureAtlas.class).findRegion(name);
+        return assetManager.get(TEXTURE_ATLAS_ALIENS, TextureAtlas.class).findRegion(name);
     }
 
     public static TextureRegion getCoinTexture(String name){
-        return assetManager.get("textures/coins/coins.atlas", TextureAtlas.class).findRegion(name);
+        return assetManager.get(TEXTURE_ATLAS_COINS, TextureAtlas.class).findRegion(name);
+    }
+
+    public static Array<TextureAtlas.AtlasRegion> getAlienRegions(String name){
+        return assetManager.get(TEXTURE_ATLAS_ALIENS, TextureAtlas.class).findRegions(name);
+    }
+
+    public static Array<TextureAtlas.AtlasRegion> getCoinRegions(String name){
+        return assetManager.get(TEXTURE_ATLAS_COINS, TextureAtlas.class).findRegions(name);
     }
 
     public static Label getLabel(LabelsEnum labelsEnum){

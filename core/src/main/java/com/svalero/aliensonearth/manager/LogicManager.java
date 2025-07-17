@@ -6,13 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Player;
-import com.svalero.aliensonearth.domain.coin.BronzeCoin;
-import com.svalero.aliensonearth.domain.coin.Coin;
-import com.svalero.aliensonearth.domain.coin.GoldCoin;
-import com.svalero.aliensonearth.domain.coin.SilverCoin;
-import com.svalero.aliensonearth.util.enums.SoundsEnum;
-import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
-import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
+import com.svalero.aliensonearth.domain.coin.*;
+import com.svalero.aliensonearth.util.enums.*;
+import com.svalero.aliensonearth.util.enums.states.*;
+import com.svalero.aliensonearth.util.enums.textures.*;
 
 public class LogicManager {
 
@@ -30,7 +27,7 @@ public class LogicManager {
     //region constructor
 
     public LogicManager(){
-        player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_PLAYER_FRONT.getRegionName()), new Vector2(0, 0));
+        player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), new Vector2(0, 0));
 
         bronzeCoins = new Array<>(new BronzeCoin[] {
             new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 20)),
@@ -57,11 +54,21 @@ public class LogicManager {
 
     private void managePlayerInput(){
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
             player.move(10);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.setState(AlienAnimationStatesEnum.WALK_LEFT);
             player.move(-10);
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             pauseGame();
+        } else{
+            if(player.getState() == AlienAnimationStatesEnum.WALK_RIGHT){
+                player.setState(AlienAnimationStatesEnum.IDLE_RIGHT);
+            } else if(player.getState() == AlienAnimationStatesEnum.WALK_LEFT){
+                player.setState(AlienAnimationStatesEnum.IDLE_LEFT);
+            } else{
+                player.setState(AlienAnimationStatesEnum.FRONT);
+            }
         }
     }
 
@@ -111,10 +118,12 @@ public class LogicManager {
         return isPaused;
     }
 
-    public void update(){
+    public void update(float dt){
         if(!isPaused){
             managePlayerInput();
             manageCollisions();
+
+            player.update(dt);
         }
     }
 
