@@ -29,15 +29,15 @@ public class RenderManager {
         batch.begin();
 
         for (BronzeCoin coin : logicManager.bronzeCoins) {
-            batch.draw(coin.getImage(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
+            batch.draw(coin.getCurrentFrame(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
         for (SilverCoin coin : logicManager.silverCoins) {
-            batch.draw(coin.getImage(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
+            batch.draw(coin.getCurrentFrame(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
         for (GoldCoin coin : logicManager.goldCoins) {
-            batch.draw(coin.getImage(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
+            batch.draw(coin.getCurrentFrame(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
-        batch.draw(logicManager.player.getImage(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
+        batch.draw(logicManager.player.getCurrentFrame(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
 
         batch.end();
     }

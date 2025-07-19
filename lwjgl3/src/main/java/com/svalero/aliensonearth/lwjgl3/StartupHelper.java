@@ -78,7 +78,7 @@ public class StartupHelper {
             return false;
         }
 
-        // There is no need for -XstartOnFirstThread on Graal native image
+        // There is no need for -XstartOnFirstThread on Graal native currentFrame
         if (!System.getProperty("org.graalvm.nativeimage.imagecode", "").isEmpty()) {
             return false;
         }

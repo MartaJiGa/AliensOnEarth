@@ -44,7 +44,7 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(float dt) {
         Gdx.gl.glClearColor(0.741f, 0.89f, 0.973f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
             ((Game) Gdx.app.getApplicationListener()).setScreen(new PauseScreen(game, this, logicManager));
         }
         else{
-            logicManager.update();
+            logicManager.update(dt);
         }
 
         renderManager.render();
