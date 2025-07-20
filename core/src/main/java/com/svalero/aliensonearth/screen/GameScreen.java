@@ -4,10 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.svalero.aliensonearth.manager.LogicManager;
-import com.svalero.aliensonearth.manager.RenderManager;
-import com.svalero.aliensonearth.manager.ResourceManager;
-import com.svalero.aliensonearth.manager.SettingsManager;
+import com.svalero.aliensonearth.manager.*;
 import com.svalero.aliensonearth.util.enums.MusicEnum;
 
 public class GameScreen implements Screen {
@@ -16,6 +13,7 @@ public class GameScreen implements Screen {
 
     private LogicManager logicManager;
     private RenderManager renderManager;
+    private LevelManager levelManager;
 
     private Game game;
     private com.badlogic.gdx.audio.Music backgroundMusic;
@@ -95,7 +93,8 @@ public class GameScreen implements Screen {
 
     public void loadManagers(){
         logicManager = new LogicManager();
-        renderManager = new RenderManager(logicManager);
+        levelManager = new LevelManager(logicManager);
+        renderManager = new RenderManager(logicManager, levelManager.getMap());
     }
 
     public void loadBackgroundMusic(){

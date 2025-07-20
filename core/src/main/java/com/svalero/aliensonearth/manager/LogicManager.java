@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
@@ -16,9 +17,12 @@ public class LogicManager {
     //region properties
 
     protected Player player;
+    protected Array<Coin> coins;
     protected Array<BronzeCoin> bronzeCoins;
     protected Array<SilverCoin> silverCoins;
     protected Array<GoldCoin> goldCoins;
+
+    public int currentLevel;
 
     private boolean isPaused = false;
 
@@ -28,6 +32,8 @@ public class LogicManager {
 
     public LogicManager(){
         player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), new Vector2(0, 0));
+
+        coins = new Array<>();
 
         bronzeCoins = new Array<>(new BronzeCoin[] {
             new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 20)),
@@ -46,6 +52,8 @@ public class LogicManager {
             new GoldCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.GOLD_COIN.getRegionName()), new Vector2(400, 400)),
             new GoldCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.GOLD_COIN.getRegionName()), new Vector2(500, 50))
         });
+
+        currentLevel = 1;
     }
 
     //endregion
@@ -79,7 +87,7 @@ public class LogicManager {
             Coin coin = bronzeCoins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 bronzeCoins.removeIndex(i);
-                makeCollisionCommonConsecuences(coin);
+                makeCollisionCommonConsequences(coin);
             }
         }
 
@@ -87,7 +95,7 @@ public class LogicManager {
             Coin coin = silverCoins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 silverCoins.removeIndex(i);
-                makeCollisionCommonConsecuences(coin);
+                makeCollisionCommonConsequences(coin);
             }
         }
 
@@ -95,12 +103,12 @@ public class LogicManager {
             Coin coin = goldCoins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 goldCoins.removeIndex(i);
-                makeCollisionCommonConsecuences(coin);
+                makeCollisionCommonConsequences(coin);
             }
         }
     }
 
-    public void makeCollisionCommonConsecuences(Coin coin){
+    public void makeCollisionCommonConsequences(Coin coin){
         player.changeScore(coin.getPoints());
         System.out.println("Score: " + player.getScore());
         ResourceManager.getSound(SoundsEnum.COIN).play();
