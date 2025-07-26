@@ -11,7 +11,7 @@ import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
 
 @Data
-public class Player extends Character {
+public class Player extends Item {
     private int score;
     private int lives;
 
@@ -21,7 +21,7 @@ public class Player extends Character {
     private float stateTime;
 
     public Player(TextureRegion currentFrame, Vector2 position){
-        super(currentFrame, 100, 100, position);
+        super(currentFrame, 80, 80, position);
 
         Array<TextureAtlas.AtlasRegion> originalFrames = new Array<>();
         originalFrames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_WALK_A.getRegionName()));
@@ -50,13 +50,13 @@ public class Player extends Character {
             case FRONT:
                 break;
             case WALK_RIGHT:
-                currentFrame = rightAnimation.getKeyFrame(stateTime, true);
+                textureRegion = rightAnimation.getKeyFrame(stateTime, true);
                 break;
             case WALK_LEFT:
-                currentFrame = leftAnimation.getKeyFrame(stateTime, true);
+                textureRegion = leftAnimation.getKeyFrame(stateTime, true);
                 break;
             case IDLE_RIGHT:
-                currentFrame = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName());
+                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName());
                 break;
             case IDLE_LEFT:
                 break;

@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class BronzeCoin extends Coin {
     public BronzeCoin(TextureRegion image, Vector2 position) {
-        super(image, CoinTypeEnum.BRONZE, 50, 50, position);
+        super(image, CoinTypeEnum.BRONZE, 30, 30, position);
     }
 }

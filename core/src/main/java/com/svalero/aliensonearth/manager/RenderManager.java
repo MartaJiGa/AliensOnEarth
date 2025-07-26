@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.svalero.aliensonearth.domain.coin.BronzeCoin;
-import com.svalero.aliensonearth.domain.coin.GoldCoin;
-import com.svalero.aliensonearth.domain.coin.SilverCoin;
+import com.svalero.aliensonearth.domain.coin.Coin;
 
 import static com.svalero.aliensonearth.util.Constants.*;
 
@@ -48,16 +46,10 @@ public class RenderManager {
 
         batch.begin();
 
-        for (BronzeCoin coin : logicManager.bronzeCoins) {
-            batch.draw(coin.getCurrentFrame(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
+        for (Coin coin : logicManager.coins) {
+            batch.draw(coin.getTextureRegion(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
         }
-        for (SilverCoin coin : logicManager.silverCoins) {
-            batch.draw(coin.getCurrentFrame(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
-        }
-        for (GoldCoin coin : logicManager.goldCoins) {
-            batch.draw(coin.getCurrentFrame(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
-        }
-        batch.draw(logicManager.player.getCurrentFrame(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
+        batch.draw(logicManager.player.getTextureRegion(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
 
         batch.end();
     }

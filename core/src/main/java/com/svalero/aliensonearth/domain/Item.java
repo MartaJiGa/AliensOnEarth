@@ -8,18 +8,26 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public abstract class Character {
-    protected TextureRegion currentFrame;
+public class Item {
+    protected TextureRegion textureRegion;
+    protected String imageName;
     protected Vector2 position;
     protected int width;
     protected int height;
     protected Rectangle rectangle;
 
-    public Character(TextureRegion currentFrame, int width, int height, Vector2 position){
-        this.currentFrame = currentFrame;
+    public Item(TextureRegion textureRegion, int width, int height, Vector2 position){
+        this.textureRegion = textureRegion;
         this.width = width;
         this.height = height;
         this.position = position;
         this.rectangle = new Rectangle(position.x, position.y, width, height);
+    }
+
+    public Item(TextureRegion textureRegion, Vector2 position, String imageName){
+        this.textureRegion = textureRegion;
+        this.position = position;
+        this.rectangle = new Rectangle(position.x, position.y, width, height);
+        this.imageName = imageName;
     }
 }
