@@ -1,7 +1,20 @@
 package com.svalero.aliensonearth.util;
 
 public class Constants {
+
+    //region General
+
     public static final String GAME_NAME = "AliensOnEarth";
+    public static final int GRAVITY = 10;
+
+    //endregion
+
+    //region Player
+
+    public static final int PLAYER_SPEED = 4;
+    public static final int PLAYER_JUMPING_SPEED = 150;
+
+    //endregion
 
     //region Tiled
 

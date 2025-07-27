@@ -2,29 +2,24 @@ package com.svalero.aliensonearth.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.*;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
+import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 
-import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
+import static com.svalero.aliensonearth.Main.prefs;
 
 public class SettingsScreen implements Screen {
 
     //region properties
 
     private Stage stage;
-    private Preferences prefs;
-
     private Game game;
 
     //endregion
@@ -33,7 +28,6 @@ public class SettingsScreen implements Screen {
 
     public SettingsScreen(Game game){
         this.game = game;
-        loadPreferences();
     }
 
     //endregion
@@ -83,10 +77,6 @@ public class SettingsScreen implements Screen {
 
     //region methods
 
-    private void loadPreferences(){
-        prefs = Gdx.app.getPreferences(GAME_NAME);
-    }
-
     public void loadStage(){
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
@@ -103,13 +93,20 @@ public class SettingsScreen implements Screen {
         settingsSaved.setVisible(false);
 
         VisCheckBox musicCheckBox = new VisCheckBox("Music");
-        musicCheckBox.setChecked(prefs.getBoolean("music", true));
+        musicCheckBox.setChecked(prefs.getBoolean(PrefsNamesEnum.MUSIC.getPrefsName(), true));
+
+        VisLabel musicVolumeLabel = new VisLabel("Music volume");
+        settingsSaved.setFontScale(0.5f);
+
+        VisSlider musicVolumeSlider = new VisSlider(0.1f, 1f, 0.01f, false);
+        musicVolumeSlider.setValue(prefs.getFloat(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName()));
 
         VisTextButton saveButton = new VisTextButton("Save");
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-                prefs.putBoolean("music", musicCheckBox.isChecked());
+                prefs.putBoolean(PrefsNamesEnum.MUSIC.getPrefsName(), musicCheckBox.isChecked());
+                prefs.putFloat(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName(), musicVolumeSlider.getValue());
 
                 prefs.flush();
                 settingsSaved.setVisible(true);
@@ -128,13 +125,15 @@ public class SettingsScreen implements Screen {
         table.row();
         table.add(ResourceManager.getLabel(LabelsEnum.SETTINGS)).center();
         table.row().padTop(60);
-        table.add(musicCheckBox).center();
+        table.add(musicCheckBox).left();
+        table.row().padTop(15);
+        table.add(musicVolumeLabel).left();
+        table.add(musicVolumeSlider).left();
         table.row().padTop(30);
         table.add(settingsSaved).center();
         table.row().padTop(10);
-        table.add(saveButton).center();
-        table.row().padTop(10);
-        table.add(returnButton).center();
+        table.add(saveButton);
+        table.add(returnButton);
 
         Gdx.input.setInputProcessor(stage);
     }

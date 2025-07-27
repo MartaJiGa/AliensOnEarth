@@ -15,8 +15,9 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
+import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 
-import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
+import static com.svalero.aliensonearth.util.Constants.*;
 
 public class PauseScreen implements Screen {
 
@@ -106,11 +107,11 @@ public class PauseScreen implements Screen {
         stage.addActor(table);
 
         VisCheckBox musicCheckBox = new VisCheckBox("Music");
-        musicCheckBox.setChecked(prefs.getBoolean("music", true));
+        musicCheckBox.setChecked(prefs.getBoolean(PrefsNamesEnum.MUSIC.getPrefsName(), true));
         musicCheckBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-                prefs.putBoolean("music", musicCheckBox.isChecked());
+                prefs.putBoolean(PrefsNamesEnum.MUSIC.getPrefsName(), musicCheckBox.isChecked());
                 prefs.flush();
             }
         });

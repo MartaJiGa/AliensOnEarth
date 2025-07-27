@@ -6,28 +6,62 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.manager.ResourceManager;
+import com.svalero.aliensonearth.util.Constants;
 import com.svalero.aliensonearth.util.enums.states.AlienAnimationStatesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
 
+import static com.svalero.aliensonearth.util.Constants.*;
+
 @Data
 public class Player extends Item {
+    //region properties
+
     private int score;
     private int lives;
+    private Vector2 speed;
+    private boolean isJumping;
+    private Boolean isFacingRight, isFacingUp;
 
-    private Animation<TextureRegion> rightAnimation, leftAnimation;
+    private Animation<TextureRegion> rightAnimation, leftAnimation, climbAnimation;
+    private TextureRegion leftIdle, leftJump;
     private AlienAnimationStatesEnum state;
 
     private float stateTime;
 
+    //endregion
+
+    //region constructor
+
     public Player(TextureRegion currentFrame, Vector2 position){
         super(currentFrame, 80, 80, position);
 
-        Array<TextureAtlas.AtlasRegion> originalFrames = new Array<>();
-        originalFrames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_WALK_A.getRegionName()));
-        originalFrames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_WALK_B.getRegionName()));
-        rightAnimation = new Animation<>(0.1f, originalFrames);
+        formRightAnimation();
+        formLeftAnimation();
+        formClimbAnimation();
+        formLeftIdleTextureRegion();
+        formLeftJumpTextureRegion();
 
+        speed = new Vector2();
+        isJumping = false;
+        isFacingRight = null;
+        isFacingUp = null;
+
+        state = state.FRONT;
+    }
+
+    //endregion
+
+    //region methods
+
+    public void formRightAnimation() {
+        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
+        frames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_WALK_A.getRegionName()));
+        frames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_WALK_B.getRegionName()));
+        rightAnimation = new Animation<>(0.1f, frames);
+    }
+
+    public void formLeftAnimation() {
         Array<TextureAtlas.AtlasRegion> framesToFlip = new Array<>();
         Array<TextureAtlas.AtlasRegion> leftFrames = new Array<>();
         framesToFlip.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_WALK_A.getRegionName()));
@@ -39,15 +73,50 @@ public class Player extends Item {
             leftFrames.add(flipped);
         }
         leftAnimation = new Animation<>(0.1f, leftFrames);
+    }
 
-        state = state.FRONT;
+    public void formClimbAnimation() {
+        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
+        frames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_CLIMB_A.getRegionName()));
+        frames.addAll(ResourceManager.getAlienRegions(AlienTexturesEnum.PINK_CLIMB_B.getRegionName()));
+        climbAnimation = new Animation<>(0.1f, frames);
+    }
+
+    public void formLeftIdleTextureRegion() {
+        TextureAtlas.AtlasRegion leftIdleRegion = new TextureAtlas.AtlasRegion(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName()));
+        leftIdleRegion.flip(true, false); // Horizontal inversion
+        leftIdle = leftIdleRegion;
+    }
+
+    public void formLeftJumpTextureRegion() {
+        TextureAtlas.AtlasRegion leftJumpRegion = new TextureAtlas.AtlasRegion(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_JUMP.getRegionName()));
+        leftJumpRegion.flip(true, false); // Horizontal inversion
+        leftJump = leftJumpRegion;
     }
 
     public void update(float dt){
         stateTime += dt;
 
+        changeTextureState();
+
+        if(state != state.CLIMB && state != state.FRONT_CLIMB){
+            position.y += speed.y * dt;
+            if(position.y < 0){
+                position.y = 0;
+                isJumping = false;
+            }
+            speed.y -= GRAVITY;
+            if(speed.y < -PLAYER_JUMPING_SPEED)
+                speed.y = -PLAYER_JUMPING_SPEED;
+        }
+    }
+
+    public void changeTextureState(){
         switch (state){
             case FRONT:
+            case FRONT_CLIMB:
+            case JUMP:
+                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName());
                 break;
             case WALK_RIGHT:
                 textureRegion = rightAnimation.getKeyFrame(stateTime, true);
@@ -59,14 +128,22 @@ public class Player extends Item {
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName());
                 break;
             case IDLE_LEFT:
+                textureRegion = leftIdle;
                 break;
-            case JUMP:
+            case JUMP_RIGHT:
+                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_JUMP.getRegionName());
+                break;
+            case JUMP_LEFT:
+                textureRegion = leftJump;
                 break;
             case HIT:
+                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_HIT.getRegionName());
                 break;
             case DUCK:
+                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_DUCK.getRegionName());
                 break;
             case CLIMB:
+                textureRegion = climbAnimation.getKeyFrame(stateTime, true);
                 break;
         }
     }
@@ -74,6 +151,18 @@ public class Player extends Item {
     public void move(int movement){
         position.x += movement;
         rectangle.setPosition(position);
+    }
+
+    public void climb(int movement){
+        position.y += movement;
+        rectangle.setPosition(position);
+    }
+
+    public void jump(){
+        if(!isJumping){
+            speed.y = PLAYER_JUMPING_SPEED;
+            isJumping = true;
+        }
     }
 
     public void changeScore(int points){
@@ -95,4 +184,6 @@ public class Player extends Item {
     public void setState(AlienAnimationStatesEnum state){
         this.state = state;
     }
+
+    //endregion
 }

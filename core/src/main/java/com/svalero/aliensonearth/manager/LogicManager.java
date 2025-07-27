@@ -11,16 +11,17 @@ import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
 import com.svalero.aliensonearth.util.enums.textures.*;
 
+import static com.svalero.aliensonearth.util.Constants.*;
+
 public class LogicManager {
 
     //region properties
 
     protected Player player;
     protected Array<Coin> coins;
+    private boolean isPaused, moving, jumping, climbing;
 
     public int currentLevel;
-
-    private boolean isPaused = false;
 
     //endregion
 
@@ -28,9 +29,9 @@ public class LogicManager {
 
     public LogicManager(){
         player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), new Vector2(0, 0));
-
         coins = new Array<>();
 
+        isPaused = false;
         currentLevel = 1;
     }
 
@@ -39,21 +40,67 @@ public class LogicManager {
     //region methods
 
     private void managePlayerInput(){
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        moving = false;
+        jumping = false;
+        climbing = false;
+
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
+            player.setState(AlienAnimationStatesEnum.CLIMB);
+            player.climb(+PLAYER_SPEED);
+            climbing = true;
+            player.setIsFacingRight(null);
+            player.setIsFacingUp(true);
+        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.C)){
+            player.setState(AlienAnimationStatesEnum.CLIMB);
+            player.climb(-PLAYER_SPEED);
+            climbing = true;
+            player.setIsFacingRight(null);
+            player.setIsFacingUp(false);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
-            player.move(10);
+            player.move(PLAYER_SPEED);
+            moving = true;
+            player.setIsFacingRight(true);
+            player.setIsFacingUp(null);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.setState(AlienAnimationStatesEnum.WALK_LEFT);
-            player.move(-10);
+            player.move(-PLAYER_SPEED);
+            moving = true;
+            player.setIsFacingRight(false);
+            player.setIsFacingUp(null);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.UP)){
+            player.setState(AlienAnimationStatesEnum.JUMP);
+            player.jump();
+            jumping = true;
+            player.setIsFacingRight(null);
+            player.setIsFacingUp(null);
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             pauseGame();
-        } else{
-            if(player.getState() == AlienAnimationStatesEnum.WALK_RIGHT){
-                player.setState(AlienAnimationStatesEnum.IDLE_RIGHT);
-            } else if(player.getState() == AlienAnimationStatesEnum.WALK_LEFT){
-                player.setState(AlienAnimationStatesEnum.IDLE_LEFT);
-            } else{
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+            player.setState(AlienAnimationStatesEnum.JUMP_RIGHT);
+            player.setIsFacingRight(true);
+            player.setIsFacingUp(null);
+            player.jump();
+        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+            player.setState(AlienAnimationStatesEnum.JUMP_LEFT);
+            player.setIsFacingRight(false);
+            player.setIsFacingUp(null);
+            player.jump();
+        }
+
+        if (!moving && !jumping && !climbing) {
+            Boolean playerFacingRight = player.getIsFacingRight();
+            Boolean playerFacingUp = player.getIsFacingUp();
+            if (playerFacingUp != null) {
+                player.setState(AlienAnimationStatesEnum.FRONT_CLIMB);
+            } else if (playerFacingRight == null) {
                 player.setState(AlienAnimationStatesEnum.FRONT);
+            } else if (playerFacingRight) {
+                player.setState(AlienAnimationStatesEnum.IDLE_RIGHT);
+            } else {
+                player.setState(AlienAnimationStatesEnum.IDLE_LEFT);
             }
         }
     }

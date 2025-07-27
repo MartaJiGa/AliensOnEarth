@@ -17,6 +17,8 @@ import lombok.Data;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.svalero.aliensonearth.Main.prefs;
+
 @Data
 public class ResourceManager {
 
@@ -79,7 +81,9 @@ public class ResourceManager {
     }
 
     public static Music getMusic(MusicEnum musicEnum){
-        return assetManager.get(musicEnum.getFileName(), Music.class);
+        Music music = assetManager.get(musicEnum.getFileName(), Music.class);
+        music.setVolume(prefs.getFloat(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName()));
+        return music;
     }
 
     public static Sound getSound(SoundsEnum soundsEnum){
