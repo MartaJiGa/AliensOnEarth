@@ -35,8 +35,7 @@ public class RenderManager {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
 
-        //TODO: AJUSTAR TAMAÑO ANCHO Y ALTURA (NÚMERO PUESTO A PIÑÓN EN ESTOS PARÁMETROS) CON LO HECHO EN TILED AL EJECUTAR EL JUEGO.
-        camera.setToOrtho(false, 30 * TILE_WIDTH, 20 * TILE_HEIGHT);
+        camera.setToOrtho(false, 25 * TILE_WIDTH, 15 * TILE_HEIGHT);
         camera.update();
     }
 
@@ -45,11 +44,27 @@ public class RenderManager {
     //region methods
 
     public void render(){
+        camera.position.set(
+            logicManager.player.getX() + logicManager.player.getWidth() / 2f,
+            logicManager.player.getY() + logicManager.player.getHeight() / 2f,
+            0
+        );
+
+        float halfWidth = camera.viewportWidth / 2f;
+        float halfHeight = camera.viewportHeight / 2f;
+        float mapWidth = mapRenderer.getMap().getProperties().get("width", Integer.class) * TILE_WIDTH;
+        float mapHeight = mapRenderer.getMap().getProperties().get("height", Integer.class) * TILE_HEIGHT;
+
+        // Fixed camera position on the corners of the screen
+        camera.position.x = Math.max(halfWidth, Math.min(camera.position.x, mapWidth - halfWidth));
+        camera.position.y = Math.max(halfHeight, Math.min(camera.position.y, mapHeight - halfHeight));
+
         camera.update();
 
         mapRenderer.setView(camera);
         mapRenderer.render();
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         for (Coin coin : logicManager.coins) {
