@@ -1,4 +1,9 @@
 package com.svalero.aliensonearth.domain;
 
-public class Enemy {
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class Enemy extends Character {
 }

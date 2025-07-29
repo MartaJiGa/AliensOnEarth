@@ -3,13 +3,11 @@ package com.svalero.aliensonearth.manager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
-import com.svalero.aliensonearth.util.enums.textures.*;
 
 import static com.svalero.aliensonearth.util.Constants.*;
 
@@ -28,9 +26,6 @@ public class LogicManager {
     //region constructor
 
     public LogicManager(){
-        player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), new Vector2(0, 0));
-        coins = new Array<>();
-
         isPaused = false;
         currentLevel = 1;
     }

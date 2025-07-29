@@ -3,24 +3,26 @@ package com.svalero.aliensonearth.domain;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.manager.ResourceManager;
-import com.svalero.aliensonearth.util.Constants;
 import com.svalero.aliensonearth.util.enums.states.AlienAnimationStatesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import static com.svalero.aliensonearth.util.Constants.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class Player extends Item {
+public class Player extends Character {
     //region properties
 
-    private int score;
+    private int level;
     private int lives;
-    private Vector2 speed;
-    private boolean isJumping;
+    private int score;
+
     private Boolean isFacingRight, isFacingUp;
 
     private Animation<TextureRegion> rightAnimation, leftAnimation, climbAnimation;
@@ -33,8 +35,8 @@ public class Player extends Item {
 
     //region constructor
 
-    public Player(TextureRegion currentFrame, Vector2 position){
-        super(currentFrame, 80, 80, position);
+    public Player(TextureRegion currentFrame, Vector2 position, TiledMapTileLayer groundLayer){
+        super(currentFrame, 70, 70, position, groundLayer);
 
         formRightAnimation();
         formLeftAnimation();
@@ -42,10 +44,10 @@ public class Player extends Item {
         formLeftIdleTextureRegion();
         formLeftJumpTextureRegion();
 
-        speed = new Vector2();
-        isJumping = false;
         isFacingRight = null;
         isFacingUp = null;
+
+        lives = 6;
 
         state = state.FRONT;
     }
@@ -100,14 +102,11 @@ public class Player extends Item {
         changeTextureState();
 
         if(state != state.CLIMB && state != state.FRONT_CLIMB){
-            position.y += speed.y * dt;
-            if(position.y < 0){
-                position.y = 0;
-                isJumping = false;
-            }
-            speed.y -= GRAVITY;
-            if(speed.y < -PLAYER_JUMPING_SPEED)
-                speed.y = -PLAYER_JUMPING_SPEED;
+            super.manageMovement(dt);
+
+            super.getSpeed().y -= GRAVITY;
+            if (super.getSpeed().y < -PLAYER_JUMPING_SPEED)
+                super.getSpeed().y = -PLAYER_JUMPING_SPEED;
         }
     }
 
@@ -148,20 +147,15 @@ public class Player extends Item {
         }
     }
 
-    public void move(int movement){
-        position.x += movement;
-        rectangle.setPosition(position);
-    }
-
     public void climb(int movement){
         position.y += movement;
         rectangle.setPosition(position);
     }
 
     public void jump(){
-        if(!isJumping){
-            speed.y = PLAYER_JUMPING_SPEED;
-            isJumping = true;
+        if(!super.isJumping()){
+            super.getSpeed().y = PLAYER_JUMPING_SPEED;
+            super.setJumping(true);
         }
     }
 

@@ -1,16 +1,18 @@
 package com.svalero.aliensonearth.manager;
 
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Item;
+import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
+import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
 
 import static com.svalero.aliensonearth.util.Constants.*;
@@ -22,8 +24,6 @@ public class LevelManager {
     private TiledMap map;
     private TiledMapTileLayer backgroundLayer;
     private TiledMapTileLayer groundLayer;
-    private MapLayer enemiesLayer;
-    private MapLayer coinsLayer;
 
     private LogicManager logicManager;
 
@@ -33,7 +33,6 @@ public class LevelManager {
 
     public LevelManager(LogicManager logicManager){
         this.logicManager = logicManager;
-
         loadCurrentLevel();
     }
 
@@ -49,8 +48,11 @@ public class LevelManager {
         map = new TmxMapLoader().load(TILE_LEVEL1);
         backgroundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_BACKGROUND);
         groundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_GROUND);
-//        enemiesLayer = map.getLayers().get(TILE_LAYER_ENEMIES);
-//        coinsLayer = map.getLayers().get(TILE_LAYER_COINS);
+
+        Vector2 initialPosition = getInitialPlayerPositionOnGround();
+
+        this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
+        this.logicManager.coins = new Array<>();
 
         loadBackground();
         loadGround();
@@ -101,6 +103,18 @@ public class LevelManager {
             logicManager.coins.add(new SilverCoin(item.getTextureRegion(), item.getPosition()));
         else if(item.getImageName().equals(CoinTexturesEnum.GOLD_COIN.getRegionName()))
             logicManager.coins.add(new GoldCoin(item.getTextureRegion(), item.getPosition()));
+    }
+
+    private Vector2 getInitialPlayerPositionOnGround() {
+        for (int y = groundLayer.getHeight() - 1; y >= 0; y--) {
+            for (int x = 0; x < groundLayer.getWidth(); x++) {
+                TiledMapTileLayer.Cell cell = groundLayer.getCell(x, y);
+                if (cell != null && cell.getTile() != null) {
+                    return new Vector2(x * TILE_WIDTH, (y + 1) * TILE_HEIGHT);
+                }
+            }
+        }
+        return new Vector2(0, 0);
     }
 
     //endregion
