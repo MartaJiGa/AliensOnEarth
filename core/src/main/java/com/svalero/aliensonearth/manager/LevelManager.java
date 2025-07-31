@@ -93,7 +93,7 @@ public class LevelManager {
             y = Float.parseFloat(mapObject.getProperties().get("y").toString());
         }
 
-        return new Item(ResourceManager.getCoinTexture(imageName), new Vector2(x, y), imageName);
+        return new Item(ResourceManager.getInteractionTexture(imageName), new Vector2(x, y), imageName);
     }
 
     public void addItemToCoinList(Item item){
