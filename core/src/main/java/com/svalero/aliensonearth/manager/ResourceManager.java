@@ -28,6 +28,7 @@ public class ResourceManager {
     private static Map<String, Label> labels = new HashMap<>();
 
     private static String TEXTURE_ATLAS_ALIENS = "textures/aliens.atlas";
+    private static String TEXTURE_ATLAS_ENEMIES = "textures/enemies.atlas";
     private static String TEXTURE_ATLAS_INTERACTION = "textures/interaction.atlas";
 
     //endregion
@@ -40,6 +41,7 @@ public class ResourceManager {
 
     public static void loadAllResources(){
         assetManager.load(TEXTURE_ATLAS_ALIENS, TextureAtlas.class);
+        assetManager.load(TEXTURE_ATLAS_ENEMIES, TextureAtlas.class);
         assetManager.load(TEXTURE_ATLAS_INTERACTION, TextureAtlas.class);
 
         loadMusic();
@@ -92,6 +94,10 @@ public class ResourceManager {
 
     public static TextureRegion getAlienTexture(String name){
         return assetManager.get(TEXTURE_ATLAS_ALIENS, TextureAtlas.class).findRegion(name);
+    }
+
+    public static TextureRegion getEnemyTexture(String name){
+        return assetManager.get(TEXTURE_ATLAS_ENEMIES, TextureAtlas.class).findRegion(name);
     }
 
     public static TextureRegion getInteractionTexture(String name){

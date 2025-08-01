@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.coin.Coin;
 
 import static com.svalero.aliensonearth.util.Constants.*;
@@ -69,6 +70,9 @@ public class RenderManager {
 
         for (Coin coin : logicManager.coins) {
             batch.draw(coin.getTextureRegion(), coin.getPosition().x, coin.getPosition().y, coin.getWidth(), coin.getHeight());
+        }
+        for (Enemy enemy : logicManager.enemies) {
+            batch.draw(enemy.getTextureRegion(), enemy.getPosition().x, enemy.getPosition().y, enemy.getWidth(), enemy.getHeight());
         }
         batch.draw(logicManager.player.getTextureRegion(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
 

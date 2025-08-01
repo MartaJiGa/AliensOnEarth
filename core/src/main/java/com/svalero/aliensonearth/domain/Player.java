@@ -29,8 +29,6 @@ public class Player extends Character {
     private TextureRegion leftIdle, leftJump;
     private AlienAnimationStatesEnum state;
 
-    private float stateTime;
-
     //endregion
 
     //region constructor
@@ -50,6 +48,27 @@ public class Player extends Character {
         lives = 6;
 
         state = state.FRONT;
+    }
+
+    //endregion
+
+    //region override
+
+    @Override
+    public void update(float dt){
+        float stateTime = getStateTime();
+        stateTime += dt;
+        setStateTime(stateTime);
+
+        changeTextureState();
+
+        if(state != state.CLIMB && state != state.FRONT_CLIMB){
+            manageMovement(dt);
+
+            getSpeed().y -= GRAVITY;
+            if (getSpeed().y < -PLAYER_JUMPING_SPEED)
+                getSpeed().y = -PLAYER_JUMPING_SPEED;
+        }
     }
 
     //endregion
@@ -96,20 +115,6 @@ public class Player extends Character {
         leftJump = leftJumpRegion;
     }
 
-    public void update(float dt){
-        stateTime += dt;
-
-        changeTextureState();
-
-        if(state != state.CLIMB && state != state.FRONT_CLIMB){
-            super.manageMovement(dt);
-
-            super.getSpeed().y -= GRAVITY;
-            if (super.getSpeed().y < -PLAYER_JUMPING_SPEED)
-                super.getSpeed().y = -PLAYER_JUMPING_SPEED;
-        }
-    }
-
     public void changeTextureState(){
         switch (state){
             case FRONT:
@@ -118,10 +123,10 @@ public class Player extends Character {
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName());
                 break;
             case WALK_RIGHT:
-                textureRegion = rightAnimation.getKeyFrame(stateTime, true);
+                textureRegion = rightAnimation.getKeyFrame(getStateTime(), true);
                 break;
             case WALK_LEFT:
-                textureRegion = leftAnimation.getKeyFrame(stateTime, true);
+                textureRegion = leftAnimation.getKeyFrame(getStateTime(), true);
                 break;
             case IDLE_RIGHT:
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName());
@@ -142,7 +147,7 @@ public class Player extends Character {
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_DUCK.getRegionName());
                 break;
             case CLIMB:
-                textureRegion = climbAnimation.getKeyFrame(stateTime, true);
+                textureRegion = climbAnimation.getKeyFrame(getStateTime(), true);
                 break;
         }
     }
@@ -153,9 +158,9 @@ public class Player extends Character {
     }
 
     public void jump(){
-        if(!super.isJumping()){
-            super.getSpeed().y = PLAYER_JUMPING_SPEED;
-            super.setJumping(true);
+        if(!isJumping()){
+            getSpeed().y = PLAYER_JUMPING_SPEED;
+            setJumping(true);
         }
     }
 

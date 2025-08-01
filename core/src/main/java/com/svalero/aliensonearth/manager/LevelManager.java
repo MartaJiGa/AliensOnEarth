@@ -7,13 +7,16 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
+import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
+import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
 
 import static com.svalero.aliensonearth.util.Constants.*;
 
@@ -53,23 +56,9 @@ public class LevelManager {
 
         this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
         this.logicManager.coins = new Array<>();
+        this.logicManager.enemies = new Array<>();
 
-        loadBackground();
-        loadGround();
-        loadEnemies();
         loadItems();
-    }
-
-    public void loadBackground(){
-
-    }
-
-    public void loadGround(){
-
-    }
-
-    public void loadEnemies(){
-
     }
 
     public void loadItems(){
@@ -77,12 +66,19 @@ public class LevelManager {
             String imageName = mapObject.getName();
             if (imageName == null) continue;
 
-            Item item = getItem(mapObject, imageName);
+            Item item = getItem(mapObject, imageName, TILE_LAYER_COINS);
             addItemToCoinList(item);
+        }
+        for(MapObject mapObject : map.getLayers().get(TILE_LAYER_ENEMIES).getObjects()){
+            String imageName = mapObject.getName();
+            if (imageName == null) continue;
+
+            Item item = getItem(mapObject, imageName, TILE_LAYER_ENEMIES);
+            addItemToEnemyList(item);
         }
     }
 
-    public Item getItem(MapObject mapObject, String imageName){
+    public Item getItem(MapObject mapObject, String imageName, String layerName){
         float x = 0, y = 0;
 
         if (mapObject instanceof TiledMapTileMapObject) {
@@ -93,7 +89,13 @@ public class LevelManager {
             y = Float.parseFloat(mapObject.getProperties().get("y").toString());
         }
 
-        return new Item(ResourceManager.getInteractionTexture(imageName), new Vector2(x, y), imageName);
+        if(layerName.equals("Coins")){
+            return new Item(ResourceManager.getInteractionTexture(imageName), new Vector2(x, y), imageName);
+        } else if(layerName.equals("Enemies")){
+            return new Item(ResourceManager.getEnemyTexture(imageName), new Vector2(x, y), imageName);
+        } else{
+            return null;
+        }
     }
 
     public void addItemToCoinList(Item item){
@@ -103,6 +105,11 @@ public class LevelManager {
             logicManager.coins.add(new SilverCoin(item.getTextureRegion(), item.getPosition()));
         else if(item.getImageName().equals(CoinTexturesEnum.GOLD_COIN.getRegionName()))
             logicManager.coins.add(new GoldCoin(item.getTextureRegion(), item.getPosition()));
+    }
+
+    public void addItemToEnemyList(Item item){
+        if(item.getImageName().equals(EnemyTexturesEnum.WORM_REST.getRegionName()))
+            logicManager.enemies.add(new Enemy(item.getTextureRegion(), item.getPosition(), groundLayer, true, EnemyTypeEnum.WORM));
     }
 
     private Vector2 getInitialPlayerPositionOnGround() {

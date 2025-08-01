@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
@@ -17,6 +18,7 @@ public class LogicManager {
 
     protected Player player;
     protected Array<Coin> coins;
+    protected Array<Enemy> enemies;
     private boolean isPaused, moving, jumping, climbing;
 
     public int currentLevel;
@@ -136,6 +138,11 @@ public class LogicManager {
             manageCollisions();
 
             player.update(dt);
+
+            for(int i = 0; i < enemies.size; i++){
+                Enemy enemy = enemies.get(i);
+                enemy.update(dt);
+            }
         }
     }
 

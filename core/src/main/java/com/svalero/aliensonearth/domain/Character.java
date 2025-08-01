@@ -8,17 +8,23 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import static com.svalero.aliensonearth.util.Constants.TILE_HEIGHT;
-import static com.svalero.aliensonearth.util.Constants.TILE_WIDTH;
+import static com.svalero.aliensonearth.util.Constants.*;
+import static com.svalero.aliensonearth.util.Constants.PLAYER_JUMPING_SPEED;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public abstract class Character extends Item {
+    //region properties
 
     private TiledMapTileLayer groundLayer;
     private Vector2 speed;
     private boolean isJumping;
+    private float stateTime;
+
+    //endregion
+
+    //region constructor
 
     public Character(TextureRegion textureRegion, int width, int height, Vector2 position, TiledMapTileLayer groundLayer) {
         super(textureRegion, width, height, position);
@@ -26,6 +32,14 @@ public abstract class Character extends Item {
         this.groundLayer = groundLayer;
         speed = new Vector2();
         isJumping = false;
+    }
+
+    //endregion
+
+    //region methods
+
+    public void update(float dt){
+        stateTime += dt;
     }
 
     public void manageMovement(float dt){
@@ -78,4 +92,6 @@ public abstract class Character extends Item {
             rectangle.setPosition(position);
         }
     }
+
+    //endregion
 }

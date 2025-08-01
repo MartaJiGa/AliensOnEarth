@@ -13,7 +13,7 @@
   </data>
  </layer>
  <objectgroup id="4" name="Enemies">
-  <object id="11" name="worm_ring_move_a" x="690.667" y="472.667" width="64" height="32"/>
+  <object id="11" name="worm_ring_rest" x="690.667" y="472.667" width="64" height="32"/>
  </objectgroup>
  <objectgroup id="3" name="Coins">
   <object id="14" name="coin_bronze" x="460" y="406.667" width="39" height="40"/>
