@@ -30,4 +30,10 @@ public class Item {
         this.rectangle = new Rectangle(position.x, position.y, width, height);
         this.imageName = imageName;
     }
+
+    public Item(TextureRegion textureRegion, int width, int height){
+        this.textureRegion = textureRegion;
+        this.width = width;
+        this.height = height;
+    }
 }

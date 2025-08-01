@@ -25,7 +25,9 @@ public class LevelManager {
     //region properties
 
     private TiledMap map;
+    private TiledMapTileLayer skyLayer;
     private TiledMapTileLayer backgroundLayer;
+    private TiledMapTileLayer interactionLayer;
     private TiledMapTileLayer groundLayer;
 
     private LogicManager logicManager;
@@ -49,6 +51,8 @@ public class LevelManager {
 
     public void loadCurrentLevel(){
         map = new TmxMapLoader().load(TILE_LEVEL1);
+        skyLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_SKY);
+        interactionLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_INTERACTION);
         backgroundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_BACKGROUND);
         groundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_GROUND);
 
@@ -57,6 +61,7 @@ public class LevelManager {
         this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
         this.logicManager.coins = new Array<>();
         this.logicManager.enemies = new Array<>();
+        this.logicManager.items = new Array<>();
 
         loadItems();
     }
@@ -76,6 +81,13 @@ public class LevelManager {
             Item item = getItem(mapObject, imageName, TILE_LAYER_ENEMIES);
             addItemToEnemyList(item);
         }
+        for(MapObject mapObject : map.getLayers().get(TILE_LAYER_UFO).getObjects()){
+            String imageName = mapObject.getName();
+            if (imageName == null) continue;
+
+            Item item = getItem(mapObject, imageName, TILE_LAYER_UFO);
+            addItemToItemList(item);
+        }
     }
 
     public Item getItem(MapObject mapObject, String imageName, String layerName){
@@ -89,7 +101,7 @@ public class LevelManager {
             y = Float.parseFloat(mapObject.getProperties().get("y").toString());
         }
 
-        if(layerName.equals("Coins")){
+        if(layerName.equals("Coins") || layerName.equals("Ufo")){
             return new Item(ResourceManager.getInteractionTexture(imageName), new Vector2(x, y), imageName);
         } else if(layerName.equals("Enemies")){
             return new Item(ResourceManager.getEnemyTexture(imageName), new Vector2(x, y), imageName);
@@ -113,6 +125,12 @@ public class LevelManager {
             width = 64; height = 32;
             Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
             logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.WORM));
+        }
+    }
+
+    public void addItemToItemList(Item item){
+        if(item.getImageName().equals("ufo")){
+            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition()));
         }
     }
 

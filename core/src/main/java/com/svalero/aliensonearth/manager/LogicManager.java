@@ -6,12 +6,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Enemy;
+import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
 
 import static com.svalero.aliensonearth.util.Constants.*;
+import static com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum.*;
 
 public class LogicManager {
 
@@ -19,7 +21,11 @@ public class LogicManager {
 
     protected Player player;
     protected Array<Coin> coins;
+    protected Array<Item> items;
     protected Array<Enemy> enemies;
+    protected Item fullHubHeart;
+    protected Item halfHubHeart;
+    protected Item emptyHubHeart;
     private boolean isPaused, moving, jumping, climbing;
     private float enemyCollisionCooldown;
     private float playerEnemyCollisionHitTexture;
@@ -34,6 +40,10 @@ public class LogicManager {
         enemyCollisionCooldown = 0f;
         playerEnemyCollisionHitTexture = 0f;
         currentLevel = 1;
+
+        fullHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_FULL.getRegionName()), 30,30);
+        halfHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_HALF.getRegionName()), 30,30);
+        emptyHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_EMPTY.getRegionName()), 30,30);
     }
 
     //endregion
@@ -123,22 +133,31 @@ public class LogicManager {
                 makeEnemyCollisionConsequences();
             }
         }
+
+        for (int i = items.size - 1; i >= 0; i--) {
+            Item item = items.get(i);
+            if (item.getRectangle().overlaps(playerRectangle)) {
+                makeItemCollisionConsequences();
+            }
+        }
     }
 
     public void makeCoinCollisionConsequences(Coin coin){
         player.changeScore(coin.getPoints());
         ResourceManager.getSound(SoundsEnum.COIN).play();
-        System.out.println("Score: " + player.getScore());
     }
 
     public void makeEnemyCollisionConsequences(){
         player.reduceLives();
         player.setState(AlienAnimationStatesEnum.HIT);
         ResourceManager.getSound(SoundsEnum.HURT).play();
-        System.out.println("Lives: " + player.getLives());
 
         enemyCollisionCooldown = ENEMY_COLLISION_COOLDOWN_TIME;
         playerEnemyCollisionHitTexture = PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME;
+    }
+
+    public void makeItemCollisionConsequences(){
+        System.out.println("Game Finished");
     }
 
     public void pauseGame(){
