@@ -19,6 +19,12 @@ public class Constants {
 
     //endregion
 
+    //region Enemy
+
+    public static final int ENEMY_SPEED = 2;
+
+    //endregion
+
     //region Tiled
 
         // General

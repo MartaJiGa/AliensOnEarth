@@ -108,8 +108,12 @@ public class LevelManager {
     }
 
     public void addItemToEnemyList(Item item){
-        if(item.getImageName().equals(EnemyTexturesEnum.WORM_REST.getRegionName()))
-            logicManager.enemies.add(new Enemy(item.getTextureRegion(), item.getPosition(), groundLayer, true, EnemyTypeEnum.WORM));
+        int width, height;
+        if(item.getImageName().equals(EnemyTexturesEnum.WORM_REST.getRegionName())){
+            width = 64; height = 32;
+            Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
+            logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.WORM));
+        }
     }
 
     private Vector2 getInitialPlayerPositionOnGround() {
@@ -122,6 +126,28 @@ public class LevelManager {
             }
         }
         return new Vector2(0, 0);
+    }
+
+    private Vector2 getGroundedEnemyPosition(Vector2 originalPosition, int width) {
+        float x = originalPosition.x;
+        float y = originalPosition.y;
+
+        float centerX = x + width / 2f;
+        int tileX = (int)(centerX / TILE_WIDTH);
+        int tileY = (int)(y / TILE_HEIGHT);
+
+        while (tileY >= 0) {
+            TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
+            if (cell != null && cell.getTile() != null) {
+                Object solid = cell.getTile().getProperties().get("Solid");
+                if (solid != null && solid.toString().trim().equalsIgnoreCase("true")) {
+                    return new Vector2(x, (tileY + 1) * TILE_HEIGHT);
+                }
+            }
+            tileY--;
+        }
+
+        return originalPosition;
     }
 
     //endregion

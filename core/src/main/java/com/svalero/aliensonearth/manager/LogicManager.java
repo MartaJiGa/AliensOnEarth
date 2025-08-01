@@ -3,6 +3,7 @@ package com.svalero.aliensonearth.manager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Player;
@@ -141,6 +142,12 @@ public class LogicManager {
 
             for(int i = 0; i < enemies.size; i++){
                 Enemy enemy = enemies.get(i);
+
+                Vector2 enemyPos = enemy.getPosition();
+                Vector2 playerPos = player.getPosition();
+                float distance = enemyPos.dst(playerPos);
+
+                enemy.setPlayerNearby(distance < 500);
                 enemy.update(dt);
             }
         }

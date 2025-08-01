@@ -63,7 +63,7 @@ public abstract class Character extends Item {
         }
     }
 
-    private boolean isSolid(float worldX, float worldY) {
+    public boolean isSolid(float worldX, float worldY) {
         int tileX = (int) (worldX / TILE_WIDTH);
         int tileY = (int) (worldY / TILE_HEIGHT);
 

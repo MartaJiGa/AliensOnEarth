@@ -108,6 +108,10 @@ public class ResourceManager {
         return assetManager.get(TEXTURE_ATLAS_ALIENS, TextureAtlas.class).findRegions(name);
     }
 
+    public static Array<TextureAtlas.AtlasRegion> getEnemyRegions(String name){
+        return assetManager.get(TEXTURE_ATLAS_ENEMIES, TextureAtlas.class).findRegions(name);
+    }
+
     public static Label getLabel(LabelsEnum labelsEnum){
         return labels.get(labelsEnum.name());
     }
