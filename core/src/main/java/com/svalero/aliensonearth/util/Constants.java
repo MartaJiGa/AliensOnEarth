@@ -16,12 +16,14 @@ public class Constants {
 
     public static final int PLAYER_SPEED = 4;
     public static final int PLAYER_JUMPING_SPEED = 220;
+    public static final float PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME = 0.5f;
 
     //endregion
 
     //region Enemy
 
     public static final int ENEMY_SPEED = 2;
+    public static final float ENEMY_COLLISION_COOLDOWN_TIME = 2f; //Number of seconds the program can't make the collision consequences.
 
     //endregion
 

@@ -21,7 +21,8 @@ public class LogicManager {
     protected Array<Coin> coins;
     protected Array<Enemy> enemies;
     private boolean isPaused, moving, jumping, climbing;
-
+    private float enemyCollisionCooldown;
+    private float playerEnemyCollisionHitTexture;
     public int currentLevel;
 
     //endregion
@@ -30,6 +31,8 @@ public class LogicManager {
 
     public LogicManager(){
         isPaused = false;
+        enemyCollisionCooldown = 0f;
+        playerEnemyCollisionHitTexture = 0f;
         currentLevel = 1;
     }
 
@@ -110,15 +113,32 @@ public class LogicManager {
             Coin coin = coins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
                 coins.removeIndex(i);
-                makeCollisionCommonConsequences(coin);
+                makeCoinCollisionConsequences(coin);
+            }
+        }
+
+        for (int i = enemies.size - 1; i >= 0; i--) {
+            Enemy enemy = enemies.get(i);
+            if (enemy.getRectangle().overlaps(playerRectangle) && enemyCollisionCooldown <= 0) {
+                makeEnemyCollisionConsequences();
             }
         }
     }
 
-    public void makeCollisionCommonConsequences(Coin coin){
+    public void makeCoinCollisionConsequences(Coin coin){
         player.changeScore(coin.getPoints());
-        System.out.println("Score: " + player.getScore());
         ResourceManager.getSound(SoundsEnum.COIN).play();
+        System.out.println("Score: " + player.getScore());
+    }
+
+    public void makeEnemyCollisionConsequences(){
+        player.reduceLives();
+        player.setState(AlienAnimationStatesEnum.HIT);
+        ResourceManager.getSound(SoundsEnum.HURT).play();
+        System.out.println("Lives: " + player.getLives());
+
+        enemyCollisionCooldown = ENEMY_COLLISION_COOLDOWN_TIME;
+        playerEnemyCollisionHitTexture = PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME;
     }
 
     public void pauseGame(){
@@ -135,10 +155,14 @@ public class LogicManager {
 
     public void update(float dt){
         if(!isPaused){
-            managePlayerInput();
+            if(playerEnemyCollisionHitTexture <= 0){
+                managePlayerInput();
+            }
+
             manageCollisions();
 
-            player.update(dt);
+            if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
+                player.update(dt);
 
             for(int i = 0; i < enemies.size; i++){
                 Enemy enemy = enemies.get(i);
@@ -150,6 +174,12 @@ public class LogicManager {
                 enemy.setPlayerNearby(distance < 500);
                 enemy.update(dt);
             }
+
+            if (enemyCollisionCooldown > 0)
+                enemyCollisionCooldown -= dt;
+
+            if (playerEnemyCollisionHitTexture > 0)
+                playerEnemyCollisionHitTexture -= dt;
         }
     }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.manager.ResourceManager;
+import com.svalero.aliensonearth.util.enums.SoundsEnum;
 import com.svalero.aliensonearth.util.enums.states.AlienAnimationStatesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Player extends Character {
     private int level;
     private int lives;
     private int score;
+    private boolean playStateSound;
 
     private Boolean isFacingRight, isFacingUp;
 
@@ -44,9 +46,8 @@ public class Player extends Character {
 
         isFacingRight = null;
         isFacingUp = null;
-
+        playStateSound = true;
         lives = 6;
-
         state = state.FRONT;
     }
 
@@ -119,35 +120,60 @@ public class Player extends Character {
         switch (state){
             case FRONT:
             case FRONT_CLIMB:
-            case JUMP:
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName());
+                playStateSound = true;
                 break;
             case WALK_RIGHT:
                 textureRegion = rightAnimation.getKeyFrame(getStateTime(), true);
+                playStateSound = true;
                 break;
             case WALK_LEFT:
                 textureRegion = leftAnimation.getKeyFrame(getStateTime(), true);
+                playStateSound = true;
                 break;
             case IDLE_RIGHT:
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName());
+                playStateSound = true;
                 break;
             case IDLE_LEFT:
                 textureRegion = leftIdle;
+                playStateSound = true;
+                break;
+            case JUMP:
+                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName());
+                if(playStateSound){
+                    ResourceManager.getSound(SoundsEnum.JUMP).play();
+                    playStateSound = false;
+                }
                 break;
             case JUMP_RIGHT:
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_JUMP.getRegionName());
+                if(playStateSound){
+                    ResourceManager.getSound(SoundsEnum.JUMP).play();
+                    playStateSound = false;
+                }
                 break;
             case JUMP_LEFT:
                 textureRegion = leftJump;
+                if(playStateSound){
+                    ResourceManager.getSound(SoundsEnum.JUMP).play();
+                    playStateSound = false;
+                }
                 break;
             case HIT:
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_HIT.getRegionName());
+                if(playStateSound){
+                    ResourceManager.getSound(SoundsEnum.HURT).play();
+                    playStateSound = false;
+                }
                 break;
             case DUCK:
                 textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_DUCK.getRegionName());
+                playStateSound = true;
                 break;
             case CLIMB:
                 textureRegion = climbAnimation.getKeyFrame(getStateTime(), true);
+                playStateSound = true;
                 break;
         }
     }
@@ -166,6 +192,10 @@ public class Player extends Character {
 
     public void changeScore(int points){
         this.score += points;
+    }
+
+    public void reduceLives(){
+        this.lives -= 1;
     }
 
     public float getX(){

@@ -55,6 +55,9 @@ public class ResourceManager {
 
     public static void loadSounds(){
         assetManager.load(SoundsEnum.COIN.getFileName(), Sound.class);
+        assetManager.load(SoundsEnum.DESAPPEAR.getFileName(), Sound.class);
+        assetManager.load(SoundsEnum.HURT.getFileName(), Sound.class);
+        assetManager.load(SoundsEnum.JUMP.getFileName(), Sound.class);
     }
 
     public static void generateLabels(){
