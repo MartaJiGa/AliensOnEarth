@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 public class SilverCoin extends Coin {
     public SilverCoin(TextureRegion image, Vector2 position) {
-        super(image, CoinTypeEnum.SILVER, 50, 50, position);
+        super(image, CoinTypeEnum.SILVER, 30, 30, position);
     }
 }

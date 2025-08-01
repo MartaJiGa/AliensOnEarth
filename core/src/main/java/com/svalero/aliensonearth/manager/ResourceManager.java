@@ -17,6 +17,8 @@ import lombok.Data;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.svalero.aliensonearth.Main.prefs;
+
 @Data
 public class ResourceManager {
 
@@ -25,8 +27,9 @@ public class ResourceManager {
     private static AssetManager assetManager = new AssetManager();
     private static Map<String, Label> labels = new HashMap<>();
 
-    private static String TEXTURE_ATLAS_ALIENS = "textures/aliens/aliens.atlas";
-    private static String TEXTURE_ATLAS_COINS = "textures/coins/coins.atlas";
+    private static String TEXTURE_ATLAS_ALIENS = "textures/aliens.atlas";
+    private static String TEXTURE_ATLAS_ENEMIES = "textures/enemies.atlas";
+    private static String TEXTURE_ATLAS_INTERACTION = "textures/interaction.atlas";
 
     //endregion
 
@@ -38,7 +41,8 @@ public class ResourceManager {
 
     public static void loadAllResources(){
         assetManager.load(TEXTURE_ATLAS_ALIENS, TextureAtlas.class);
-        assetManager.load(TEXTURE_ATLAS_COINS, TextureAtlas.class);
+        assetManager.load(TEXTURE_ATLAS_ENEMIES, TextureAtlas.class);
+        assetManager.load(TEXTURE_ATLAS_INTERACTION, TextureAtlas.class);
 
         loadMusic();
         loadSounds();
@@ -51,6 +55,9 @@ public class ResourceManager {
 
     public static void loadSounds(){
         assetManager.load(SoundsEnum.COIN.getFileName(), Sound.class);
+        assetManager.load(SoundsEnum.DESAPPEAR.getFileName(), Sound.class);
+        assetManager.load(SoundsEnum.HURT.getFileName(), Sound.class);
+        assetManager.load(SoundsEnum.JUMP.getFileName(), Sound.class);
     }
 
     public static void generateLabels(){
@@ -79,7 +86,9 @@ public class ResourceManager {
     }
 
     public static Music getMusic(MusicEnum musicEnum){
-        return assetManager.get(musicEnum.getFileName(), Music.class);
+        Music music = assetManager.get(musicEnum.getFileName(), Music.class);
+        music.setVolume(prefs.getFloat(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName()));
+        return music;
     }
 
     public static Sound getSound(SoundsEnum soundsEnum){
@@ -90,16 +99,20 @@ public class ResourceManager {
         return assetManager.get(TEXTURE_ATLAS_ALIENS, TextureAtlas.class).findRegion(name);
     }
 
-    public static TextureRegion getCoinTexture(String name){
-        return assetManager.get(TEXTURE_ATLAS_COINS, TextureAtlas.class).findRegion(name);
+    public static TextureRegion getEnemyTexture(String name){
+        return assetManager.get(TEXTURE_ATLAS_ENEMIES, TextureAtlas.class).findRegion(name);
+    }
+
+    public static TextureRegion getInteractionTexture(String name){
+        return assetManager.get(TEXTURE_ATLAS_INTERACTION, TextureAtlas.class).findRegion(name);
     }
 
     public static Array<TextureAtlas.AtlasRegion> getAlienRegions(String name){
         return assetManager.get(TEXTURE_ATLAS_ALIENS, TextureAtlas.class).findRegions(name);
     }
 
-    public static Array<TextureAtlas.AtlasRegion> getCoinRegions(String name){
-        return assetManager.get(TEXTURE_ATLAS_COINS, TextureAtlas.class).findRegions(name);
+    public static Array<TextureAtlas.AtlasRegion> getEnemyRegions(String name){
+        return assetManager.get(TEXTURE_ATLAS_ENEMIES, TextureAtlas.class).findRegions(name);
     }
 
     public static Label getLabel(LabelsEnum labelsEnum){

@@ -1,17 +1,12 @@
 package com.svalero.aliensonearth.manager;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
+import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 
-import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
+import static com.svalero.aliensonearth.util.Constants.*;
+import static com.svalero.aliensonearth.Main.prefs;
 
 public class SettingsManager {
-
-    //region properties
-
-    private static Preferences prefs;
-
-    //endregion
 
     //region constructor
 
@@ -28,7 +23,7 @@ public class SettingsManager {
     }
 
     public static boolean isMusicEnabled(){
-        return prefs.getBoolean("music", true);
+        return prefs.getBoolean(PrefsNamesEnum.MUSIC.getPrefsName(), true);
     }
 
     //endregion

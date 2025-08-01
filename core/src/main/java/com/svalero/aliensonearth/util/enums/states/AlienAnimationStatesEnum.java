@@ -7,7 +7,10 @@ public enum AlienAnimationStatesEnum {
     IDLE_RIGHT,
     IDLE_LEFT,
     JUMP,
+    JUMP_RIGHT,
+    JUMP_LEFT,
     WALK_RIGHT,
     WALK_LEFT,
-    FRONT;
+    FRONT,
+    FRONT_CLIMB;
 }

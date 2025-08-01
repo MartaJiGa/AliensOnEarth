@@ -5,47 +5,35 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
-import com.svalero.aliensonearth.util.enums.textures.*;
+
+import static com.svalero.aliensonearth.util.Constants.*;
 
 public class LogicManager {
 
     //region properties
 
     protected Player player;
-    protected Array<BronzeCoin> bronzeCoins;
-    protected Array<SilverCoin> silverCoins;
-    protected Array<GoldCoin> goldCoins;
-
-    private boolean isPaused = false;
+    protected Array<Coin> coins;
+    protected Array<Enemy> enemies;
+    private boolean isPaused, moving, jumping, climbing;
+    private float enemyCollisionCooldown;
+    private float playerEnemyCollisionHitTexture;
+    public int currentLevel;
 
     //endregion
 
     //region constructor
 
     public LogicManager(){
-        player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), new Vector2(0, 0));
-
-        bronzeCoins = new Array<>(new BronzeCoin[] {
-            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 20)),
-            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(100, 150)),
-            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(170, 200)),
-            new BronzeCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.BRONZE_COIN.getRegionName()), new Vector2(240, 340))
-        });
-
-        silverCoins = new Array<>(new SilverCoin[] {
-            new SilverCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.SILVER_COIN.getRegionName()), new Vector2(220, 45)),
-            new SilverCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.SILVER_COIN.getRegionName()), new Vector2(500, 310)),
-            new SilverCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.SILVER_COIN.getRegionName()), new Vector2(600, 200))
-        });
-
-        goldCoins = new Array<>(new GoldCoin[] {
-            new GoldCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.GOLD_COIN.getRegionName()), new Vector2(400, 400)),
-            new GoldCoin(ResourceManager.getCoinTexture(CoinTexturesEnum.GOLD_COIN.getRegionName()), new Vector2(500, 50))
-        });
+        isPaused = false;
+        enemyCollisionCooldown = 0f;
+        playerEnemyCollisionHitTexture = 0f;
+        currentLevel = 1;
     }
 
     //endregion
@@ -53,21 +41,67 @@ public class LogicManager {
     //region methods
 
     private void managePlayerInput(){
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        moving = false;
+        jumping = false;
+        climbing = false;
+
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
+            player.setState(AlienAnimationStatesEnum.CLIMB);
+            player.climb(+PLAYER_SPEED);
+            climbing = true;
+            player.setIsFacingRight(null);
+            player.setIsFacingUp(true);
+        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.C)){
+            player.setState(AlienAnimationStatesEnum.CLIMB);
+            player.climb(-PLAYER_SPEED);
+            climbing = true;
+            player.setIsFacingRight(null);
+            player.setIsFacingUp(false);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
-            player.move(10);
+            player.move(PLAYER_SPEED);
+            moving = true;
+            player.setIsFacingRight(true);
+            player.setIsFacingUp(null);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.setState(AlienAnimationStatesEnum.WALK_LEFT);
-            player.move(-10);
+            player.move(-PLAYER_SPEED);
+            moving = true;
+            player.setIsFacingRight(false);
+            player.setIsFacingUp(null);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.UP)){
+            player.setState(AlienAnimationStatesEnum.JUMP);
+            player.jump();
+            jumping = true;
+            player.setIsFacingRight(null);
+            player.setIsFacingUp(null);
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             pauseGame();
-        } else{
-            if(player.getState() == AlienAnimationStatesEnum.WALK_RIGHT){
-                player.setState(AlienAnimationStatesEnum.IDLE_RIGHT);
-            } else if(player.getState() == AlienAnimationStatesEnum.WALK_LEFT){
-                player.setState(AlienAnimationStatesEnum.IDLE_LEFT);
-            } else{
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+            player.setState(AlienAnimationStatesEnum.JUMP_RIGHT);
+            player.setIsFacingRight(true);
+            player.setIsFacingUp(null);
+            player.jump();
+        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+            player.setState(AlienAnimationStatesEnum.JUMP_LEFT);
+            player.setIsFacingRight(false);
+            player.setIsFacingUp(null);
+            player.jump();
+        }
+
+        if (!moving && !jumping && !climbing) {
+            Boolean playerFacingRight = player.getIsFacingRight();
+            Boolean playerFacingUp = player.getIsFacingUp();
+            if (playerFacingUp != null) {
+                player.setState(AlienAnimationStatesEnum.FRONT_CLIMB);
+            } else if (playerFacingRight == null) {
                 player.setState(AlienAnimationStatesEnum.FRONT);
+            } else if (playerFacingRight) {
+                player.setState(AlienAnimationStatesEnum.IDLE_RIGHT);
+            } else {
+                player.setState(AlienAnimationStatesEnum.IDLE_LEFT);
             }
         }
     }
@@ -75,35 +109,36 @@ public class LogicManager {
     private void manageCollisions(){
         Rectangle playerRectangle = player.getRectangle();
 
-        for (int i = bronzeCoins.size - 1; i >= 0; i--) {
-            Coin coin = bronzeCoins.get(i);
+        for (int i = coins.size - 1; i >= 0; i--) {
+            Coin coin = coins.get(i);
             if (coin.getRectangle().overlaps(playerRectangle)) {
-                bronzeCoins.removeIndex(i);
-                makeCollisionCommonConsecuences(coin);
+                coins.removeIndex(i);
+                makeCoinCollisionConsequences(coin);
             }
         }
 
-        for (int i = silverCoins.size - 1; i >= 0; i--) {
-            Coin coin = silverCoins.get(i);
-            if (coin.getRectangle().overlaps(playerRectangle)) {
-                silverCoins.removeIndex(i);
-                makeCollisionCommonConsecuences(coin);
-            }
-        }
-
-        for (int i = goldCoins.size - 1; i >= 0; i--) {
-            Coin coin = goldCoins.get(i);
-            if (coin.getRectangle().overlaps(playerRectangle)) {
-                goldCoins.removeIndex(i);
-                makeCollisionCommonConsecuences(coin);
+        for (int i = enemies.size - 1; i >= 0; i--) {
+            Enemy enemy = enemies.get(i);
+            if (enemy.getRectangle().overlaps(playerRectangle) && enemyCollisionCooldown <= 0) {
+                makeEnemyCollisionConsequences();
             }
         }
     }
 
-    public void makeCollisionCommonConsecuences(Coin coin){
+    public void makeCoinCollisionConsequences(Coin coin){
         player.changeScore(coin.getPoints());
-        System.out.println("Score: " + player.getScore());
         ResourceManager.getSound(SoundsEnum.COIN).play();
+        System.out.println("Score: " + player.getScore());
+    }
+
+    public void makeEnemyCollisionConsequences(){
+        player.reduceLives();
+        player.setState(AlienAnimationStatesEnum.HIT);
+        ResourceManager.getSound(SoundsEnum.HURT).play();
+        System.out.println("Lives: " + player.getLives());
+
+        enemyCollisionCooldown = ENEMY_COLLISION_COOLDOWN_TIME;
+        playerEnemyCollisionHitTexture = PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME;
     }
 
     public void pauseGame(){
@@ -120,10 +155,31 @@ public class LogicManager {
 
     public void update(float dt){
         if(!isPaused){
-            managePlayerInput();
+            if(playerEnemyCollisionHitTexture <= 0){
+                managePlayerInput();
+            }
+
             manageCollisions();
 
-            player.update(dt);
+            if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
+                player.update(dt);
+
+            for(int i = 0; i < enemies.size; i++){
+                Enemy enemy = enemies.get(i);
+
+                Vector2 enemyPos = enemy.getPosition();
+                Vector2 playerPos = player.getPosition();
+                float distance = enemyPos.dst(playerPos);
+
+                enemy.setPlayerNearby(distance < 500);
+                enemy.update(dt);
+            }
+
+            if (enemyCollisionCooldown > 0)
+                enemyCollisionCooldown -= dt;
+
+            if (playerEnemyCollisionHitTexture > 0)
+                playerEnemyCollisionHitTexture -= dt;
         }
     }
 
