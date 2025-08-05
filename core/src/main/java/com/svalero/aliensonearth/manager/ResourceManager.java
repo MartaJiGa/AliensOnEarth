@@ -72,6 +72,8 @@ public class ResourceManager {
         labels.put(LabelsEnum.ON_EARTH.name(), new Label("ON EARTH", onEarthStyle));
         labels.put(LabelsEnum.PAUSE.name(), new Label("PAUSE", pauseStyle));
         labels.put(LabelsEnum.SETTINGS.name(), new Label("SETTINGS", pauseStyle));
+        labels.put(LabelsEnum.GAME_OVER.name(), new Label("GAME OVER", pauseStyle));
+        labels.put(LabelsEnum.FINISH.name(), new Label("LEVEL FINISHED", pauseStyle));
     }
 
     public static BitmapFont generateFont(String fontPathWithFile, int fontSize){

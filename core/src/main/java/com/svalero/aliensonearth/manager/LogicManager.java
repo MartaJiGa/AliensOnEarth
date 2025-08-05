@@ -23,12 +23,9 @@ public class LogicManager {
     protected Array<Coin> coins;
     protected Array<Item> items;
     protected Array<Enemy> enemies;
-    protected Item fullHubHeart;
-    protected Item halfHubHeart;
-    protected Item emptyHubHeart;
-    private boolean isPaused, moving, jumping, climbing;
-    private float enemyCollisionCooldown;
-    private float playerEnemyCollisionHitTexture;
+    protected Item fullHubHeart, halfHubHeart, emptyHubHeart;
+    private boolean isPaused, isFinished, isDead, moving, jumping, climbing;
+    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture;
     public int currentLevel;
 
     //endregion
@@ -37,6 +34,8 @@ public class LogicManager {
 
     public LogicManager(){
         isPaused = false;
+        isFinished = false;
+        isDead = false;
         enemyCollisionCooldown = 0f;
         playerEnemyCollisionHitTexture = 0f;
         currentLevel = 1;
@@ -157,7 +156,7 @@ public class LogicManager {
     }
 
     public void makeItemCollisionConsequences(){
-        System.out.println("Game Finished");
+        isFinished = true;
     }
 
     public void pauseGame(){
@@ -172,10 +171,22 @@ public class LogicManager {
         return isPaused;
     }
 
+    public boolean isFinished(){
+        return isFinished;
+    }
+
+    public boolean isDead(){
+        return isDead;
+    }
+
     public void update(float dt){
         if(!isPaused){
             if(playerEnemyCollisionHitTexture <= 0){
-                managePlayerInput();
+                if(player.getLives() <= 0){
+                    isDead = true;
+                } else{
+                    managePlayerInput();
+                }
             }
 
             manageCollisions();

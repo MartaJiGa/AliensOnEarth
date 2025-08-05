@@ -25,11 +25,7 @@ public class LevelManager {
     //region properties
 
     private TiledMap map;
-    private TiledMapTileLayer skyLayer;
-    private TiledMapTileLayer backgroundLayer;
-    private TiledMapTileLayer interactionLayer;
-    private TiledMapTileLayer groundLayer;
-
+    private TiledMapTileLayer skyLayer, backgroundLayer, interactionLayer, groundLayer;
     private LogicManager logicManager;
 
     //endregion

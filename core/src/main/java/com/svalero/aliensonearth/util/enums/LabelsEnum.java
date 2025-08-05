@@ -4,5 +4,7 @@ public enum LabelsEnum {
     ALIEN,
     ON_EARTH,
     PAUSE,
-    SETTINGS
+    SETTINGS,
+    GAME_OVER,
+    FINISH
 }

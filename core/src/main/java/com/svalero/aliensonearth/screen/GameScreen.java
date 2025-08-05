@@ -47,10 +47,14 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (logicManager.isPaused()) {
-            if(backgroundMusic != null && SettingsManager.isMusicEnabled())
-                backgroundMusic.pause();
-
+            pauseMusic();
             ((Game) Gdx.app.getApplicationListener()).setScreen(new PauseScreen(game, this, logicManager));
+        } else if(logicManager.isFinished()){
+            pauseMusic();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new FinishScreen(game, this, logicManager, false));
+        } else if(logicManager.isDead()){
+            pauseMusic();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new FinishScreen(game, this, logicManager, true));
         }
         else{
             logicManager.update(dt);
@@ -106,6 +110,11 @@ public class GameScreen implements Screen {
         backgroundMusic = ResourceManager.getMusic(MusicEnum.BACKGROUND);
         backgroundMusic.setLooping(true);
         backgroundMusic.setPosition(0); // If I activate the music from the settings menu and return to the game, the music starts from the beginning.
+    }
+
+    public void pauseMusic(){
+        if(backgroundMusic != null && SettingsManager.isMusicEnabled())
+            backgroundMusic.pause();
     }
 
     //endregion
