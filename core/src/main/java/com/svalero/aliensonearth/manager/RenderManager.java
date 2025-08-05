@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.svalero.aliensonearth.domain.Enemy;
+import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.coin.Coin;
 
 import static com.svalero.aliensonearth.util.Constants.*;
@@ -19,6 +21,7 @@ public class RenderManager {
     private Batch batch;
     private OrthogonalTiledMapRenderer mapRenderer;
     private OrthographicCamera camera;
+    Vector3 camPosition;
     private BitmapFont font;
 
     //endregion
@@ -61,6 +64,7 @@ public class RenderManager {
         camera.position.y = Math.max(halfHeight, Math.min(camera.position.y, mapHeight - halfHeight));
 
         camera.update();
+        camPosition = camera.position;
 
         mapRenderer.setView(camera);
         mapRenderer.render();
@@ -74,13 +78,59 @@ public class RenderManager {
         for (Enemy enemy : logicManager.enemies) {
             batch.draw(enemy.getTextureRegion(), enemy.getPosition().x, enemy.getPosition().y, enemy.getWidth(), enemy.getHeight());
         }
+        for (Item item : logicManager.items) {
+            batch.draw(item.getTextureRegion(), item.getPosition().x, item.getPosition().y, item.getWidth(), item.getHeight());
+        }
         batch.draw(logicManager.player.getTextureRegion(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
 
-        font.draw(batch, "Level: " + logicManager.player.getLevel(), 20, SCREEN_HEIGHT - 10);
-        font.draw(batch, "Lives: " + logicManager.player.getLives(), 20, SCREEN_HEIGHT - 30);
-        font.draw(batch, "Score: " + logicManager.player.getScore(), 20, SCREEN_HEIGHT - 50);
+        font.draw(batch, "Level: " + logicManager.player.getLevel(), camPosition.x - 370, camPosition.y + 220);
+        font.draw(batch, "Lives: ", camPosition.x - 370, camPosition.y + 200);
+        font.draw(batch, "Score: " + logicManager.player.getScore(), camPosition.x - 370, camPosition.y + 180);
+
+        getLivesInHub(logicManager.player.getLives());
 
         batch.end();
+    }
+
+    public void getLivesInHub(int lives){
+        switch (lives){
+            default:
+            case 0:
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+            case 1:
+                batch.draw(logicManager.halfHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+            case 2:
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+            case 3:
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.halfHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+            case 4:
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.emptyHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+            case 5:
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.halfHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+            case 6:
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 335, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 315, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                batch.draw(logicManager.fullHubHeart.getTextureRegion(), camPosition.x - 295, camPosition.y + 178, logicManager.fullHubHeart.getWidth(), logicManager.fullHubHeart.getHeight());
+                break;
+        }
     }
 
     public void dispose() {

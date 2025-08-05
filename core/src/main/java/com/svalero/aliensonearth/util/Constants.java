@@ -27,6 +27,13 @@ public class Constants {
 
     //endregion
 
+    //region Ufo
+
+    public static final int UFO_WIDTH = 121;
+    public static final int UFO_HEIGHT = 109;
+
+    //endregion
+
     //region Tiled
 
         // General
@@ -37,10 +44,13 @@ public class Constants {
         public static final String TILE_LEVEL1 = "levels/level1.tmx";
 
         // Layers
+        public static final String TILE_LAYER_SKY = "Sky";
+        public static final String TILE_LAYER_INTERACTION = "Interaction";
         public static final String TILE_LAYER_BACKGROUND = "Background";
         public static final String TILE_LAYER_GROUND = "Ground";
         public static final String TILE_LAYER_ENEMIES = "Enemies";
         public static final String TILE_LAYER_COINS = "Coins";
+        public static final String TILE_LAYER_UFO = "Ufo";
 
         // Attributes
         public static final String TILE_ATTRIBUTE_INTERACT = "Interaction";
