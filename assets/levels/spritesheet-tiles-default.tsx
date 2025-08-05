@@ -1223,12 +1223,12 @@
  </tile>
  <tile id="216">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="217">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="218">
@@ -1425,12 +1425,12 @@
  </tile>
  <tile id="252">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="253">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="254">
@@ -1627,12 +1627,12 @@
  </tile>
  <tile id="288">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="289">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="290">
@@ -1827,12 +1827,12 @@
  </tile>
  <tile id="324">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="325">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="326">
@@ -2027,12 +2027,12 @@
  </tile>
  <tile id="360">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="361">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="362">
@@ -2227,12 +2227,12 @@
  </tile>
  <tile id="396">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="397">
   <properties>
-   <property name="Ground" value="Water"/>
+   <property name="Water" value=""/>
   </properties>
  </tile>
  <tile id="398">
@@ -4137,12 +4137,12 @@
  </tile>
  <tile id="742">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="743">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="744">
@@ -4329,12 +4329,12 @@
  </tile>
  <tile id="778">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="779">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="780">
@@ -4521,12 +4521,12 @@
  </tile>
  <tile id="814">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="815">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="816">
@@ -4713,12 +4713,12 @@
  </tile>
  <tile id="850">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="851">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="852">
@@ -4905,12 +4905,12 @@
  </tile>
  <tile id="886">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="887">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="888">
@@ -5097,12 +5097,12 @@
  </tile>
  <tile id="922">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="923">
   <properties>
-   <property name="Ground" value="Lava"/>
+   <property name="Lava" value=""/>
   </properties>
  </tile>
  <tile id="924">
@@ -5289,12 +5289,12 @@
  </tile>
  <tile id="958">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="959">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="960">
@@ -5481,12 +5481,12 @@
  </tile>
  <tile id="994">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="995">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="996">
@@ -5673,12 +5673,12 @@
  </tile>
  <tile id="1030">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1031">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1032">
@@ -5867,12 +5867,12 @@
  </tile>
  <tile id="1066">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1067">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1068">
@@ -6059,12 +6059,12 @@
  </tile>
  <tile id="1102">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1103">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1104">
@@ -6251,12 +6251,12 @@
  </tile>
  <tile id="1138">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1139">
   <properties>
-   <property name="Interaction" value="Ladder"/>
+   <property name="Ladder" value=""/>
   </properties>
  </tile>
  <tile id="1140">

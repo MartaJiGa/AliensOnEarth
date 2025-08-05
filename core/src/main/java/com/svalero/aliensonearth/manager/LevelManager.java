@@ -25,7 +25,7 @@ public class LevelManager {
     //region properties
 
     private TiledMap map;
-    private TiledMapTileLayer skyLayer, backgroundLayer, interactionLayer, groundLayer;
+    private TiledMapTileLayer skyLayer, backgroundLayer, groundLayer;
     private LogicManager logicManager;
 
     //endregion
@@ -48,7 +48,6 @@ public class LevelManager {
     public void loadCurrentLevel(){
         map = new TmxMapLoader().load(TILE_LEVEL1);
         skyLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_SKY);
-        interactionLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_INTERACTION);
         backgroundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_BACKGROUND);
         groundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_GROUND);
 

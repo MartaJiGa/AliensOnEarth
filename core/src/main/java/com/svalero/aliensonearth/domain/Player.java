@@ -57,6 +57,7 @@ public class Player extends Character {
 
     @Override
     public void update(float dt){
+        float newY = position.y + getSpeed().y * dt;
         float stateTime = getStateTime();
         stateTime += dt;
         setStateTime(stateTime);
@@ -70,6 +71,9 @@ public class Player extends Character {
             if (getSpeed().y < -PLAYER_JUMPING_SPEED)
                 getSpeed().y = -PLAYER_JUMPING_SPEED;
         }
+
+        if(isDeadlyGround(position.x + width / 2f, newY + height))
+            lives = 0;
     }
 
     //endregion

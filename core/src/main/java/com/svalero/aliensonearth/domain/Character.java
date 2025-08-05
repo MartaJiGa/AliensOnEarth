@@ -80,6 +80,22 @@ public abstract class Character extends Item {
         return false;
     }
 
+    public boolean isDeadlyGround(float worldX, float worldY) {
+        int tileX = (int) (worldX / TILE_WIDTH);
+        int tileY = (int) (worldY / TILE_HEIGHT);
+
+        TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
+        if (cell == null || cell.getTile() == null) return false;
+
+        MapProperties props = cell.getTile().getProperties();
+
+        if (props.containsKey("Water") || props.containsKey("Lava")) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void move(int movement){
         float newX = position.x + movement;
         float checkX = movement < 0 ? newX : newX + width;

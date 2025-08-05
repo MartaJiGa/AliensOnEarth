@@ -45,7 +45,6 @@ public class Constants {
 
         // Layers
         public static final String TILE_LAYER_SKY = "Sky";
-        public static final String TILE_LAYER_INTERACTION = "Interaction";
         public static final String TILE_LAYER_BACKGROUND = "Background";
         public static final String TILE_LAYER_GROUND = "Ground";
         public static final String TILE_LAYER_ENEMIES = "Enemies";
