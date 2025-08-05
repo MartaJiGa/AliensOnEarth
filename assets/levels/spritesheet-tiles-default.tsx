@@ -2545,14 +2545,14 @@
  </tile>
  <tile id="452">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="453">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="454">
@@ -2749,14 +2749,14 @@
  </tile>
  <tile id="488">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="489">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="490">
@@ -2953,14 +2953,14 @@
  </tile>
  <tile id="524">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="525">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="526">
@@ -3157,14 +3157,14 @@
  </tile>
  <tile id="560">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="561">
   <properties>
-   <property name="Interaction" value="Spring"/>
    <property name="Solid" value="true"/>
+   <property name="Spring" value=""/>
   </properties>
  </tile>
  <tile id="562">

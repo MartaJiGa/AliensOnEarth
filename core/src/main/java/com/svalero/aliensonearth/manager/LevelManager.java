@@ -51,7 +51,7 @@ public class LevelManager {
         backgroundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_BACKGROUND);
         groundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_GROUND);
 
-        Vector2 initialPosition = getInitialPlayerPositionOnGround();
+        Vector2 initialPosition = getInitialPlayerPositionFromObjectLayer();
 
         this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
         this.logicManager.coins = new Array<>();
@@ -129,15 +129,16 @@ public class LevelManager {
         }
     }
 
-    private Vector2 getInitialPlayerPositionOnGround() {
-        for (int y = groundLayer.getHeight() - 1; y >= 0; y--) {
-            for (int x = 0; x < groundLayer.getWidth(); x++) {
-                TiledMapTileLayer.Cell cell = groundLayer.getCell(x, y);
-                if (cell != null && cell.getTile() != null) {
-                    return new Vector2(x * TILE_WIDTH, (y + 1) * TILE_HEIGHT);
-                }
-            }
+    private Vector2 getInitialPlayerPositionFromObjectLayer() {
+        MapObject spawnObject = map.getLayers().get("SpawnPoints").getObjects().get("PlayerSpawn");
+
+        if (spawnObject != null) {
+            float x = Float.parseFloat(spawnObject.getProperties().get("x").toString());
+            float y = Float.parseFloat(spawnObject.getProperties().get("y").toString());
+
+            return new Vector2(x, y);
         }
+
         return new Vector2(0, 0);
     }
 
