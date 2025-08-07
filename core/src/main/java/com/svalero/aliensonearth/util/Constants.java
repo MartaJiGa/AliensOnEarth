@@ -27,10 +27,12 @@ public class Constants {
 
     //endregion
 
-    //region Ufo
+    //region InteractionSizes
 
     public static final int UFO_WIDTH = 121;
     public static final int UFO_HEIGHT = 109;
+    public static final int SPRING_WIDTH = 64;
+    public static final int SPRING_HEIGHT = 44;
 
     //endregion
 
@@ -49,7 +51,8 @@ public class Constants {
         public static final String TILE_LAYER_GROUND = "Ground";
         public static final String TILE_LAYER_ENEMIES = "Enemies";
         public static final String TILE_LAYER_COINS = "Coins";
-        public static final String TILE_LAYER_UFO = "Ufo";
+        public static final String TILE_LAYER_INTERACTION = "InteractionElements";
+        public static final String TILE_LAYER_SPAWN = "SpawnPoints";
 
         // Attributes
         public static final String TILE_ATTRIBUTE_INTERACT = "Interaction";

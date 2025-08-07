@@ -3,6 +3,7 @@ package com.svalero.aliensonearth.domain;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -67,7 +68,12 @@ public class Player extends Character {
         if(state != state.CLIMB && state != state.FRONT_CLIMB){
             manageMovement(dt);
 
-            getSpeed().y -= GRAVITY;
+            if (!isOnLadderTile(position)) {
+                getSpeed().y -= GRAVITY;
+            } else {
+                getSpeed().y = 0;
+            }
+
             if (getSpeed().y < -PLAYER_JUMPING_SPEED)
                 getSpeed().y = -PLAYER_JUMPING_SPEED;
         }
@@ -183,8 +189,23 @@ public class Player extends Character {
     }
 
     public void climb(int movement){
+        if (movement < 0) {
+            if (isSolidTileBelow()) {
+                // Si hay suelo debajo, cancela el movimiento descendente
+                state = AlienAnimationStatesEnum.FRONT;
+                return;
+            }
+        }
+
         position.y += movement;
         rectangle.setPosition(position);
+    }
+
+    private boolean isSolidTileBelow() {
+        float footX = position.x + width / 2f;
+        float footY = position.y - 1f;
+
+        return isSolid(footX, footY);
     }
 
     public void jump(){

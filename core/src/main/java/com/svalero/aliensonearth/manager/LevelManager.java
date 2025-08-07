@@ -17,6 +17,7 @@ import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
+import static com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum.*;
 
 import static com.svalero.aliensonearth.util.Constants.*;
 
@@ -76,12 +77,12 @@ public class LevelManager {
             Item item = getItem(mapObject, imageName, TILE_LAYER_ENEMIES);
             addItemToEnemyList(item);
         }
-        for(MapObject mapObject : map.getLayers().get(TILE_LAYER_UFO).getObjects()){
+        for(MapObject mapObject : map.getLayers().get(TILE_LAYER_INTERACTION).getObjects()){
             String imageName = mapObject.getName();
             if (imageName == null) continue;
 
-            Item item = getItem(mapObject, imageName, TILE_LAYER_UFO);
-            addItemToItemList(item);
+            Item item = getItem(mapObject, imageName, TILE_LAYER_INTERACTION);
+            addItemToItemList(item, imageName);
         }
     }
 
@@ -96,9 +97,9 @@ public class LevelManager {
             y = Float.parseFloat(mapObject.getProperties().get("y").toString());
         }
 
-        if(layerName.equals("Coins") || layerName.equals("Ufo")){
+        if(layerName.equals(TILE_LAYER_COINS) || layerName.equals(TILE_LAYER_INTERACTION)){
             return new Item(ResourceManager.getInteractionTexture(imageName), new Vector2(x, y), imageName);
-        } else if(layerName.equals("Enemies")){
+        } else if(layerName.equals(TILE_LAYER_ENEMIES)){
             return new Item(ResourceManager.getEnemyTexture(imageName), new Vector2(x, y), imageName);
         } else{
             return null;
@@ -123,14 +124,16 @@ public class LevelManager {
         }
     }
 
-    public void addItemToItemList(Item item){
-        if(item.getImageName().equals("ufo")){
-            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition()));
+    public void addItemToItemList(Item item, String imageName){
+        if(item.getImageName().equals(UFO.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition(), imageName));
+        } else if(item.getImageName().equals(SPRING.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), SPRING_WIDTH, SPRING_HEIGHT, item.getPosition(), imageName));
         }
     }
 
     private Vector2 getInitialPlayerPositionFromObjectLayer() {
-        MapObject spawnObject = map.getLayers().get("SpawnPoints").getObjects().get("PlayerSpawn");
+        MapObject spawnObject = map.getLayers().get(TILE_LAYER_SPAWN).getObjects().get("PlayerSpawn");
 
         if (spawnObject != null) {
             float x = Float.parseFloat(spawnObject.getProperties().get("x").toString());

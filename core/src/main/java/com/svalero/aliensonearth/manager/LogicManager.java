@@ -55,17 +55,21 @@ public class LogicManager {
         climbing = false;
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
-            player.setState(AlienAnimationStatesEnum.CLIMB);
-            player.climb(+PLAYER_SPEED);
-            climbing = true;
-            player.setIsFacingRight(null);
-            player.setIsFacingUp(true);
+            if (player.isOnLadderTile(player.getPosition())) {
+                player.setState(AlienAnimationStatesEnum.CLIMB);
+                player.climb(+PLAYER_SPEED);
+                climbing = true;
+                player.setIsFacingRight(null);
+                player.setIsFacingUp(true);
+            }
         } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.C)){
-            player.setState(AlienAnimationStatesEnum.CLIMB);
-            player.climb(-PLAYER_SPEED);
-            climbing = true;
-            player.setIsFacingRight(null);
-            player.setIsFacingUp(false);
+            if (player.isOnLadderTile(player.getPosition())) {
+                player.setState(AlienAnimationStatesEnum.CLIMB);
+                player.climb(-PLAYER_SPEED);
+                climbing = true;
+                player.setIsFacingRight(null);
+                player.setIsFacingUp(false);
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
             player.move(PLAYER_SPEED);
@@ -136,7 +140,7 @@ public class LogicManager {
         for (int i = items.size - 1; i >= 0; i--) {
             Item item = items.get(i);
             if (item.getRectangle().overlaps(playerRectangle)) {
-                makeItemCollisionConsequences();
+                makeItemCollisionConsequences(item);
             }
         }
     }
@@ -155,8 +159,12 @@ public class LogicManager {
         playerEnemyCollisionHitTexture = PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME;
     }
 
-    public void makeItemCollisionConsequences(){
-        isFinished = true;
+    public void makeItemCollisionConsequences(Item item){
+        if(item.getImageName().equals(UFO))
+            isFinished = true;
+        else if(item.getImageName().equals(SPRING)){
+
+        }
     }
 
     public void pauseGame(){

@@ -24,6 +24,15 @@ public class Item {
         this.rectangle = new Rectangle(position.x, position.y, width, height);
     }
 
+    public Item(TextureRegion textureRegion, int width, int height, Vector2 position, String imageName){
+        this.textureRegion = textureRegion;
+        this.width = width;
+        this.height = height;
+        this.position = position;
+        this.imageName = imageName;
+        this.rectangle = new Rectangle(position.x, position.y, width, height);
+    }
+
     public Item(TextureRegion textureRegion, Vector2 position, String imageName){
         this.textureRegion = textureRegion;
         this.position = position;
