@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.Player;
@@ -160,10 +161,21 @@ public class LogicManager {
     }
 
     public void makeItemCollisionConsequences(Item item){
-        if(item.getImageName().equals(UFO))
+        if(item.getImageName().equals(UFO.getRegionName()))
             isFinished = true;
-        else if(item.getImageName().equals(SPRING)){
+        else if(item.getImageName().equals(SPRING.getRegionName())){
+            Rectangle playerRect = player.getRectangle();
+            Rectangle itemRect = item.getRectangle();
 
+            float playerBottom = playerRect.y;
+            float itemTop = itemRect.y + itemRect.height;
+
+            boolean isLandingOnSpring = playerBottom >= itemTop - 10f;
+
+            if (isLandingOnSpring && !item.isActivated()) {
+                item.activate();
+                player.bounce(SPRING_JUMP_FORCE);
+            }
         }
     }
 
@@ -199,6 +211,31 @@ public class LogicManager {
 
             manageCollisions();
 
+            for (Item item : items) {
+                if (item.getImageName().equals(SPRING)) {
+                    Rectangle springRect = item.getRectangle();
+                    Rectangle playerRect = player.getRectangle();
+
+                    boolean landedOnSpring = springRect.overlaps(playerRect) &&
+                        player.getSpeed().y <= 0 &&
+                        player.getPosition().y > item.getPosition().y;
+
+                    if (landedOnSpring) {
+                        player.bounce(PLAYER_JUMPING_SPEED * 1.5f);
+                        item.setImageName(SPRING_OUT.getRegionName());
+                        item.setTextureRegion(ResourceManager.getInteractionTexture(SPRING_OUT.getRegionName()));
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                item.setImageName(SPRING.getRegionName());
+                                item.setTextureRegion(ResourceManager.getInteractionTexture(SPRING.getRegionName()));
+                            }
+                        }, 1.0f);
+                    }
+                }
+            }
+
             if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
                 player.update(dt);
 
@@ -218,7 +255,51 @@ public class LogicManager {
 
             if (playerEnemyCollisionHitTexture > 0)
                 playerEnemyCollisionHitTexture -= dt;
+
+            for (Item item : items) {
+                item.update(dt);
+            }
         }
+    }
+
+    public boolean isOnSolidItem(Vector2 position) {
+        Rectangle playerRect = player.getRectangle();
+        float playerBottom = playerRect.y;
+
+        for (Item item : items) {
+            if (item.isSolid()) {
+                Rectangle itemRect = item.getRectangle();
+                float itemTop = itemRect.y + itemRect.height;
+
+                if (playerBottom >= itemTop - 5f && playerBottom <= itemTop + 10f &&
+                    playerRect.x + playerRect.width > itemRect.x &&
+                    playerRect.x < itemRect.x + itemRect.width) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hitsSolidItemAbove(Vector2 position) {
+        Rectangle playerRect = player.getRectangle();
+        float playerTop = playerRect.y + playerRect.height;
+
+        for (Item item : items) {
+            if (item.isSolid()) {
+                Rectangle itemRect = item.getRectangle();
+                float itemBottom = itemRect.y;
+
+                if (playerTop >= itemBottom - 5f && playerTop <= itemBottom + 10f &&
+                    playerRect.x + playerRect.width > itemRect.x &&
+                    playerRect.x < itemRect.x + itemRect.width) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public void dispose() {

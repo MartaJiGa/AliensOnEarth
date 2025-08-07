@@ -24,7 +24,7 @@ public class Player extends Character {
     private int level;
     private int lives;
     private int score;
-    private boolean playStateSound;
+    private boolean playStateSound, justBounced;
 
     private Boolean isFacingRight, isFacingUp;
 
@@ -48,6 +48,7 @@ public class Player extends Character {
         isFacingRight = null;
         isFacingUp = null;
         playStateSound = true;
+        justBounced = false;
         lives = 6;
         state = state.FRONT;
     }
@@ -68,10 +69,14 @@ public class Player extends Character {
         if(state != state.CLIMB && state != state.FRONT_CLIMB){
             manageMovement(dt);
 
-            if (!isOnLadderTile(position)) {
-                getSpeed().y -= GRAVITY;
+            if (!isJustBounced()) {
+                if (!isOnLadderTile(position)) {
+                    getSpeed().y -= GRAVITY;
+                } else {
+                    getSpeed().y = 0;
+                }
             } else {
-                getSpeed().y = 0;
+                resetBounce();
             }
 
             if (getSpeed().y < -PLAYER_JUMPING_SPEED)
@@ -191,7 +196,6 @@ public class Player extends Character {
     public void climb(int movement){
         if (movement < 0) {
             if (isSolidTileBelow()) {
-                // Si hay suelo debajo, cancela el movimiento descendente
                 state = AlienAnimationStatesEnum.FRONT;
                 return;
             }
@@ -213,6 +217,15 @@ public class Player extends Character {
             getSpeed().y = PLAYER_JUMPING_SPEED;
             setJumping(true);
         }
+    }
+
+    public void bounce(float force) {
+        getSpeed().y = force;
+        justBounced = true;
+    }
+
+    public void resetBounce() {
+        justBounced = false;
     }
 
     public void changeScore(int points){

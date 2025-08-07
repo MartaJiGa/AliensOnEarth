@@ -126,9 +126,9 @@ public class LevelManager {
 
     public void addItemToItemList(Item item, String imageName){
         if(item.getImageName().equals(UFO.getRegionName())){
-            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition(), imageName));
+            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition(), imageName, false));
         } else if(item.getImageName().equals(SPRING.getRegionName())){
-            logicManager.items.add(new Item(item.getTextureRegion(), SPRING_WIDTH, SPRING_HEIGHT, item.getPosition(), imageName));
+            logicManager.items.add(new Item(item.getTextureRegion(), SPRING_WIDTH, SPRING_HEIGHT, item.getPosition(), imageName, true));
         }
     }
 
