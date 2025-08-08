@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.Player;
@@ -12,6 +13,8 @@ import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
 
+import static com.svalero.aliensonearth.Main.db;
+import static com.svalero.aliensonearth.Main.prefs;
 import static com.svalero.aliensonearth.util.Constants.*;
 import static com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum.*;
 
@@ -23,12 +26,9 @@ public class LogicManager {
     protected Array<Coin> coins;
     protected Array<Item> items;
     protected Array<Enemy> enemies;
-    protected Item fullHubHeart;
-    protected Item halfHubHeart;
-    protected Item emptyHubHeart;
-    private boolean isPaused, moving, jumping, climbing;
-    private float enemyCollisionCooldown;
-    private float playerEnemyCollisionHitTexture;
+    protected Item fullHubHeart, halfHubHeart, emptyHubHeart;
+    private boolean isPaused, isFinished, isDead, moving, jumping, climbing;
+    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture;
     public int currentLevel;
 
     //endregion
@@ -37,6 +37,8 @@ public class LogicManager {
 
     public LogicManager(){
         isPaused = false;
+        isFinished = false;
+        isDead = false;
         enemyCollisionCooldown = 0f;
         playerEnemyCollisionHitTexture = 0f;
         currentLevel = 1;
@@ -56,17 +58,21 @@ public class LogicManager {
         climbing = false;
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
-            player.setState(AlienAnimationStatesEnum.CLIMB);
-            player.climb(+PLAYER_SPEED);
-            climbing = true;
-            player.setIsFacingRight(null);
-            player.setIsFacingUp(true);
+            if (player.isOnLadderTile(player.getPosition())) {
+                player.setState(AlienAnimationStatesEnum.CLIMB);
+                player.climb(+PLAYER_SPEED);
+                climbing = true;
+                player.setIsFacingRight(null);
+                player.setIsFacingUp(true);
+            }
         } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.C)){
-            player.setState(AlienAnimationStatesEnum.CLIMB);
-            player.climb(-PLAYER_SPEED);
-            climbing = true;
-            player.setIsFacingRight(null);
-            player.setIsFacingUp(false);
+            if (player.isOnLadderTile(player.getPosition())) {
+                player.setState(AlienAnimationStatesEnum.CLIMB);
+                player.climb(-PLAYER_SPEED);
+                climbing = true;
+                player.setIsFacingRight(null);
+                player.setIsFacingUp(false);
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
             player.move(PLAYER_SPEED);
@@ -137,7 +143,7 @@ public class LogicManager {
         for (int i = items.size - 1; i >= 0; i--) {
             Item item = items.get(i);
             if (item.getRectangle().overlaps(playerRectangle)) {
-                makeItemCollisionConsequences();
+                makeItemCollisionConsequences(item);
             }
         }
     }
@@ -145,6 +151,8 @@ public class LogicManager {
     public void makeCoinCollisionConsequences(Coin coin){
         player.changeScore(coin.getPoints());
         ResourceManager.getSound(SoundsEnum.COIN).play();
+
+        checkPlayerLevel();
     }
 
     public void makeEnemyCollisionConsequences(){
@@ -156,8 +164,44 @@ public class LogicManager {
         playerEnemyCollisionHitTexture = PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME;
     }
 
-    public void makeItemCollisionConsequences(){
-        System.out.println("Game Finished");
+    public void makeItemCollisionConsequences(Item item){
+        if(item.getImageName().equals(UFO.getRegionName())){
+            isFinished = true;
+            saveProgressInDb();
+        } else if(item.getImageName().equals(SPRING.getRegionName())){
+            Rectangle playerRect = player.getRectangle();
+            Rectangle itemRect = item.getRectangle();
+
+            float playerBottom = playerRect.y;
+            float itemTop = itemRect.y + itemRect.height;
+
+            boolean isLandingOnSpring = playerBottom >= itemTop - 10f;
+
+            if (isLandingOnSpring && !item.isActivated()) {
+                item.activate();
+                player.bounce(SPRING_JUMP_FORCE);
+            }
+        }
+    }
+
+    public void checkPlayerLevel(){
+        int newLevel = player.getScore() / 50 + 1;
+        if(newLevel > player.getLevel())
+            player.setLevel(newLevel);
+    }
+
+    public void saveProgressInDb(){
+        int higherLevelPlayed = db.getHigherLevelPlayed(player.getId());
+        int playerId = db.getPlayerIdByName(prefs.getString("playerName"));
+
+        playerId = playerId == -1 ? playerId : player.getId();
+
+        if(higherLevelPlayed > player.getCurrentGameLevel())
+            db.savePlayerProgress(player.getName(), higherLevelPlayed, player.getLevel(), player.getScore(), playerId);
+        else
+            db.savePlayerProgress(player.getName(), player.getCurrentGameLevel(), player.getLevel(), player.getScore(), playerId);
+
+        db.saveGameProgress(player.getId(), player.getCurrentGameLevel(), player.getScore());
     }
 
     public void pauseGame(){
@@ -172,13 +216,50 @@ public class LogicManager {
         return isPaused;
     }
 
+    public boolean isFinished(){
+        return isFinished;
+    }
+
+    public boolean isDead(){
+        return isDead;
+    }
+
     public void update(float dt){
         if(!isPaused){
             if(playerEnemyCollisionHitTexture <= 0){
-                managePlayerInput();
+                if(player.getLives() <= 0){
+                    isDead = true;
+                } else{
+                    managePlayerInput();
+                }
             }
 
             manageCollisions();
+
+            for (Item item : items) {
+                if (item.getImageName().equals(SPRING)) {
+                    Rectangle springRect = item.getRectangle();
+                    Rectangle playerRect = player.getRectangle();
+
+                    boolean landedOnSpring = springRect.overlaps(playerRect) &&
+                        player.getSpeed().y <= 0 &&
+                        player.getPosition().y > item.getPosition().y;
+
+                    if (landedOnSpring) {
+                        player.bounce(PLAYER_JUMPING_SPEED * 1.5f);
+                        item.setImageName(SPRING_OUT.getRegionName());
+                        item.setTextureRegion(ResourceManager.getInteractionTexture(SPRING_OUT.getRegionName()));
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                item.setImageName(SPRING.getRegionName());
+                                item.setTextureRegion(ResourceManager.getInteractionTexture(SPRING.getRegionName()));
+                            }
+                        }, 1.0f);
+                    }
+                }
+            }
 
             if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
                 player.update(dt);
@@ -199,7 +280,51 @@ public class LogicManager {
 
             if (playerEnemyCollisionHitTexture > 0)
                 playerEnemyCollisionHitTexture -= dt;
+
+            for (Item item : items) {
+                item.update(dt);
+            }
         }
+    }
+
+    public boolean isOnSolidItem(Vector2 position) {
+        Rectangle playerRect = player.getRectangle();
+        float playerBottom = playerRect.y;
+
+        for (Item item : items) {
+            if (item.isSolid()) {
+                Rectangle itemRect = item.getRectangle();
+                float itemTop = itemRect.y + itemRect.height;
+
+                if (playerBottom >= itemTop - 5f && playerBottom <= itemTop + 10f &&
+                    playerRect.x + playerRect.width > itemRect.x &&
+                    playerRect.x < itemRect.x + itemRect.width) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hitsSolidItemAbove(Vector2 position) {
+        Rectangle playerRect = player.getRectangle();
+        float playerTop = playerRect.y + playerRect.height;
+
+        for (Item item : items) {
+            if (item.isSolid()) {
+                Rectangle itemRect = item.getRectangle();
+                float itemBottom = itemRect.y;
+
+                if (playerTop >= itemBottom - 5f && playerTop <= itemBottom + 10f &&
+                    playerRect.x + playerRect.width > itemRect.x &&
+                    playerRect.x < itemRect.x + itemRect.width) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public void dispose() {

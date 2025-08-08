@@ -91,6 +91,8 @@ public class Enemy extends Character {
                 switch (enemyType) {
                     case WORM:
                         textureRegion = ResourceManager.getEnemyTexture(EnemyTexturesEnum.WORM_REST.getRegionName());
+                    case BARNACLE:
+                        textureRegion = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BARNACLE_REST.getRegionName());
                 }
                 break;
 //            case FLAT:

@@ -3,6 +3,7 @@ package com.svalero.aliensonearth.domain;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -13,6 +14,8 @@ import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import static com.svalero.aliensonearth.Main.db;
+import static com.svalero.aliensonearth.Main.prefs;
 import static com.svalero.aliensonearth.util.Constants.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,11 +23,9 @@ import static com.svalero.aliensonearth.util.Constants.*;
 public class Player extends Character {
     //region properties
 
-    private int level;
-    private int lives;
-    private int score;
-    private boolean playStateSound;
-
+    private String name;
+    private int id, level, lives, score, currentGameLevel;
+    private boolean playStateSound, justBounced;
     private Boolean isFacingRight, isFacingUp;
 
     private Animation<TextureRegion> rightAnimation, leftAnimation, climbAnimation;
@@ -47,6 +48,7 @@ public class Player extends Character {
         isFacingRight = null;
         isFacingUp = null;
         playStateSound = true;
+        justBounced = false;
         lives = 6;
         state = state.FRONT;
     }
@@ -57,6 +59,7 @@ public class Player extends Character {
 
     @Override
     public void update(float dt){
+        float newY = position.y + getSpeed().y * dt;
         float stateTime = getStateTime();
         stateTime += dt;
         setStateTime(stateTime);
@@ -66,10 +69,22 @@ public class Player extends Character {
         if(state != state.CLIMB && state != state.FRONT_CLIMB){
             manageMovement(dt);
 
-            getSpeed().y -= GRAVITY;
+            if (!isJustBounced()) {
+                if (!isOnLadderTile(position)) {
+                    getSpeed().y -= GRAVITY;
+                } else {
+                    getSpeed().y = 0;
+                }
+            } else {
+                resetBounce();
+            }
+
             if (getSpeed().y < -PLAYER_JUMPING_SPEED)
                 getSpeed().y = -PLAYER_JUMPING_SPEED;
         }
+
+        if(isDeadlyGround(position.x + width / 2f, newY + height))
+            lives = 0;
     }
 
     //endregion
@@ -179,8 +194,22 @@ public class Player extends Character {
     }
 
     public void climb(int movement){
+        if (movement < 0) {
+            if (isSolidTileBelow()) {
+                state = AlienAnimationStatesEnum.FRONT;
+                return;
+            }
+        }
+
         position.y += movement;
         rectangle.setPosition(position);
+    }
+
+    private boolean isSolidTileBelow() {
+        float footX = position.x + width / 2f;
+        float footY = position.y - 1f;
+
+        return isSolid(footX, footY);
     }
 
     public void jump(){
@@ -188,6 +217,15 @@ public class Player extends Character {
             getSpeed().y = PLAYER_JUMPING_SPEED;
             setJumping(true);
         }
+    }
+
+    public void bounce(float force) {
+        getSpeed().y = force;
+        justBounced = true;
+    }
+
+    public void resetBounce() {
+        justBounced = false;
     }
 
     public void changeScore(int points){

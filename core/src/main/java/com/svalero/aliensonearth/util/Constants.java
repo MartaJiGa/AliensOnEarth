@@ -27,10 +27,13 @@ public class Constants {
 
     //endregion
 
-    //region Ufo
+    //region Interaction
 
     public static final int UFO_WIDTH = 121;
     public static final int UFO_HEIGHT = 109;
+    public static final int SPRING_WIDTH = 64;
+    public static final int SPRING_HEIGHT = 44;
+    public static final int SPRING_JUMP_FORCE = 500;
 
     //endregion
 
@@ -42,15 +45,16 @@ public class Constants {
 
         // Levels
         public static final String TILE_LEVEL1 = "levels/level1.tmx";
+        public static final String TILE_LEVEL2 = "levels/level2.tmx";
 
         // Layers
         public static final String TILE_LAYER_SKY = "Sky";
-        public static final String TILE_LAYER_INTERACTION = "Interaction";
         public static final String TILE_LAYER_BACKGROUND = "Background";
         public static final String TILE_LAYER_GROUND = "Ground";
         public static final String TILE_LAYER_ENEMIES = "Enemies";
         public static final String TILE_LAYER_COINS = "Coins";
-        public static final String TILE_LAYER_UFO = "Ufo";
+        public static final String TILE_LAYER_INTERACTION = "InteractionElements";
+        public static final String TILE_LAYER_SPAWN = "SpawnPoints";
 
         // Attributes
         public static final String TILE_ATTRIBUTE_INTERACT = "Interaction";

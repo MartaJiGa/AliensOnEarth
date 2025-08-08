@@ -18,6 +18,10 @@ import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
 
+import static com.svalero.aliensonearth.Main.db;
+import static com.svalero.aliensonearth.Main.prefs;
+import static com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum.*;
+
 import static com.svalero.aliensonearth.util.Constants.*;
 
 public class LevelManager {
@@ -25,11 +29,7 @@ public class LevelManager {
     //region properties
 
     private TiledMap map;
-    private TiledMapTileLayer skyLayer;
-    private TiledMapTileLayer backgroundLayer;
-    private TiledMapTileLayer interactionLayer;
-    private TiledMapTileLayer groundLayer;
-
+    private TiledMapTileLayer skyLayer, backgroundLayer, groundLayer;
     private LogicManager logicManager;
 
     //endregion
@@ -50,15 +50,40 @@ public class LevelManager {
     }
 
     public void loadCurrentLevel(){
-        map = new TmxMapLoader().load(TILE_LEVEL1);
+        String playerName = prefs.getString("playerName");
+
+        int playerId = db.getPlayerIdByName(playerName);
+        playerId = playerId <= 0 ? 1: playerId;
+
+        int playerLevel = db.getPlayerLevel(playerId);
+        playerLevel = playerLevel <= 0 ? 1: playerLevel;
+
+        int currentLevel;
+        switch (db.getHigherLevelPlayed(playerId)) {
+            default:
+            case -1:
+            case 1:
+                map = new TmxMapLoader().load(TILE_LEVEL1);
+                currentLevel = 1;
+                break;
+            case 2:
+                map = new TmxMapLoader().load(TILE_LEVEL2);
+                currentLevel = 2;
+                break;
+        }
+
         skyLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_SKY);
-        interactionLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_INTERACTION);
         backgroundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_BACKGROUND);
         groundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_GROUND);
 
-        Vector2 initialPosition = getInitialPlayerPositionOnGround();
+        Vector2 initialPosition = getInitialPlayerPositionFromObjectLayer();
 
         this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
+        this.logicManager.player.setName(playerName);
+        this.logicManager.player.setId(playerId);
+        this.logicManager.player.setCurrentGameLevel(currentLevel);
+        this.logicManager.player.setLevel(playerLevel);
+
         this.logicManager.coins = new Array<>();
         this.logicManager.enemies = new Array<>();
         this.logicManager.items = new Array<>();
@@ -81,12 +106,12 @@ public class LevelManager {
             Item item = getItem(mapObject, imageName, TILE_LAYER_ENEMIES);
             addItemToEnemyList(item);
         }
-        for(MapObject mapObject : map.getLayers().get(TILE_LAYER_UFO).getObjects()){
+        for(MapObject mapObject : map.getLayers().get(TILE_LAYER_INTERACTION).getObjects()){
             String imageName = mapObject.getName();
             if (imageName == null) continue;
 
-            Item item = getItem(mapObject, imageName, TILE_LAYER_UFO);
-            addItemToItemList(item);
+            Item item = getItem(mapObject, imageName, TILE_LAYER_INTERACTION);
+            addItemToItemList(item, imageName);
         }
     }
 
@@ -101,9 +126,9 @@ public class LevelManager {
             y = Float.parseFloat(mapObject.getProperties().get("y").toString());
         }
 
-        if(layerName.equals("Coins") || layerName.equals("Ufo")){
+        if(layerName.equals(TILE_LAYER_COINS) || layerName.equals(TILE_LAYER_INTERACTION)){
             return new Item(ResourceManager.getInteractionTexture(imageName), new Vector2(x, y), imageName);
-        } else if(layerName.equals("Enemies")){
+        } else if(layerName.equals(TILE_LAYER_ENEMIES)){
             return new Item(ResourceManager.getEnemyTexture(imageName), new Vector2(x, y), imageName);
         } else{
             return null;
@@ -125,24 +150,31 @@ public class LevelManager {
             width = 64; height = 32;
             Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
             logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.WORM));
+        } else if(item.getImageName().equals(EnemyTexturesEnum.BARNACLE_REST.getRegionName())){
+            width = 64; height = 64;
+            Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
+            logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.BARNACLE));
         }
     }
 
-    public void addItemToItemList(Item item){
-        if(item.getImageName().equals("ufo")){
-            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition()));
+    public void addItemToItemList(Item item, String imageName){
+        if(item.getImageName().equals(UFO.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition(), imageName, false));
+        } else if(item.getImageName().equals(SPRING.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), SPRING_WIDTH, SPRING_HEIGHT, item.getPosition(), imageName, true));
         }
     }
 
-    private Vector2 getInitialPlayerPositionOnGround() {
-        for (int y = groundLayer.getHeight() - 1; y >= 0; y--) {
-            for (int x = 0; x < groundLayer.getWidth(); x++) {
-                TiledMapTileLayer.Cell cell = groundLayer.getCell(x, y);
-                if (cell != null && cell.getTile() != null) {
-                    return new Vector2(x * TILE_WIDTH, (y + 1) * TILE_HEIGHT);
-                }
-            }
+    private Vector2 getInitialPlayerPositionFromObjectLayer() {
+        MapObject spawnObject = map.getLayers().get(TILE_LAYER_SPAWN).getObjects().get("PlayerSpawn");
+
+        if (spawnObject != null) {
+            float x = Float.parseFloat(spawnObject.getProperties().get("x").toString());
+            float y = Float.parseFloat(spawnObject.getProperties().get("y").toString());
+
+            return new Vector2(x, y);
         }
+
         return new Vector2(0, 0);
     }
 

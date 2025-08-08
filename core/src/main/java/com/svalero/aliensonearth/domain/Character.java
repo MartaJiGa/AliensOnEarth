@@ -72,9 +72,39 @@ public abstract class Character extends Item {
 
         MapProperties props = cell.getTile().getProperties();
 
-        if (props.containsKey("Solid")) {
-            String value = props.get("Solid").toString().trim().toLowerCase();
-            return value.equals("true");
+        boolean isSolid = props.containsKey("Solid") && Boolean.parseBoolean(props.get("Solid").toString());
+        boolean isLadder = props.containsKey("Ladder");
+
+        return isSolid && !isLadder;
+    }
+
+    public boolean isDeadlyGround(float worldX, float worldY) {
+        int tileX = (int) (worldX / TILE_WIDTH);
+        int tileY = (int) (worldY / TILE_HEIGHT);
+
+        TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
+        if (cell == null || cell.getTile() == null) return false;
+
+        MapProperties props = cell.getTile().getProperties();
+
+        if (props.containsKey("Water") || props.containsKey("Lava")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isOnLadderTile(Vector2 position) {
+        float centerX = position.x + width / 2f;
+        float centerY = position.y + height / 2f;
+
+        int tileX = (int)(centerX / TILE_WIDTH);
+        int tileY = (int)(centerY / TILE_HEIGHT);
+
+        TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
+        if (cell != null && cell.getTile() != null) {
+            Object ladder = cell.getTile().getProperties().get("Ladder");
+            return ladder != null ? true : false;
         }
 
         return false;
