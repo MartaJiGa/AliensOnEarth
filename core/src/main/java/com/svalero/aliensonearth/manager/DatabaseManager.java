@@ -59,19 +59,35 @@ public class DatabaseManager {
         }
     }
 
-    public void savePlayerProgress(String name, int higherLevelPlayed, int playerLevel, int globalScore) {
-        String sql = "INSERT INTO player_progress(name, higher_level_played, player_level, global_score) VALUES(?, ?, ?, ?)";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setInt(2, higherLevelPlayed);
-            pstmt.setInt(3, playerLevel);
-            pstmt.setInt(4, globalScore);
-            pstmt.executeUpdate();
-            System.out.println("Progress saved.");
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void savePlayerProgress(String name, int higherLevelPlayed, int playerLevel, int globalScore, int playerId) {
+        if(playerId == -1){
+            String sql = "INSERT INTO player_progress(name, higher_level_played, player_level, global_score) VALUES(?, ?, ?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, name);
+                pstmt.setInt(2, higherLevelPlayed);
+                pstmt.setInt(3, playerLevel);
+                pstmt.setInt(4, globalScore);
+                pstmt.executeUpdate();
+                System.out.println("Progress saved.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+        else{
+            String sql = "UPDATE player_progress SET higher_level_played = ?, player_level = ?, global_score = ? WHERE id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, higherLevelPlayed);
+                pstmt.setInt(2, playerLevel);
+                pstmt.setInt(3, globalScore);
+                pstmt.setInt(4, playerId);
+                pstmt.executeUpdate();
+                System.out.println("Progress saved.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
     public int getPlayerIdByName(String name) {
@@ -91,13 +107,29 @@ public class DatabaseManager {
     }
 
     public int getHigherLevelPlayed(int playerId) {
-        String sql = "SELECT higher_level_played FROM player_progress WHERE id = ? ORDER BY higher_level_played DESC LIMIT 1";
+        String sql = "SELECT higher_level_played FROM player_progress WHERE id = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, playerId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("higher_level_played");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int getPlayerLevel(int playerId) {
+        String sql = "SELECT player_level FROM player_progress WHERE id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, playerId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("player_level");
                 }
             }
         } catch (SQLException e) {

@@ -51,9 +51,14 @@ public class LevelManager {
 
     public void loadCurrentLevel(){
         String playerName = prefs.getString("playerName");
-        int playerId = db.getPlayerIdByName(playerName);
-        int currentLevel;
 
+        int playerId = db.getPlayerIdByName(playerName);
+        playerId = playerId <= 0 ? 1: playerId;
+
+        int playerLevel = db.getPlayerLevel(playerId);
+        playerLevel = playerLevel <= 0 ? 1: playerLevel;
+
+        int currentLevel;
         switch (db.getHigherLevelPlayed(playerId)) {
             default:
             case -1:
@@ -77,6 +82,7 @@ public class LevelManager {
         this.logicManager.player.setName(playerName);
         this.logicManager.player.setId(playerId);
         this.logicManager.player.setCurrentGameLevel(currentLevel);
+        this.logicManager.player.setLevel(playerLevel);
 
         this.logicManager.coins = new Array<>();
         this.logicManager.enemies = new Array<>();
