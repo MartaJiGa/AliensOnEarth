@@ -36,6 +36,8 @@ public class Player extends Character {
 
     //region constructor
 
+    public Player(){}
+
     public Player(TextureRegion currentFrame, Vector2 position, TiledMapTileLayer groundLayer){
         super(currentFrame, 70, 70, position, groundLayer);
 

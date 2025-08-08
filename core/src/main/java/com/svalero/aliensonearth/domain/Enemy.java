@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.states.*;
-import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,8 +43,10 @@ public class Enemy extends Character {
         isPlayerNearby = false;
         isFacingRight = null;
 
-        formLeftAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
-        formRightAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
+        if(enemyType.equals(EnemyTypeEnum.WORM)){
+            formLeftAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
+            formRightAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
+        }
     }
 
     //endregion
@@ -60,7 +61,11 @@ public class Enemy extends Character {
 
         getSpeed().y -= GRAVITY * dt;
 
-        changeTextureState();
+        if(enemyType.equals(EnemyTypeEnum.WORM))
+            changeTextureState(EnemyTexturesEnum.WORM_REST.getRegionName());
+        else if(enemyType.equals(EnemyTypeEnum.BARNACLE))
+            changeTextureState(EnemyTexturesEnum.BARNACLE_REST.getRegionName());
+
         manageMovement(dt);
 
         if (!isPlayerNearby) {
@@ -68,16 +73,18 @@ public class Enemy extends Character {
             return;
         }
 
-        if (isFacingRight == null) isFacingRight = true;
+        if(enemyType.equals(EnemyTypeEnum.WORM)){
+            if (isFacingRight == null) isFacingRight = true;
 
-        int direction = isFacingRight ? ENEMY_SPEED : -ENEMY_SPEED;
+            int direction = isFacingRight ? ENEMY_SPEED : -ENEMY_SPEED;
 
-        if (canMove(direction)) {
-            position.x += direction;
-            rectangle.setPosition(position);
-            state = isFacingRight ? EnemyAnimationStatesEnum.WALK_RIGHT : EnemyAnimationStatesEnum.WALK_LEFT;
-        } else {
-            isFacingRight = !isFacingRight;
+            if (canMove(direction)) {
+                position.x += direction;
+                rectangle.setPosition(position);
+                state = isFacingRight ? EnemyAnimationStatesEnum.WALK_RIGHT : EnemyAnimationStatesEnum.WALK_LEFT;
+            } else {
+                isFacingRight = !isFacingRight;
+            }
         }
     }
 
@@ -85,15 +92,10 @@ public class Enemy extends Character {
 
     //region methods
 
-    public void changeTextureState(){
+    public void changeTextureState(String enemyName){
         switch (state){
             case REST:
-                switch (enemyType) {
-                    case WORM:
-                        textureRegion = ResourceManager.getEnemyTexture(EnemyTexturesEnum.WORM_REST.getRegionName());
-                    case BARNACLE:
-                        textureRegion = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BARNACLE_REST.getRegionName());
-                }
+                textureRegion = ResourceManager.getEnemyTexture(enemyName);
                 break;
 //            case FLAT:
 //                textureRegion = leftAnimation.getKeyFrame(super.getStateTime(), true);
