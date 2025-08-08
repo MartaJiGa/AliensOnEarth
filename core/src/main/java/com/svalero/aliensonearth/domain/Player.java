@@ -14,6 +14,8 @@ import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import static com.svalero.aliensonearth.Main.db;
+import static com.svalero.aliensonearth.Main.prefs;
 import static com.svalero.aliensonearth.util.Constants.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -21,11 +23,9 @@ import static com.svalero.aliensonearth.util.Constants.*;
 public class Player extends Character {
     //region properties
 
-    private int level;
-    private int lives;
-    private int score;
+    private String name;
+    private int id, level, lives, score, currentGameLevel;
     private boolean playStateSound, justBounced;
-
     private Boolean isFacingRight, isFacingUp;
 
     private Animation<TextureRegion> rightAnimation, leftAnimation, climbAnimation;

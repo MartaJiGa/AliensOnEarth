@@ -45,6 +45,7 @@ public class Constants {
 
         // Levels
         public static final String TILE_LEVEL1 = "levels/level1.tmx";
+        public static final String TILE_LEVEL2 = "levels/level2.tmx";
 
         // Layers
         public static final String TILE_LAYER_SKY = "Sky";

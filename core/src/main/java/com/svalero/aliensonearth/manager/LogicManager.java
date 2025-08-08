@@ -13,6 +13,7 @@ import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
 
+import static com.svalero.aliensonearth.Main.db;
 import static com.svalero.aliensonearth.util.Constants.*;
 import static com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum.*;
 
@@ -149,6 +150,8 @@ public class LogicManager {
     public void makeCoinCollisionConsequences(Coin coin){
         player.changeScore(coin.getPoints());
         ResourceManager.getSound(SoundsEnum.COIN).play();
+
+        checkPlayerLevel();
     }
 
     public void makeEnemyCollisionConsequences(){
@@ -161,9 +164,10 @@ public class LogicManager {
     }
 
     public void makeItemCollisionConsequences(Item item){
-        if(item.getImageName().equals(UFO.getRegionName()))
+        if(item.getImageName().equals(UFO.getRegionName())){
             isFinished = true;
-        else if(item.getImageName().equals(SPRING.getRegionName())){
+            saveProgressInDb();
+        } else if(item.getImageName().equals(SPRING.getRegionName())){
             Rectangle playerRect = player.getRectangle();
             Rectangle itemRect = item.getRectangle();
 
@@ -177,6 +181,22 @@ public class LogicManager {
                 player.bounce(SPRING_JUMP_FORCE);
             }
         }
+    }
+
+    public void checkPlayerLevel(){
+        int newLevel = player.getScore() / 50 + 1;
+        if(newLevel > player.getLevel())
+            player.setLevel(newLevel);
+    }
+
+    public void saveProgressInDb(){
+        int higherLevelPlayed = db.getHigherLevelPlayed(player.getId());
+        if(higherLevelPlayed > player.getCurrentGameLevel())
+            db.savePlayerProgress(player.getName(), higherLevelPlayed, player.getLevel(), player.getScore());
+        else
+            db.savePlayerProgress(player.getName(), player.getCurrentGameLevel(), player.getLevel(), player.getScore());
+
+        db.saveGameProgress(player.getId(), player.getLevel(), player.getScore());
     }
 
     public void pauseGame(){

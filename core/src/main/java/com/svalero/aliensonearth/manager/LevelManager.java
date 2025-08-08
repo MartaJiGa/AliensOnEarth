@@ -17,6 +17,9 @@ import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
+
+import static com.svalero.aliensonearth.Main.db;
+import static com.svalero.aliensonearth.Main.prefs;
 import static com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum.*;
 
 import static com.svalero.aliensonearth.util.Constants.*;
@@ -47,7 +50,23 @@ public class LevelManager {
     }
 
     public void loadCurrentLevel(){
-        map = new TmxMapLoader().load(TILE_LEVEL1);
+        String playerName = prefs.getString("playerName");
+        int playerId = db.getPlayerIdByName(playerName);
+        int currentLevel;
+
+        switch (db.getHigherLevelPlayed(playerId)) {
+            default:
+            case -1:
+            case 1:
+                map = new TmxMapLoader().load(TILE_LEVEL1);
+                currentLevel = 1;
+                break;
+            case 2:
+                map = new TmxMapLoader().load(TILE_LEVEL2);
+                currentLevel = 2;
+                break;
+        }
+
         skyLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_SKY);
         backgroundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_BACKGROUND);
         groundLayer = (TiledMapTileLayer)map.getLayers().get(TILE_LAYER_GROUND);
@@ -55,6 +74,10 @@ public class LevelManager {
         Vector2 initialPosition = getInitialPlayerPositionFromObjectLayer();
 
         this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
+        this.logicManager.player.setName(playerName);
+        this.logicManager.player.setId(playerId);
+        this.logicManager.player.setCurrentGameLevel(currentLevel);
+
         this.logicManager.coins = new Array<>();
         this.logicManager.enemies = new Array<>();
         this.logicManager.items = new Array<>();
@@ -121,6 +144,10 @@ public class LevelManager {
             width = 64; height = 32;
             Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
             logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.WORM));
+        } else if(item.getImageName().equals(EnemyTexturesEnum.BARNACLE_REST.getRegionName())){
+            width = 64; height = 64;
+            Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
+            logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.BARNACLE));
         }
     }
 

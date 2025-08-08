@@ -6049,12 +6049,12 @@
  </tile>
  <tile id="1100">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1101">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1102">
@@ -6241,12 +6241,12 @@
  </tile>
  <tile id="1136">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1137">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1138">
@@ -6433,12 +6433,12 @@
  </tile>
  <tile id="1172">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1173">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1174">
@@ -6627,12 +6627,12 @@
  </tile>
  <tile id="1208">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1209">
   <properties>
-   <property name="Interaction" value="Rope"/>
+   <property name="Rope" value=""/>
   </properties>
  </tile>
  <tile id="1210">
