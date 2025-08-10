@@ -1,6 +1,8 @@
 package com.svalero.aliensonearth.manager;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private Connection conn;
@@ -86,8 +88,22 @@ public class DatabaseManager {
                 e.printStackTrace();
             }
         }
+    }
 
+    public List<String> getAllPlayers() {
+        List<String> players = new ArrayList<>();
+        String sql = "SELECT name FROM player_progress";
 
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    players.add(rs.getString("name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return players;
     }
 
     public int getPlayerIdByName(String name) {
