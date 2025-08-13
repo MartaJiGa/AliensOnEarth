@@ -138,6 +138,22 @@ public class DatabaseManager {
         return -1;
     }
 
+    public int getPlayerGlobalScore(int playerId) {
+        String sql = "SELECT global_score FROM player_progress WHERE id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, playerId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("global_score");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     public int getPlayerLevel(int playerId) {
         String sql = "SELECT player_level FROM player_progress WHERE id = ?";
 

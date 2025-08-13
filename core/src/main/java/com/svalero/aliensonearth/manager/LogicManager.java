@@ -185,7 +185,7 @@ public class LogicManager {
     }
 
     public void checkPlayerLevel(){
-        int newLevel = player.getScore() / 50 + 1;
+        int newLevel = player.getGlobalScore() / 50 + 1;
         if(newLevel > player.getLevel())
             player.setLevel(newLevel);
     }
@@ -199,7 +199,7 @@ public class LogicManager {
         if(higherLevelPlayed >= player.getCurrentGameLevel()){
             higherLevelPlayed = player.getCurrentGameLevel() + 1;
         }
-        db.savePlayerProgress(player.getName(), higherLevelPlayed, player.getLevel(), player.getScore(), playerId);
+        db.savePlayerProgress(player.getName(), higherLevelPlayed, player.getLevel(), player.getGlobalScore(), playerId);
         db.saveGameProgress(player.getId(), player.getCurrentGameLevel(), player.getScore());
     }
 

@@ -27,12 +27,15 @@ public class Main extends Game {
         prefs = Gdx.app.getPreferences(GAME_NAME);
         if (!prefs.contains(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName())) {
             prefs.putFloat(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName(), 0.5f);
-            prefs.flush();
         }
-        if (!prefs.contains("playerName")) {
+
+        String currentName = prefs.getString("playerName", "Anonymous");
+        int playerId = db.getPlayerIdByName(currentName);
+        if (playerId == -1) {
             prefs.putString("playerName", "Anonymous");
-            prefs.flush();
         }
+
+        prefs.flush();
 
         setScreen(new SplashScreen(this));
     }
