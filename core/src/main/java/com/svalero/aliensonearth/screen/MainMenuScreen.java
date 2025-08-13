@@ -6,14 +6,21 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.manager.SettingsManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
 import com.svalero.aliensonearth.util.enums.MusicEnum;
+import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
+
+import static com.svalero.aliensonearth.Main.db;
+import static com.svalero.aliensonearth.Main.prefs;
 
 public class MainMenuScreen implements Screen {
 
@@ -124,16 +131,41 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        String playerName = prefs.getString("playerName");
+        VisLabel playerNameLabel = new VisLabel(playerName);
+
+        int globalScore = db.getPlayerGlobalScore(db.getPlayerIdByName(playerName));
+        int shownGlobalScore = globalScore == -1 ? 0 : globalScore;
+        VisLabel playerGlobalScoreLabel = new VisLabel("Score: " + shownGlobalScore);
+
+        Image playerImage = new Image(new TextureRegionDrawable(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName())));
+
         table.row();
         table.add(ResourceManager.getLabel(LabelsEnum.ALIEN)).center();
+
         table.row();
         table.add(ResourceManager.getLabel(LabelsEnum.ON_EARTH)).center();
+
         table.row().padTop(60);
         table.add(playButton).center();
+
         table.row().padTop(10);
         table.add(configButton).center();
+
         table.row().padTop(10);
         table.add(exitButton).center();
+
+        VisTable playerTable = new VisTable();
+        playerTable.left().padLeft(50);
+        playerTable.add(playerImage).size(120, 120).padRight(20);
+        VisTable textTable = new VisTable();
+        textTable.padTop(30);
+        textTable.add(playerNameLabel).left().row();
+        textTable.add(playerGlobalScoreLabel).left();
+        playerTable.add(textTable);
+
+        table.row().padTop(60);
+        table.add(playerTable).left();
 
         Gdx.input.setInputProcessor(stage);
     }

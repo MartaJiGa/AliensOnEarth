@@ -89,6 +89,9 @@ public class LevelManager {
         this.logicManager.player.setId(playerId);
         this.logicManager.player.setCurrentGameLevel(currentLevel);
         this.logicManager.player.setLevel(playerLevel);
+        this.logicManager.player.setGlobalScore(db.getPlayerGlobalScore(playerId));
+
+        this.logicManager.checkPlayerLevel();
 
         this.logicManager.coins = new Array<>();
         this.logicManager.enemies = new Array<>();

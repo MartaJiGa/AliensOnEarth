@@ -24,7 +24,7 @@ public class Player extends Character {
     //region properties
 
     private String name;
-    private int id, level, lives, score, currentGameLevel;
+    private int id, level, lives, score, globalScore, currentGameLevel;
     private boolean playStateSound, justBounced;
     private Boolean isFacingRight, isFacingUp;
 
@@ -232,6 +232,7 @@ public class Player extends Character {
 
     public void changeScore(int points){
         this.score += points;
+        this.globalScore += points;
     }
 
     public void reduceLives(){
