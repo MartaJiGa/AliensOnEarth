@@ -36,9 +36,9 @@ public class LevelManager {
 
     //region constructor
 
-    public LevelManager(LogicManager logicManager){
+    public LevelManager(LogicManager logicManager, boolean retryLevel){
         this.logicManager = logicManager;
-        loadCurrentLevel();
+        loadCurrentLevel(retryLevel);
     }
 
     //endregion
@@ -49,7 +49,7 @@ public class LevelManager {
         return map;
     }
 
-    public void loadCurrentLevel(){
+    public void loadCurrentLevel(boolean retryLevel){
         String playerName = prefs.getString("playerName");
 
         int playerId = db.getPlayerIdByName(playerName);
@@ -67,8 +67,14 @@ public class LevelManager {
                 currentLevel = 1;
                 break;
             case 2:
-                map = new TmxMapLoader().load(TILE_LEVEL2);
-                currentLevel = 2;
+                if(retryLevel){
+                    map = new TmxMapLoader().load(TILE_LEVEL1);
+                    currentLevel = 1;
+                } else{
+                    map = new TmxMapLoader().load(TILE_LEVEL2);
+                    currentLevel = 2;
+                }
+
                 break;
         }
 

@@ -9,13 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
-import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 
 import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
 
@@ -121,7 +119,7 @@ public class FinishScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game, true));
             }
         });
 
@@ -159,7 +157,16 @@ public class FinishScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game, true));
+            }
+        });
+
+        VisTextButton playNextButton = new VisTextButton("Play Next");
+        playNextButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                dispose();
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game, false));
             }
         });
 
@@ -185,6 +192,8 @@ public class FinishScreen implements Screen {
         table.add(ResourceManager.getLabel(LabelsEnum.FINISH)).center();
         table.row().padTop(60);
         table.add(retryButton).center();
+        table.row().padTop(10);
+        table.add(playNextButton).center();
         table.row().padTop(10);
         table.add(mainMenuButton).center();
         table.row().padTop(10);
