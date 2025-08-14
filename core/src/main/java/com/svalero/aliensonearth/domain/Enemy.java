@@ -27,7 +27,7 @@ public class Enemy extends Character {
 
     private Boolean isFacingRight;
 
-    private Animation<TextureRegion> wormLeftAnimation, wormRightAnimation;
+    private Animation<TextureRegion> wormLeftAnimation, wormRightAnimation, attackAnimation, beeAnimation, flyAnimation;
     private EnemyAnimationStatesEnum state;
     private EnemyTypeEnum enemyType;
 
@@ -38,14 +38,23 @@ public class Enemy extends Character {
         super(currentFrame, width, height, position, groundLayer);
 
         this.enemyType = enemyType;
-        state = state.REST;
 
         isPlayerNearby = false;
         isFacingRight = null;
 
         if(enemyType.equals(EnemyTypeEnum.WORM)){
-            formLeftAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
-            formRightAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
+            state = state.REST;
+            formWormLeftAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
+            formWormRightAnimation(EnemyTexturesEnum.WORM_MOVE_A.getRegionName(), EnemyTexturesEnum.WORM_MOVE_B.getRegionName());
+        } else if(enemyType.equals(EnemyTypeEnum.BEE)){
+            state = state.FLY_LEFT;
+            formBeeAnimation(EnemyTexturesEnum.BEE_A.getRegionName(), EnemyTexturesEnum.BEE_B.getRegionName());
+        } else if(enemyType.equals(EnemyTypeEnum.FLY)){
+            state = state.FLY_LEFT;
+            formFlyAnimation(EnemyTexturesEnum.FLY_A.getRegionName(), EnemyTexturesEnum.FLY_B.getRegionName());
+        } else if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
+            state = state.REST;
+            //TODO: Crear animación de ataque
         }
     }
 
@@ -97,47 +106,32 @@ public class Enemy extends Character {
             case REST:
                 textureRegion = ResourceManager.getEnemyTexture(enemyName);
                 break;
-//            case FLAT:
-//                textureRegion = leftAnimation.getKeyFrame(super.getStateTime(), true);
-//                break;
             case WALK_LEFT:
                 textureRegion = wormLeftAnimation.getKeyFrame(super.getStateTime(), true);
                 break;
             case WALK_RIGHT:
                 textureRegion = wormRightAnimation.getKeyFrame(super.getStateTime(), true);
                 break;
-//            case ATTACK:
-//                textureRegion = rightAnimation.getKeyFrame(super.getStateTime(), true);
-//                break;
-//            case IDLE_FRONT:
-//                textureRegion = rightAnimation.getKeyFrame(super.getStateTime(), true);
-//                break;
-//            case IDLE_LEFT:
-//                textureRegion = leftIdle;
-//                break;
-//            case IDLE_RIGHT:
-//                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_IDLE.getRegionName());
-//                break;
-//            case JUMP:
-//                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName());
-//                break;
-//            case JUMP_LEFT:
-//                textureRegion = leftJump;
-//                break;
-//            case JUMP_RIGHT:
-//                textureRegion = ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_JUMP.getRegionName());
-//                break;
+            case ATTACK:
+                textureRegion = attackAnimation.getKeyFrame(super.getStateTime(), true);
+                break;
+            case FLY_LEFT:
+                if(enemyName.equals(EnemyTypeEnum.BEE.name()))
+                    textureRegion = beeAnimation.getKeyFrame(super.getStateTime(), true);
+                if(enemyName.equals(EnemyTypeEnum.FLY.name()))
+                    textureRegion = flyAnimation.getKeyFrame(super.getStateTime(), true);
+                break;
         }
     }
 
-    public void formLeftAnimation(String textureA, String textureB) {
+    public void formWormLeftAnimation(String textureA, String textureB) {
         Array<TextureAtlas.AtlasRegion> frames = new Array<>();
         frames.addAll(ResourceManager.getEnemyRegions(textureA));
         frames.addAll(ResourceManager.getEnemyRegions(textureB));
         wormLeftAnimation = new Animation<>(0.1f, frames);
     }
 
-    public void formRightAnimation(String textureA, String textureB) {
+    public void formWormRightAnimation(String textureA, String textureB) {
         Array<TextureAtlas.AtlasRegion> framesToFlip = new Array<>();
         Array<TextureAtlas.AtlasRegion> rightFrames = new Array<>();
         framesToFlip.addAll(ResourceManager.getEnemyRegions(textureA));
@@ -149,6 +143,20 @@ public class Enemy extends Character {
             rightFrames.add(flipped);
         }
         wormRightAnimation = new Animation<>(0.1f, rightFrames);
+    }
+
+    public void formBeeAnimation(String textureA, String textureB) {
+        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
+        frames.addAll(ResourceManager.getEnemyRegions(textureA));
+        frames.addAll(ResourceManager.getEnemyRegions(textureB));
+        beeAnimation = new Animation<>(0.1f, frames);
+    }
+
+    public void formFlyAnimation(String textureA, String textureB) {
+        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
+        frames.addAll(ResourceManager.getEnemyRegions(textureA));
+        frames.addAll(ResourceManager.getEnemyRegions(textureB));
+        flyAnimation = new Animation<>(0.1f, frames);
     }
 
     private boolean canMove(int direction) {
