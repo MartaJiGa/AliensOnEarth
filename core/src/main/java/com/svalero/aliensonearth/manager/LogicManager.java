@@ -306,13 +306,20 @@ public class LogicManager {
         if (spawnTimer >= spawnInterval) {
             spawnTimer = 0;
 
-            TextureRegion texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BEE_A.getRegionName());
-
+            TextureRegion texture;
+            FlyingEnemy flyingEnemy;
             float spawnX = mapWidth;
             float spawnY = MathUtils.random(50, SCREEN_HEIGHT - 50);
 
             float xSpeed = MathUtils.random(100, 400);
-            FlyingEnemy flyingEnemy = new FlyingEnemy(texture, new Vector2(spawnX, spawnY), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.BEE, -xSpeed);
+
+            if(prefs.getInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName()) == 1){
+                texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BEE_A.getRegionName());
+                flyingEnemy = new FlyingEnemy(texture, new Vector2(spawnX, spawnY), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.BEE, -xSpeed);
+            } else{
+                texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.FLY_A.getRegionName());
+                flyingEnemy = new FlyingEnemy(texture, new Vector2(spawnX, spawnY), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.FLY, -xSpeed);
+            }
 
             flyingEnemies.add(flyingEnemy);
         }
