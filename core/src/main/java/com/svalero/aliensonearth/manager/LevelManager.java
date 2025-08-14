@@ -14,6 +14,7 @@ import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
+import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
@@ -36,7 +37,7 @@ public class LevelManager {
 
     //region constructor
 
-    public LevelManager(LogicManager logicManager, boolean retryLevel){
+    public LevelManager(LogicManager logicManager, Boolean retryLevel){
         this.logicManager = logicManager;
         loadCurrentLevel(retryLevel);
     }
@@ -49,30 +50,41 @@ public class LevelManager {
         return map;
     }
 
-    public void loadCurrentLevel(boolean retryLevel){
-        String playerName = prefs.getString("playerName");
+    public void loadCurrentLevel(Boolean retryLevel){
+        String playerName = prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName());
 
         int playerId = db.getPlayerIdByName(playerName);
-        playerId = playerId <= 0 ? 1: playerId;
+        if(playerId <= 0){
+            db.savePlayerProgress(playerName, 1, 1, 1, 0, -1);
+            playerId = db.getPlayerIdByName(playerName);
+        }
 
         int playerLevel = db.getPlayerLevel(playerId);
         playerLevel = playerLevel <= 0 ? 1: playerLevel;
 
-        int currentLevel;
         switch (db.getHigherLevelPlayed(playerId)) {
             default:
             case -1:
             case 1:
                 map = new TmxMapLoader().load(TILE_LEVEL1);
-                currentLevel = 1;
+                prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                 break;
             case 2:
-                if(retryLevel){
-                    map = new TmxMapLoader().load(TILE_LEVEL1);
-                    currentLevel = 1;
-                } else{
+                if(retryLevel == null){
+                    int lastLevelPlayed = db.getLastLevelPlayed(playerId);
+                    if(lastLevelPlayed == 1 && prefs.getInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName()) == 1){
+                        map = new TmxMapLoader().load(TILE_LEVEL1);
+                        prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
+                    } else {
+                        map = new TmxMapLoader().load(TILE_LEVEL2);
+                        prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 2);
+                    }
+                } else if(!retryLevel){
                     map = new TmxMapLoader().load(TILE_LEVEL2);
-                    currentLevel = 2;
+                    prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 2);
+                }else{
+                    map = new TmxMapLoader().load(TILE_LEVEL1);
+                    prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                 }
 
                 break;
@@ -87,7 +99,7 @@ public class LevelManager {
         this.logicManager.player = new Player(ResourceManager.getAlienTexture(AlienTexturesEnum.PINK_FRONT.getRegionName()), initialPosition, groundLayer);
         this.logicManager.player.setName(playerName);
         this.logicManager.player.setId(playerId);
-        this.logicManager.player.setCurrentGameLevel(currentLevel);
+        this.logicManager.player.setCurrentGameLevel(prefs.getInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName()));
         this.logicManager.player.setLevel(playerLevel);
         this.logicManager.player.setGlobalScore(db.getPlayerGlobalScore(playerId));
 

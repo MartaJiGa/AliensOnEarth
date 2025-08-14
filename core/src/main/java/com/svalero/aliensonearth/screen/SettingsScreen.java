@@ -110,7 +110,7 @@ public class SettingsScreen implements Screen {
         VisLabel playerLabel = new VisLabel("Select player");
         VisSelectBox<String> playerSelectBox = new VisSelectBox<>();
         playerSelectBox.setItems(db.getAllPlayers().toArray(new String[0]));
-        playerSelectBox.setSelected(prefs.getString("playerName"));
+        playerSelectBox.setSelected(prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName()));
 
         VisLabel newPlayerLabel = new VisLabel("New player");
         VisTextField newPlayerTextField = new VisTextField();
@@ -147,7 +147,7 @@ public class SettingsScreen implements Screen {
                 boolean duplicateName = false;
 
                 if(newPlayerTextField.isEmpty()){
-                    prefs.putString("playerName", playerSelectBox.getSelected());
+                    prefs.putString(PrefsNamesEnum.PLAYER_NAME.getPrefsName(), playerSelectBox.getSelected());
                 } else{
                     Array<String> players = playerSelectBox.getItems();
                     for(int i = 0; i < players.size; i++){
@@ -157,11 +157,11 @@ public class SettingsScreen implements Screen {
                     }
 
                     if(!duplicateName){
-                        db.savePlayerProgress(newPlayerTextField.getText(), 1, 1, 0, -1);
-                        prefs.putString("playerName", newPlayerTextField.getText());
+                        db.savePlayerProgress(newPlayerTextField.getText(), 1, 1, 1, 0, -1);
+                        prefs.putString(PrefsNamesEnum.PLAYER_NAME.getPrefsName(), newPlayerTextField.getText());
                         playerSelectBox.clearItems();
                         playerSelectBox.setItems(db.getAllPlayers().toArray(new String[0]));
-                        playerSelectBox.setSelected(prefs.getString("playerName"));
+                        playerSelectBox.setSelected(prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName()));
                         newPlayerCheckBox.setChecked(false);
                     }
 

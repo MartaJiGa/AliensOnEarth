@@ -31,7 +31,7 @@ public class GameScreen implements Screen {
             backgroundMusic.play();
     }
 
-    public GameScreen(Game game, boolean retryLevel){
+    public GameScreen(Game game, Boolean retryLevel){
         this.game = game;
         loadManagers(retryLevel);
         loadBackgroundMusic();
@@ -104,7 +104,7 @@ public class GameScreen implements Screen {
 
     //region methods
 
-    public void loadManagers(boolean retryLevel){
+    public void loadManagers(Boolean retryLevel){
         logicManager = new LogicManager();
         levelManager = new LevelManager(logicManager, retryLevel);
         renderManager = new RenderManager(logicManager, levelManager.getMap());

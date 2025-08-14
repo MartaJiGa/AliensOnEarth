@@ -119,7 +119,7 @@ public class FinishScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 dispose();
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game, true));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(game, null));
             }
         });
 

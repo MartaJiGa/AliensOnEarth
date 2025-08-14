@@ -191,16 +191,15 @@ public class LogicManager {
     }
 
     public void saveProgressInDb(){
+        int lastLevelPlayed = player.getCurrentGameLevel();
         int higherLevelPlayed = db.getHigherLevelPlayed(player.getId());
-        int playerId = db.getPlayerIdByName(prefs.getString("playerName"));
+        int playerId = db.getPlayerIdByName(prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName()));
 
-        playerId = playerId == -1 ? playerId : player.getId();
-
-        if(higherLevelPlayed >= player.getCurrentGameLevel()){
-            higherLevelPlayed = player.getCurrentGameLevel() + 1;
+        if(higherLevelPlayed >= lastLevelPlayed){
+            higherLevelPlayed = lastLevelPlayed + 1;
         }
-        db.savePlayerProgress(player.getName(), higherLevelPlayed, player.getLevel(), player.getGlobalScore(), playerId);
-        db.saveGameProgress(player.getId(), player.getCurrentGameLevel(), player.getScore());
+        db.savePlayerProgress(player.getName(), higherLevelPlayed, lastLevelPlayed, player.getLevel(), player.getGlobalScore(), playerId);
+        db.saveGameProgress(player.getId(), lastLevelPlayed, player.getScore());
     }
 
     public void pauseGame(){
