@@ -34,7 +34,7 @@ public class LogicManager {
     protected Array<FlyingEnemy> flyingEnemies;
     protected Item fullHubHeart, halfHubHeart, emptyHubHeart;
     private boolean isPaused, isFinished, isDead, moving, jumping, climbing;
-    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval;
+    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval, mapWidth;
     public int currentLevel;
 
     //endregion
@@ -272,31 +272,7 @@ public class LogicManager {
             if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
                 player.update(dt);
 
-            spawnTimer += dt;
-            if (spawnTimer >= spawnInterval) {
-                spawnTimer = 0;
-
-                TextureRegion texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BEE_A.getRegionName());
-
-                float yPos = MathUtils.random(50, SCREEN_HEIGHT - 50);
-                float xSpeed = MathUtils.random(100, 200);
-                FlyingEnemy flyingEnemy = new FlyingEnemy(texture, new Vector2(SCREEN_WIDTH, yPos), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.BEE, -xSpeed);
-
-                flyingEnemies.add(flyingEnemy);
-            }
-
-            for (int i = flyingEnemies.size - 1; i >= 0; i--) {
-                FlyingEnemy flyingEnemy = flyingEnemies.get(i);
-                flyingEnemy.update(dt);
-
-                if (flyingEnemy.getRectangle().overlaps(player.getRectangle()) && enemyCollisionCooldown <= 0) {
-                    makeEnemyCollisionConsequences();
-                }
-
-                if (flyingEnemy.getPosition().x + flyingEnemy.getWidth() < 0) {
-                    flyingEnemies.removeIndex(i);
-                }
-            }
+            manageFlyingEnemy(dt);
 
             for(int i = 0; i < enemies.size; i++){
                 Enemy enemy = enemies.get(i);
@@ -317,6 +293,40 @@ public class LogicManager {
 
             for (Item item : items) {
                 item.update(dt);
+            }
+        }
+    }
+
+    public void setMapWidth(float mapWidth) {
+        this.mapWidth = mapWidth;
+    }
+
+    public void manageFlyingEnemy(float dt) {
+        spawnTimer += dt;
+        if (spawnTimer >= spawnInterval) {
+            spawnTimer = 0;
+
+            TextureRegion texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BEE_A.getRegionName());
+
+            float spawnX = mapWidth;
+            float spawnY = MathUtils.random(50, SCREEN_HEIGHT - 50);
+
+            float xSpeed = MathUtils.random(100, 400);
+            FlyingEnemy flyingEnemy = new FlyingEnemy(texture, new Vector2(spawnX, spawnY), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.BEE, -xSpeed);
+
+            flyingEnemies.add(flyingEnemy);
+        }
+
+        for (int i = flyingEnemies.size - 1; i >= 0; i--) {
+            FlyingEnemy flyingEnemy = flyingEnemies.get(i);
+            flyingEnemy.update(dt);
+
+            if (flyingEnemy.getRectangle().overlaps(player.getRectangle()) && enemyCollisionCooldown <= 0) {
+                makeEnemyCollisionConsequences();
+            }
+
+            if (flyingEnemy.getPosition().x + flyingEnemy.getWidth() < 0) {
+                flyingEnemies.removeIndex(i);
             }
         }
     }
