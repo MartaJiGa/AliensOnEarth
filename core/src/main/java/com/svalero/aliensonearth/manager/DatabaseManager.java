@@ -24,6 +24,7 @@ public class DatabaseManager {
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "name TEXT NOT NULL, " +
             "higher_level_played INTEGER NOT NULL, " +
+            "last_level_played INTEGER NOT NULL, " +
             "player_level INTEGER NOT NULL, " +
             "global_score INTEGER NOT NULL" +
             ")";
@@ -61,14 +62,15 @@ public class DatabaseManager {
         }
     }
 
-    public void savePlayerProgress(String name, int higherLevelPlayed, int playerLevel, int globalScore, int playerId) {
+    public void savePlayerProgress(String name, int higherLevelPlayed, int lastLevelPlayed, int playerLevel, int globalScore, int playerId) {
         if(playerId == -1){
-            String sql = "INSERT INTO player_progress(name, higher_level_played, player_level, global_score) VALUES(?, ?, ?, ?)";
+            String sql = "INSERT INTO player_progress(name, higher_level_played, last_level_played, player_level, global_score) VALUES(?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, name);
                 pstmt.setInt(2, higherLevelPlayed);
-                pstmt.setInt(3, playerLevel);
-                pstmt.setInt(4, globalScore);
+                pstmt.setInt(3, lastLevelPlayed);
+                pstmt.setInt(4, playerLevel);
+                pstmt.setInt(5, globalScore);
                 pstmt.executeUpdate();
                 System.out.println("Progress saved.");
             } catch (SQLException e) {
@@ -76,12 +78,13 @@ public class DatabaseManager {
             }
         }
         else{
-            String sql = "UPDATE player_progress SET higher_level_played = ?, player_level = ?, global_score = ? WHERE id = ?";
+            String sql = "UPDATE player_progress SET higher_level_played = ?, last_level_played = ?, player_level = ?, global_score = ? WHERE id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, higherLevelPlayed);
-                pstmt.setInt(2, playerLevel);
-                pstmt.setInt(3, globalScore);
-                pstmt.setInt(4, playerId);
+                pstmt.setInt(2, lastLevelPlayed);
+                pstmt.setInt(3, playerLevel);
+                pstmt.setInt(4, globalScore);
+                pstmt.setInt(5, playerId);
                 pstmt.executeUpdate();
                 System.out.println("Progress saved.");
             } catch (SQLException e) {
@@ -130,6 +133,22 @@ public class DatabaseManager {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("higher_level_played");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int getLastLevelPlayed(int playerId) {
+        String sql = "SELECT last_level_played FROM player_progress WHERE id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, playerId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("last_level_played");
                 }
             }
         } catch (SQLException e) {

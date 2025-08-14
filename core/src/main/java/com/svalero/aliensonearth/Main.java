@@ -8,8 +8,6 @@ import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.screen.SplashScreen;
 import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 
-import java.sql.Statement;
-
 import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -29,10 +27,10 @@ public class Main extends Game {
             prefs.putFloat(PrefsNamesEnum.MUSIC_VOLUME.getPrefsName(), 0.5f);
         }
 
-        String currentName = prefs.getString("playerName", "Anonymous");
+        String currentName = prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName());
         int playerId = db.getPlayerIdByName(currentName);
         if (playerId == -1) {
-            prefs.putString("playerName", "Anonymous");
+            prefs.putString(PrefsNamesEnum.PLAYER_NAME.getPrefsName(), "Anonymous");
         }
 
         prefs.flush();

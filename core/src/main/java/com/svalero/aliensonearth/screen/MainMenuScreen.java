@@ -17,6 +17,7 @@ import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.manager.SettingsManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
 import com.svalero.aliensonearth.util.enums.MusicEnum;
+import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 
 import static com.svalero.aliensonearth.Main.db;
@@ -131,7 +132,7 @@ public class MainMenuScreen implements Screen {
             }
         });
 
-        String playerName = prefs.getString("playerName");
+        String playerName = prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName());
         VisLabel playerNameLabel = new VisLabel(playerName);
 
         int globalScore = db.getPlayerGlobalScore(db.getPlayerIdByName(playerName));

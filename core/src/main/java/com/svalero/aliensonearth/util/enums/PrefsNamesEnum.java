@@ -2,7 +2,9 @@ package com.svalero.aliensonearth.util.enums;
 
 public enum PrefsNamesEnum {
     MUSIC("music"),
-    MUSIC_VOLUME("musicVolume");
+    MUSIC_VOLUME("musicVolume"),
+    PLAYER_NAME("playerName"),
+    CURRENT_LEVEL("currentLevel");
 
     private final String settingName;
 
