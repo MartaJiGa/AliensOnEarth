@@ -187,7 +187,13 @@ public class LevelManager {
         if(item.getImageName().equals(UFO.getRegionName())){
             logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition(), imageName, false));
         } else if(item.getImageName().equals(SPRING.getRegionName())){
-            logicManager.items.add(new Item(item.getTextureRegion(), SPRING_WIDTH, SPRING_HEIGHT, item.getPosition(), imageName, true));
+            logicManager.items.add(new Item(item.getTextureRegion(), STANDARD_OBJECT_SIZE, SPRING_HEIGHT, item.getPosition(), imageName, true));
+        } else if(item.getImageName().equals(WEIGHT.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true));
+        } else if(item.getImageName().equals(SWITCH.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true));
+        } else if(item.getImageName().equals(LEVER.getRegionName())){
+            logicManager.items.add(new Item(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true));
         }
     }
 

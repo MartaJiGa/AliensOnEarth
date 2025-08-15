@@ -29,10 +29,12 @@ public class Constants {
 
     //region Interaction
 
+    public static final int STANDARD_OBJECT_SIZE = 64;
     public static final int UFO_WIDTH = 121;
     public static final int UFO_HEIGHT = 109;
-    public static final int SPRING_WIDTH = 64;
     public static final int SPRING_HEIGHT = 44;
+    public static final int FIREBALL_HEIGHT = 34;
+    public static final int FIREBALL_WIDTH = 34;
     public static final int SPRING_JUMP_FORCE = 500;
 
     //endregion
@@ -55,19 +57,6 @@ public class Constants {
         public static final String TILE_LAYER_COINS = "Coins";
         public static final String TILE_LAYER_INTERACTION = "InteractionElements";
         public static final String TILE_LAYER_SPAWN = "SpawnPoints";
-
-        // Attributes
-        public static final String TILE_ATTRIBUTE_INTERACT = "Interaction";
-        public static final String TILE_ATTRIBUTE_ENEMY = "Enemy";
-        public static final String TILE_ATTRIBUTE_GROUND = "Ground";
-        public static final String TILE_ATTRIBUTE_BACKGROUND = "Background";
-        public static final String TILE_ATTRIBUTE_HUD = "Hud";
-        public static final String TILE_ATTRIBUTE_FINISH = "FinishLine";
-
-        // Attribute Values
-        public static final String TILE_ATT_VALUE_BRONZE_COIN = "BronzeCoin";
-        public static final String TILE_ATT_VALUE_SILVER_COIN = "SilverCoin";
-        public static final String TILE_ATT_VALUE_GOLD_COIN = "GoldCoin";
 
     //endregion
 }
