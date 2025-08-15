@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import static com.svalero.aliensonearth.util.Constants.*;
-import static com.svalero.aliensonearth.util.Constants.PLAYER_JUMPING_SPEED;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

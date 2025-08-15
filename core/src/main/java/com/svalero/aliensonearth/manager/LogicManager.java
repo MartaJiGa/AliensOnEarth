@@ -2,16 +2,21 @@ package com.svalero.aliensonearth.manager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.svalero.aliensonearth.domain.Enemy;
+import com.svalero.aliensonearth.domain.FlyingEnemy;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
+import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
 
 import static com.svalero.aliensonearth.Main.db;
 import static com.svalero.aliensonearth.Main.prefs;
@@ -26,9 +31,10 @@ public class LogicManager {
     protected Array<Coin> coins;
     protected Array<Item> items;
     protected Array<Enemy> enemies;
+    protected Array<FlyingEnemy> flyingEnemies;
     protected Item fullHubHeart, halfHubHeart, emptyHubHeart;
     private boolean isPaused, isFinished, isDead, moving, jumping, climbing;
-    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture;
+    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval, mapWidth;
     public int currentLevel;
 
     //endregion
@@ -42,6 +48,10 @@ public class LogicManager {
         enemyCollisionCooldown = 0f;
         playerEnemyCollisionHitTexture = 0f;
         currentLevel = 1;
+        spawnTimer = 0f;
+        spawnInterval = 2f;
+
+        flyingEnemies = new Array<>();
 
         fullHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_FULL.getRegionName()), 30,30);
         halfHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_HALF.getRegionName()), 30,30);
@@ -262,6 +272,8 @@ public class LogicManager {
             if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
                 player.update(dt);
 
+            manageFlyingEnemy(dt);
+
             for(int i = 0; i < enemies.size; i++){
                 Enemy enemy = enemies.get(i);
 
@@ -281,6 +293,47 @@ public class LogicManager {
 
             for (Item item : items) {
                 item.update(dt);
+            }
+        }
+    }
+
+    public void setMapWidth(float mapWidth) {
+        this.mapWidth = mapWidth;
+    }
+
+    public void manageFlyingEnemy(float dt) {
+        spawnTimer += dt;
+        if (spawnTimer >= spawnInterval) {
+            spawnTimer = 0;
+
+            TextureRegion texture;
+            FlyingEnemy flyingEnemy;
+            float spawnX = mapWidth;
+            float spawnY = MathUtils.random(50, SCREEN_HEIGHT - 50);
+
+            float xSpeed = MathUtils.random(100, 400);
+
+            if(prefs.getInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName()) == 1){
+                texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.BEE_A.getRegionName());
+                flyingEnemy = new FlyingEnemy(texture, new Vector2(spawnX, spawnY), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.BEE, -xSpeed);
+            } else{
+                texture = ResourceManager.getEnemyTexture(EnemyTexturesEnum.FLY_A.getRegionName());
+                flyingEnemy = new FlyingEnemy(texture, new Vector2(spawnX, spawnY), 64, 64, new TiledMapTileLayer(1,1,1,1), EnemyTypeEnum.FLY, -xSpeed);
+            }
+
+            flyingEnemies.add(flyingEnemy);
+        }
+
+        for (int i = flyingEnemies.size - 1; i >= 0; i--) {
+            FlyingEnemy flyingEnemy = flyingEnemies.get(i);
+            flyingEnemy.update(dt);
+
+            if (flyingEnemy.getRectangle().overlaps(player.getRectangle()) && enemyCollisionCooldown <= 0) {
+                makeEnemyCollisionConsequences();
+            }
+
+            if (flyingEnemy.getPosition().x + flyingEnemy.getWidth() < 0) {
+                flyingEnemies.removeIndex(i);
             }
         }
     }
