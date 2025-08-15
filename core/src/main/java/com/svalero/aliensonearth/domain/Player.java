@@ -93,6 +93,8 @@ public class Player extends Character {
 
         if(isDeadlyGround(position.x + width / 2f, newY + height))
             lives = 0;
+
+        rectangle.setPosition(position);
     }
 
     //endregion
