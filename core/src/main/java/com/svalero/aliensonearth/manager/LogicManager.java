@@ -278,7 +278,7 @@ public class LogicManager {
             }
 
             if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
-                player.update(dt);
+                player.update(dt, mapWidth);
 
             manageFlyingEnemy(dt);
 

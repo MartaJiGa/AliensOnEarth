@@ -60,7 +60,7 @@ public class Player extends Character {
     //region override
 
     @Override
-    public void update(float dt){
+    public void update(float dt, float mapWidth){
         float newY = position.y + getSpeed().y * dt;
         float stateTime = getStateTime();
         stateTime += dt;
@@ -70,6 +70,12 @@ public class Player extends Character {
 
         if(state != state.CLIMB && state != state.FRONT_CLIMB){
             manageMovement(dt);
+
+            if (position.x < 0) {
+                position.x = 0;
+            } else if (position.x + width > mapWidth) {
+                position.x = mapWidth - width;
+            }
 
             if (!isJustBounced()) {
                 if (!isOnLadderTile(position)) {

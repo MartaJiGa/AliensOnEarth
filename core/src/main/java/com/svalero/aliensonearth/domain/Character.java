@@ -37,7 +37,7 @@ public abstract class Character extends Item {
 
     //region methods
 
-    public void update(float dt){
+    public void update(float dt, float mapWidth){
         stateTime += dt;
     }
 
