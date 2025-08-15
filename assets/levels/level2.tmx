@@ -59,22 +59,22 @@
   <object id="48" name="spring" x="993" y="532" width="64" height="44"/>
   <object id="54" name="weight" x="1502" y="255" width="64" height="62">
    <properties>
-    <property name="WeightID" type="int" value="1"/>
+    <property name="weightId" type="int" value="1"/>
    </properties>
   </object>
   <object id="55" name="lever" x="2046" y="451" width="64" height="62">
    <properties>
-    <property name="LeverID" type="int" value="2"/>
+    <property name="leverId" type="int" value="2"/>
    </properties>
   </object>
   <object id="57" name="switch" x="1772" y="390" width="64" height="62">
    <properties>
-    <property name="SwitchID" type="int" value="1"/>
+    <property name="switchId" type="int" value="1"/>
    </properties>
   </object>
   <object id="56" name="lever" x="2175" y="483" width="64" height="62">
    <properties>
-    <property name="LeverID" type="int" value="1"/>
+    <property name="leverId" type="int" value="1"/>
    </properties>
   </object>
  </objectgroup>
