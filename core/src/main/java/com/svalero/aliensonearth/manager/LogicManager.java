@@ -68,7 +68,7 @@ public class LogicManager {
         climbing = false;
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
-            if (player.isOnLadderTile(player.getPosition())) {
+            if (player.isOnClimbTile(player.getPosition())) {
                 player.setState(AlienAnimationStatesEnum.CLIMB);
                 player.climb(+PLAYER_SPEED);
                 climbing = true;
@@ -76,7 +76,7 @@ public class LogicManager {
                 player.setIsFacingUp(true);
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.C)){
-            if (player.isOnLadderTile(player.getPosition())) {
+            if (player.isOnClimbTile(player.getPosition())) {
                 player.setState(AlienAnimationStatesEnum.CLIMB);
                 player.climb(-PLAYER_SPEED);
                 climbing = true;
