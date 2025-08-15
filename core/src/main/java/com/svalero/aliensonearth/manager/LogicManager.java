@@ -289,7 +289,7 @@ public class LogicManager {
                 Vector2 playerPos = player.getPosition();
                 float distance = enemyPos.dst(playerPos);
 
-                enemy.setPlayerNearby(distance < 500);
+                enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
             }
 

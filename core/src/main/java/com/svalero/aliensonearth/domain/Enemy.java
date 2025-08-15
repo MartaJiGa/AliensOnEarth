@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.manager.ResourceManager;
@@ -22,8 +23,8 @@ public class Enemy extends Character {
     //region properties
 
     private int lives;
-    private boolean isShort;
-    private boolean isPlayerNearby;
+    private boolean isShort, isPlayerNearby;
+    private float enemyDistanceFromPlayer;
 
     private Boolean isFacingRight;
 
@@ -38,6 +39,8 @@ public class Enemy extends Character {
         super(currentFrame, width, height, position, groundLayer);
 
         this.enemyType = enemyType;
+
+        enemyDistanceFromPlayer = MathUtils.random(150, 350);
 
         isPlayerNearby = false;
         isFacingRight = null;
