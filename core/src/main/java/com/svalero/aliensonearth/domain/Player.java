@@ -3,7 +3,6 @@ package com.svalero.aliensonearth.domain;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -14,8 +13,6 @@ import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.svalero.aliensonearth.Main.db;
-import static com.svalero.aliensonearth.Main.prefs;
 import static com.svalero.aliensonearth.util.Constants.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -78,7 +75,7 @@ public class Player extends Character {
             }
 
             if (!isJustBounced()) {
-                if (!isOnLadderTile(position)) {
+                if (!isOnClimbTile(position)) {
                     getSpeed().y -= GRAVITY;
                 } else {
                     getSpeed().y = 0;

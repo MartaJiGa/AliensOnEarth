@@ -93,7 +93,7 @@ public abstract class Character extends Item {
         return false;
     }
 
-    public boolean isOnLadderTile(Vector2 position) {
+    public boolean isOnClimbTile(Vector2 position) {
         float centerX = position.x + width / 2f;
         float centerY = position.y + height / 2f;
 
@@ -102,8 +102,11 @@ public abstract class Character extends Item {
 
         TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
         if (cell != null && cell.getTile() != null) {
-            Object ladder = cell.getTile().getProperties().get("Ladder");
-            return ladder != null ? true : false;
+            Object climbObject = cell.getTile().getProperties().get("Ladder");
+            if(climbObject != null) return true;
+
+            climbObject = cell.getTile().getProperties().get("Rope");
+            if(climbObject != null) return true;
         }
 
         return false;
