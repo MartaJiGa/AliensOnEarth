@@ -207,7 +207,7 @@ public class Player extends Character {
         rectangle.setPosition(position);
     }
 
-    private boolean isSolidTileBelow() {
+    public boolean isSolidTileBelow() {
         float footX = position.x + width / 2f;
         float footY = position.y - 1f;
 
