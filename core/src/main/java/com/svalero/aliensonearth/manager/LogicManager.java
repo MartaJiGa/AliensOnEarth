@@ -84,13 +84,21 @@ public class LogicManager {
                 player.setIsFacingUp(false);
             }
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
+            if (player.isSolidTileBelow()){
+                player.setState(AlienAnimationStatesEnum.WALK_RIGHT);
+            } else{
+                player.setState(AlienAnimationStatesEnum.JUMP_RIGHT);
+            }
             player.move(PLAYER_SPEED);
             moving = true;
             player.setIsFacingRight(true);
             player.setIsFacingUp(null);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.setState(AlienAnimationStatesEnum.WALK_LEFT);
+            if (player.isSolidTileBelow()){
+                player.setState(AlienAnimationStatesEnum.WALK_LEFT);
+            } else{
+                player.setState(AlienAnimationStatesEnum.JUMP_LEFT);
+            }
             player.move(-PLAYER_SPEED);
             moving = true;
             player.setIsFacingRight(false);
@@ -270,7 +278,7 @@ public class LogicManager {
             }
 
             if(playerEnemyCollisionHitTexture <= 0 || playerEnemyCollisionHitTexture == PLAYER_ENEMY_COLLISION_HIT_TEXTURE_TIME)
-                player.update(dt);
+                player.update(dt, mapWidth);
 
             manageFlyingEnemy(dt);
 
@@ -281,7 +289,7 @@ public class LogicManager {
                 Vector2 playerPos = player.getPosition();
                 float distance = enemyPos.dst(playerPos);
 
-                enemy.setPlayerNearby(distance < 500);
+                enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
             }
 
@@ -336,46 +344,6 @@ public class LogicManager {
                 flyingEnemies.removeIndex(i);
             }
         }
-    }
-
-    public boolean isOnSolidItem(Vector2 position) {
-        Rectangle playerRect = player.getRectangle();
-        float playerBottom = playerRect.y;
-
-        for (Item item : items) {
-            if (item.isSolid()) {
-                Rectangle itemRect = item.getRectangle();
-                float itemTop = itemRect.y + itemRect.height;
-
-                if (playerBottom >= itemTop - 5f && playerBottom <= itemTop + 10f &&
-                    playerRect.x + playerRect.width > itemRect.x &&
-                    playerRect.x < itemRect.x + itemRect.width) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean hitsSolidItemAbove(Vector2 position) {
-        Rectangle playerRect = player.getRectangle();
-        float playerTop = playerRect.y + playerRect.height;
-
-        for (Item item : items) {
-            if (item.isSolid()) {
-                Rectangle itemRect = item.getRectangle();
-                float itemBottom = itemRect.y;
-
-                if (playerTop >= itemBottom - 5f && playerTop <= itemBottom + 10f &&
-                    playerRect.x + playerRect.width > itemRect.x &&
-                    playerRect.x < itemRect.x + itemRect.width) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     public void dispose() {
