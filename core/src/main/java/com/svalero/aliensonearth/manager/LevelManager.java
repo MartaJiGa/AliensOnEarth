@@ -201,9 +201,16 @@ public class LevelManager {
         } else if(item.getImageName().equals(LEVER.getRegionName())){
             Integer leverId = Integer.parseInt(mapObject.getProperties().get("leverId").toString());
             logicManager.items.add(new Lever(item.getTextureRegion(), LEVER_SIZE, LEVER_SIZE, item.getPosition(), imageName, true, leverId));
-            if(leverId == 1) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.RIGHT);
-            if(leverId == 2) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.UP);
+            putLeverOrientations(leverId);
         }
+    }
+
+    private void putLeverOrientations(Integer leverId){
+        if(leverId == 1) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.RIGHT);
+        if(leverId == 2) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.UP);
+        if(leverId == 3) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.LEFT);
+        if(leverId == 4) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.RIGHT);
+        if(leverId == 5) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.LEFT);
     }
 
     private Vector2 getInitialPlayerPositionFromObjectLayer() {

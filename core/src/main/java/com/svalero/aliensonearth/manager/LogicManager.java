@@ -268,18 +268,26 @@ public class LogicManager {
             Boolean orientation2 = checkedOrientations.get(2);
 
             if(orientation1 && orientation2){
-                activateWeight();
+                activateWeight(1);
+            }
+        } else if(pressedSwitch.getSwitchId() == 2){
+            Boolean orientation1 = checkedOrientations.get(3);
+            Boolean orientation2 = checkedOrientations.get(4);
+            Boolean orientation3 = checkedOrientations.get(5);
+
+            if(orientation1 && orientation2 && orientation3){
+                activateWeight(2);
             }
         }
     }
 
-    public void activateWeight(){
+    public void activateWeight(int weightId){
         for (Item itemInList : items) {
             if (itemInList instanceof Weight) {
                 Weight weight = (Weight) itemInList;
                 int id = weight.getWeightId();
 
-                if (id == 1)
+                if (id == weightId)
                     weight.activate();
                 break;
             }
