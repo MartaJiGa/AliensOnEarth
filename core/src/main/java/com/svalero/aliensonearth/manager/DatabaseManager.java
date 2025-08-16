@@ -202,35 +202,27 @@ public class DatabaseManager {
         return -1;
     }
 
-    public void showGameProgress() {
-        String sql = "SELECT * FROM game_progress";
+    public List<String[]> getTop10Scores(int level) {
+        List<String[]> topScores = new ArrayList<>();
+        String sql = "SELECT player_progress.name, game_progress.score FROM game_progress " +
+            "JOIN player_progress ON game_progress.player_id = player_progress.id " +
+            "WHERE game_progress.game_level = ? " +
+            "ORDER BY game_progress.score DESC " +
+            "LIMIT 10";
 
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                System.out.println("Game Level: " + rs.getInt("game_level") +
-                    ", Score: " + rs.getInt("score") +
-                    ", Made at: " + rs.getString("creation_timestamp"));
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, level);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String playerName = rs.getString("name");
+                    int score = rs.getInt("score");
+                    topScores.add(new String[]{playerName, String.valueOf(score)});
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void showPlayerProgress() {
-        String sql = "SELECT * FROM player_progress";
-
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                System.out.println("Name: " + rs.getString("name") +
-                    ", Higher Level Played: " + rs.getInt("higher_level_played") +
-                    ", Player Level: " + rs.getInt("player_level") +
-                    ", Score: " + rs.getInt("global_score"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return topScores;
     }
 
     public void close() {

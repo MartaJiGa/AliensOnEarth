@@ -9,12 +9,16 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.svalero.aliensonearth.manager.LogicManager;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.LabelsEnum;
 
+import java.util.List;
+
+import static com.svalero.aliensonearth.Main.db;
 import static com.svalero.aliensonearth.util.Constants.GAME_NAME;
 
 public class FinishScreen implements Screen {
@@ -152,6 +156,10 @@ public class FinishScreen implements Screen {
     }
 
     public void getFinishScreen(VisTable table){
+        List<String[]> top10 = db.getTop10Scores(logicManager.currentLevel);
+
+        VisLabel top10Label = new VisLabel("Top 10 Scores:");
+
         VisTextButton retryButton = new VisTextButton("Retry");
         retryButton.addListener(new ClickListener() {
             @Override
@@ -190,14 +198,31 @@ public class FinishScreen implements Screen {
 
         table.row();
         table.add(ResourceManager.getLabel(LabelsEnum.FINISH)).center();
+
         table.row().padTop(60);
-        table.add(retryButton).center();
+        table.add(top10Label).colspan(2).center();
+
         table.row().padTop(10);
-        table.add(playNextButton).center();
-        table.row().padTop(10);
-        table.add(mainMenuButton).center();
-        table.row().padTop(10);
-        table.add(exitButton).center();
+        int rank = 1;
+        for(String[] entry : top10){
+            String playerName = entry[0];
+            String score = entry[1];
+            VisLabel scoreLabel = new VisLabel(rank + ". " + playerName + " - " + score);
+            table.add(scoreLabel).colspan(2).center();
+            table.row().padTop(5);
+            rank++;
+        }
+
+        table.row().padTop(30);
+        VisTable buttonRow = new VisTable();
+
+        buttonRow.center();
+        buttonRow.add(retryButton).expandX().uniform().padRight(10);
+        buttonRow.add(playNextButton).expandX().uniform().padRight(10);
+        buttonRow.add(mainMenuButton).expandX().uniform().padRight(10);
+        buttonRow.add(exitButton).expandX().uniform();
+
+        table.add(buttonRow).center().fillX();
     }
 
     //endregion
