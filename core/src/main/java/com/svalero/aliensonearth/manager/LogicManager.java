@@ -254,7 +254,6 @@ public class LogicManager {
 
                 if (id == 1)
                     weight.activate();
-                    weight.setFinished(true);
                 break;
             }
         }

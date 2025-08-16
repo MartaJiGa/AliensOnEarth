@@ -39,6 +39,12 @@ public class Weight extends Item {
     }
 
     @Override
+    public void setPosition(Vector2 newPosition) {
+        super.setPosition(newPosition);
+        rectangle.setPosition(newPosition.x, newPosition.y);
+    }
+
+    @Override
     public void update(float dt) {
         if (isActivated()) {
             float gravityMultiplier = 10f;
@@ -54,6 +60,7 @@ public class Weight extends Item {
 
                 velocity.y = 0;
                 setActivated(false);
+                finished = true;
             }
         }
     }
