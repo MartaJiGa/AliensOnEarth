@@ -4,9 +4,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.VisUI;
@@ -115,9 +117,45 @@ public class SettingsScreen implements Screen {
         VisLabel newPlayerLabel = new VisLabel("New player");
         VisTextField newPlayerTextField = new VisTextField();
 
+        VisTextButton deletePlayerButton = new VisTextButton("Delete player");
+        deletePlayerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                final String selectedPlayer = playerSelectBox.getSelected();
+                if (selectedPlayer == null) return;
+
+                VisDialog confirmDialog = new VisDialog("Confirm delete") {
+                    @Override
+                    protected void result(Object obj) {
+                        if ((Boolean) obj) { // If the user has selected "yes"
+                            db.deletePlayerFromSelectBoxByName(selectedPlayer);
+
+                            playerSelectBox.clearItems();
+                            playerSelectBox.setItems(db.getAllPlayers().toArray(new String[0]));
+
+                            if (playerSelectBox.getItems().size > 0) {
+                                playerSelectBox.setSelectedIndex(0);
+                                prefs.putString(PrefsNamesEnum.PLAYER_NAME.getPrefsName(),
+                                    playerSelectBox.getSelected());
+                            } else {
+                                prefs.putString(PrefsNamesEnum.PLAYER_NAME.getPrefsName(), "Anonymous");
+                            }
+                            prefs.flush();
+                        }
+                    }
+                };
+
+                confirmDialog.text("Are you sure you want to delete \"" + selectedPlayer + "\"?");
+                confirmDialog.button("Yes", true);
+                confirmDialog.button("No", false);
+                confirmDialog.show(stage);
+            }
+        });
+
         VisTable selectPlayerTable = new VisTable(true);
         selectPlayerTable.add(playerLabel).padRight(10).left();
         selectPlayerTable.add(playerSelectBox).width(400);
+        selectPlayerTable.add(deletePlayerButton);
 
         VisTable newPlayerTable = new VisTable(true);
         newPlayerTable.add(newPlayerLabel).padRight(10).left();
