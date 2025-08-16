@@ -26,7 +26,8 @@ public class DatabaseManager {
             "higher_level_played INTEGER NOT NULL, " +
             "last_level_played INTEGER NOT NULL, " +
             "player_level INTEGER NOT NULL, " +
-            "global_score INTEGER NOT NULL" +
+            "global_score INTEGER NOT NULL, " +
+            "selectable_player INTEGER NOT NULL" +
             ")";
 
         String sql2 = "CREATE TABLE IF NOT EXISTS game_progress (" +
@@ -64,13 +65,14 @@ public class DatabaseManager {
 
     public void savePlayerProgress(String name, int higherLevelPlayed, int lastLevelPlayed, int playerLevel, int globalScore, int playerId) {
         if(playerId == -1){
-            String sql = "INSERT INTO player_progress(name, higher_level_played, last_level_played, player_level, global_score) VALUES(?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO player_progress(name, higher_level_played, last_level_played, player_level, global_score, selectable_player) VALUES(?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, name);
                 pstmt.setInt(2, higherLevelPlayed);
                 pstmt.setInt(3, lastLevelPlayed);
                 pstmt.setInt(4, playerLevel);
                 pstmt.setInt(5, globalScore);
+                pstmt.setInt(6, 1);
                 pstmt.executeUpdate();
                 System.out.println("Progress saved.");
             } catch (SQLException e) {
@@ -93,9 +95,20 @@ public class DatabaseManager {
         }
     }
 
+    public void deletePlayerFromSelectBoxByName(String name) {
+        String sql = "UPDATE player_progress SET selectable_player = ? WHERE name = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, 0);
+            pstmt.setString(2, name);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<String> getAllPlayers() {
         List<String> players = new ArrayList<>();
-        String sql = "SELECT name FROM player_progress";
+        String sql = "SELECT name FROM player_progress WHERE selectable_player = 1";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
             try (ResultSet rs = pstmt.executeQuery()) {
