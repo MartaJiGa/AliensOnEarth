@@ -6099,14 +6099,12 @@
  </tile>
  <tile id="1110">
   <properties>
-   <property name="Ground" value="Bridge"/>
-   <property name="Solid" value="true"/>
+   <property name="Bridge" type="int" value="0"/>
   </properties>
  </tile>
  <tile id="1111">
   <properties>
-   <property name="Ground" value="Bridge"/>
-   <property name="Solid" value="true"/>
+   <property name="Bridge" type="int" value="0"/>
   </properties>
  </tile>
  <tile id="1112">
@@ -6291,14 +6289,12 @@
  </tile>
  <tile id="1146">
   <properties>
-   <property name="Ground" value="Bridge"/>
-   <property name="Solid" value="true"/>
+   <property name="Bridge" type="int" value="0"/>
   </properties>
  </tile>
  <tile id="1147">
   <properties>
-   <property name="Ground" value="Bridge"/>
-   <property name="Solid" value="true"/>
+   <property name="Bridge" type="int" value="0"/>
   </properties>
  </tile>
  <tile id="1148">

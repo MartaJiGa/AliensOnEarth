@@ -431,18 +431,15 @@ public class LogicManager {
             for(int i = 0; i < fireballs.size; i++){
                 Fireball fireball = fireballs.get(i);
 
-                // Actualizar posición
                 fireball.getPosition().add(fireball.getVelocity().cpy().scl(dt));
                 fireball.getRectangle().setPosition(fireball.getPosition());
 
-                // Colisiones con el jugador
                 if (fireball.getRectangle().overlaps(player.getRectangle())) {
-                    player.reduceLives(2);
+                    player.reduceLives(1);
                     fireballs.removeIndex(i);
                     continue;
                 }
 
-                // Eliminar fireballs que salgan de la pantalla
                 if (fireball.getPosition().x < 0 || fireball.getPosition().x > mapWidth ||
                     fireball.getPosition().y < 0 || fireball.getPosition().y > mapHeight) {
                     fireballs.removeIndex(i);
