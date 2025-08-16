@@ -408,7 +408,7 @@ public class LogicManager {
 
                 enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
-                if(enemy.equals(Barnacle.class)){
+                if(enemy instanceof Barnacle){
                     Barnacle barnacle = (Barnacle)enemy;
 
                     if(barnacle.getTimeSinceLastAttack() >= barnacle.getAttackCooldown()){
