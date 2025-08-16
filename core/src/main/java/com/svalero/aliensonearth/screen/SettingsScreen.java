@@ -114,7 +114,7 @@ public class SettingsScreen implements Screen {
         playerSelectBox.setItems(db.getAllPlayers().toArray(new String[0]));
         playerSelectBox.setSelected(prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName()));
 
-        VisLabel newPlayerLabel = new VisLabel("New player");
+        VisLabel newPlayerLabel = new VisLabel("Player name");
         VisTextField newPlayerTextField = new VisTextField();
 
         VisTextButton deletePlayerButton = new VisTextButton("Delete player");
@@ -197,10 +197,14 @@ public class SettingsScreen implements Screen {
                     if(!duplicateName){
                         db.savePlayerProgress(newPlayerTextField.getText(), 1, 1, 1, 0, -1);
                         prefs.putString(PrefsNamesEnum.PLAYER_NAME.getPrefsName(), newPlayerTextField.getText());
+
                         playerSelectBox.clearItems();
                         playerSelectBox.setItems(db.getAllPlayers().toArray(new String[0]));
                         playerSelectBox.setSelected(prefs.getString(PrefsNamesEnum.PLAYER_NAME.getPrefsName()));
+
                         newPlayerCheckBox.setChecked(false);
+                        selectPlayerTable.setVisible(true);
+                        newPlayerTable.setVisible(false);
                     }
 
                     newPlayerTextField.setText("");
@@ -230,25 +234,26 @@ public class SettingsScreen implements Screen {
         });
 
         table.row();
-        table.add(ResourceManager.getLabel(LabelsEnum.SETTINGS)).center();
+        table.add(ResourceManager.getLabel(LabelsEnum.SETTINGS)).colspan(2).expandX().center();
 
         table.row().padTop(60);
-        table.add(musicCheckBox).left().padLeft(50);
+        table.add(musicCheckBox).left().padLeft(100);
 
         table.row().padTop(15);
-        table.add(musicVolumeLabel).left().padLeft(50);
-        table.add(musicVolumeSlider).left().padLeft(50);
+        table.add(musicVolumeLabel).left().padLeft(100);
+        table.add(musicVolumeSlider).left().padLeft(100);
 
         table.row().padTop(15);
-        table.add(newPlayerCheckBox).left().padLeft(50);
+        table.add(newPlayerCheckBox).left().padLeft(100);
         table.add(playerStack).colspan(2).expandX().fillX();
 
         table.row().padTop(30);
-        table.add(settingsSaved).center();
+        table.add(settingsSaved).colspan(2).expandX().left().padLeft(100).width(600);
+        settingsSaved.setWrap(true);
 
         table.row().padTop(10);
-        table.add(saveButton).right();
-        table.add(returnButton).right().padRight(50);
+        table.add(saveButton).colspan(2).expandX().right();
+        table.add(returnButton).colspan(2).expandX().right().padRight(120);
 
         Gdx.input.setInputProcessor(stage);
     }
