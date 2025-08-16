@@ -11,6 +11,7 @@ import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.states.*;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
+import com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,7 +27,7 @@ public class Enemy extends Character {
     private boolean isShort, isPlayerNearby;
     private float enemyDistanceFromPlayer;
 
-    private Boolean isFacingRight;
+    private Boolean isFacingRight, alive;
 
     private Animation<TextureRegion> wormLeftAnimation, wormRightAnimation, attackAnimation, beeAnimation, flyAnimation;
     private EnemyAnimationStatesEnum state;
@@ -40,9 +41,8 @@ public class Enemy extends Character {
 
         this.enemyType = enemyType;
 
-        enemyDistanceFromPlayer = MathUtils.random(150, 350);
-
         isPlayerNearby = false;
+        alive = true;
         isFacingRight = null;
 
         if(enemyType.equals(EnemyTypeEnum.WORM)){
@@ -57,8 +57,13 @@ public class Enemy extends Character {
             formFlyAnimation(EnemyTexturesEnum.FLY_A.getRegionName(), EnemyTexturesEnum.FLY_B.getRegionName());
         } else if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
             state = state.REST;
-            //TODO: Crear animación de ataque
+            formAttackAnimation(EnemyTexturesEnum.BARNACLE_ATTACK_A.getRegionName(), EnemyTexturesEnum.BARNACLE_ATTACK_B.getRegionName());
         }
+
+        if(enemyType.equals(EnemyTypeEnum.BARNACLE))
+            enemyDistanceFromPlayer = 390;
+        else
+            enemyDistanceFromPlayer = MathUtils.random(150, 350);
     }
 
     //endregion
@@ -97,6 +102,9 @@ public class Enemy extends Character {
             } else {
                 isFacingRight = !isFacingRight;
             }
+        } else if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
+            state = EnemyAnimationStatesEnum.ATTACK;
+            launchFireballAtPlayer();
         }
     }
 
@@ -162,6 +170,13 @@ public class Enemy extends Character {
         flyAnimation = new Animation<>(0.1f, frames);
     }
 
+    public void formAttackAnimation(String textureA, String textureB) {
+        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
+        frames.addAll(ResourceManager.getEnemyRegions(textureA));
+        frames.addAll(ResourceManager.getEnemyRegions(textureB));
+        attackAnimation = new Animation<>(0.1f, frames);
+    }
+
     private boolean canMove(int direction) {
         float nextX = direction > 0 ? position.x + width : position.x - 1;
         float footY = position.y + 5f;
@@ -172,6 +187,10 @@ public class Enemy extends Character {
 
     public void setPlayerNearby(boolean nearby) {
         this.isPlayerNearby = nearby;
+    }
+
+    public void launchFireballAtPlayer(){
+//        Item fireball = ResourceManager.getInteractionTexture(InteractionTexturesEnum.FIREBALL.getRegionName());
     }
 
     //endregion
