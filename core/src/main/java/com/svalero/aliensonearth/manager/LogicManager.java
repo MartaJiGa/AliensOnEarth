@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.svalero.aliensonearth.domain.*;
 import com.svalero.aliensonearth.domain.coin.*;
+import com.svalero.aliensonearth.domain.enemies.Barnacle;
+import com.svalero.aliensonearth.domain.enemies.FlyingEnemy;
 import com.svalero.aliensonearth.domain.interactionObject.Lever;
 import com.svalero.aliensonearth.domain.interactionObject.Switch;
 import com.svalero.aliensonearth.domain.interactionObject.Weight;
@@ -406,9 +408,13 @@ public class LogicManager {
 
                 enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
-                if(enemy.getTimeSinceLastAttack() >= enemy.getAttackCooldown()){
-                    fireballs.add(enemy.launchFireballAtPlayer(player));
-                    enemy.setTimeSinceLastAttack(0f);
+                if(enemy instanceof Barnacle){
+                    Barnacle barnacle = (Barnacle)enemy;
+
+                    if(barnacle.getTimeSinceLastAttack() >= barnacle.getAttackCooldown()){
+                        fireballs.add(barnacle.launchFireballAtPlayer(player));
+                        barnacle.setTimeSinceLastAttack(0f);
+                    }
                 }
 
                 for (int j = 0; j < items.size; j++){

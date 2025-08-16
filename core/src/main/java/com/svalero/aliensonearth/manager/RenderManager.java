@@ -9,7 +9,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Fireball;
-import com.svalero.aliensonearth.domain.FlyingEnemy;
+import com.svalero.aliensonearth.domain.enemies.FlyingEnemy;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.coin.Coin;
 
