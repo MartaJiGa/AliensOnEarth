@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Item;
+import com.svalero.aliensonearth.domain.enemies.Barnacle;
+import com.svalero.aliensonearth.domain.enemies.Worm;
 import com.svalero.aliensonearth.domain.interactionObject.Lever;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.BronzeCoin;
@@ -179,11 +181,11 @@ public class LevelManager {
         if(item.getImageName().equals(EnemyTexturesEnum.WORM_REST.getRegionName())){
             width = 64; height = 32;
             Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
-            logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.WORM));
+            logicManager.enemies.add(new Worm(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.WORM));
         } else if(item.getImageName().equals(EnemyTexturesEnum.BARNACLE_REST.getRegionName())){
             width = 64; height = 64;
             Vector2 groundedPosition = getGroundedEnemyPosition(item.getPosition(), width);
-            logicManager.enemies.add(new Enemy(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.BARNACLE));
+            logicManager.enemies.add(new Barnacle(item.getTextureRegion(), groundedPosition, width, height, groundLayer, EnemyTypeEnum.BARNACLE));
         }
     }
 

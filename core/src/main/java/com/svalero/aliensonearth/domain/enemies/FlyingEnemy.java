@@ -1,8 +1,9 @@
-package com.svalero.aliensonearth.domain;
+package com.svalero.aliensonearth.domain.enemies;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.states.EnemyAnimationStatesEnum;
 import lombok.Data;
