@@ -309,7 +309,9 @@ public class LogicManager {
 
             manageCollisions();
 
-            for (Item item : items) {
+            // Iterate item list
+            for (int i = 0; i < items.size; i++) {
+                Item item = items.get(i);
                 if (item.getImageName().equals(SPRING)) {
                     Rectangle springRect = item.getRectangle();
                     Rectangle playerRect = player.getRectangle();
@@ -351,6 +353,11 @@ public class LogicManager {
                             }
                         }, 0.75f);
                     }
+                } else if(item.getImageName().equals(WEIGHT.getRegionName())){
+                    Weight weight = (Weight) item;
+                    if (weight.shouldRemove(dt)) {
+                        items.removeIndex(i);
+                    }
                 }
             }
 
@@ -359,6 +366,7 @@ public class LogicManager {
 
             manageFlyingEnemy(dt);
 
+            // Iterate enemy list
             for(int i = 0; i < enemies.size; i++){
                 Enemy enemy = enemies.get(i);
 
@@ -375,7 +383,7 @@ public class LogicManager {
                         if (weight.isFinished()) {
                             if (weight.getRectangle().overlaps(enemy.getRectangle())) {
                                 enemies.removeIndex(i);
-                                items.removeIndex(j);
+                                weight.markForRemoval();
                                 //TODO: Poner sonido
                                 //ResourceManager.getSound(SoundsEnum.HIT).play();
                                 break;
