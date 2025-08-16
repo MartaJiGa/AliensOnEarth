@@ -33,8 +33,9 @@ public class Constants {
     public static final int UFO_WIDTH = 121;
     public static final int UFO_HEIGHT = 109;
     public static final int SPRING_HEIGHT = 44;
-    public static final int FIREBALL_HEIGHT = 34;
-    public static final int FIREBALL_WIDTH = 34;
+    public static final int FIREBALL_SIZE = 34;
+    public static final int SWITCH_SIZE = 45;
+    public static final int LEVER_SIZE = 60;
     public static final int SPRING_JUMP_FORCE = 500;
 
     //endregion

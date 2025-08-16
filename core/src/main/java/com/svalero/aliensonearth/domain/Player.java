@@ -212,13 +212,6 @@ public class Player extends Character {
         rectangle.setPosition(position);
     }
 
-    public boolean isSolidTileBelow() {
-        float footX = position.x + width / 2f;
-        float footY = position.y - 1f;
-
-        return isSolid(footX, footY);
-    }
-
     public void jump(){
         if(!isJumping()){
             getSpeed().y = PLAYER_JUMPING_SPEED;

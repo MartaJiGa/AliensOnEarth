@@ -17,6 +17,7 @@ import com.svalero.aliensonearth.domain.coin.SilverCoin;
 import com.svalero.aliensonearth.domain.interactionObject.Switch;
 import com.svalero.aliensonearth.domain.interactionObject.Weight;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
+import com.svalero.aliensonearth.util.enums.LeverOrientationEnum;
 import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
@@ -193,13 +194,15 @@ public class LevelManager {
             logicManager.items.add(new Item(item.getTextureRegion(), STANDARD_OBJECT_SIZE, SPRING_HEIGHT, item.getPosition(), imageName, true));
         } else if(item.getImageName().equals(WEIGHT.getRegionName())){
             Integer weightId = Integer.parseInt(mapObject.getProperties().get("weightId").toString());
-            logicManager.items.add(new Weight(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true, weightId));
+            logicManager.items.add(new Weight(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true, weightId, groundLayer));
         } else if(item.getImageName().equals(SWITCH.getRegionName())){
             Integer switchId = Integer.parseInt(mapObject.getProperties().get("switchId").toString());
-            logicManager.items.add(new Switch(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true, switchId));
+            logicManager.items.add(new Switch(item.getTextureRegion(), SWITCH_SIZE, SWITCH_SIZE, item.getPosition(), imageName, true, switchId));
         } else if(item.getImageName().equals(LEVER.getRegionName())){
             Integer leverId = Integer.parseInt(mapObject.getProperties().get("leverId").toString());
-            logicManager.items.add(new Lever(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true, leverId));
+            logicManager.items.add(new Lever(item.getTextureRegion(), LEVER_SIZE, LEVER_SIZE, item.getPosition(), imageName, true, leverId));
+            if(leverId == 1) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.UP);
+            if(leverId == 2) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.UP);
         }
     }
 

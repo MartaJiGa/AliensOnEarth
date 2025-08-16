@@ -167,7 +167,7 @@ public class Enemy extends Character {
         float footY = position.y + 5f;
         float headY = position.y + height - 5f;
 
-        return !isSolid(nextX, footY) && !isSolid(nextX, headY);
+        return !isSolidTile(nextX, footY) && !isSolidTile(nextX, headY);
     }
 
     public void setPlayerNearby(boolean nearby) {
