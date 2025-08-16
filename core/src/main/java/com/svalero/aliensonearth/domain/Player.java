@@ -233,8 +233,8 @@ public class Player extends Character {
         this.globalScore += points;
     }
 
-    public void reduceLives(){
-        this.lives -= 1;
+    public void reduceLives(int lives){
+        this.lives -= lives;
     }
 
     public float getX(){

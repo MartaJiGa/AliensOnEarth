@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.LeverOrientationEnum;
-import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

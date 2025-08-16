@@ -24,6 +24,7 @@ public class Constants {
 
     public static final int ENEMY_SPEED = 2;
     public static final float ENEMY_COLLISION_COOLDOWN_TIME = 2f; //Number of seconds the program can't make the collision consequences.
+    public static final float BARNACLE_DISTANCE_FROM_PLAYER = 390f;
 
     //endregion
 

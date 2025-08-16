@@ -23,11 +23,9 @@ public class Item {
     private TiledMapTileLayer groundLayer;
     protected String imageName;
     protected Vector2 position;
-    protected int width;
-    protected int height;
     protected Rectangle rectangle;
-    private boolean isSolid;
-    private boolean activated;
+    protected int width, height;
+    private boolean isSolid, activated;
     private float activationTime;
 
     //endregion

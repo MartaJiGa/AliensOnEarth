@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-import com.svalero.aliensonearth.domain.Enemy;
-import com.svalero.aliensonearth.domain.FlyingEnemy;
-import com.svalero.aliensonearth.domain.Item;
-import com.svalero.aliensonearth.domain.Player;
+import com.svalero.aliensonearth.domain.*;
 import com.svalero.aliensonearth.domain.coin.*;
 import com.svalero.aliensonearth.domain.interactionObject.Lever;
 import com.svalero.aliensonearth.domain.interactionObject.Switch;
@@ -37,10 +34,11 @@ public class LogicManager {
     protected Array<Item> items;
     protected Array<Enemy> enemies;
     protected Array<FlyingEnemy> flyingEnemies;
+    protected Array<Fireball> fireballs;
     protected Item fullHubHeart, halfHubHeart, emptyHubHeart;
     protected HashMap<Integer, LeverOrientationEnum> leverOrientations;
     private boolean isPaused, isFinished, isDead, moving, jumping, climbing;
-    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval, mapWidth;
+    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval, mapWidth, mapHeight;
     public int currentLevel;
 
     //endregion
@@ -58,6 +56,7 @@ public class LogicManager {
         spawnInterval = 2f;
 
         flyingEnemies = new Array<>();
+        fireballs = new Array<>();
         leverOrientations = new HashMap<>();
 
         fullHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_FULL.getRegionName()), 30,30);
@@ -209,7 +208,7 @@ public class LogicManager {
     }
 
     public void makeEnemyCollisionConsequences(){
-        player.reduceLives();
+        player.reduceLives(1);
         player.setState(AlienAnimationStatesEnum.HIT);
         ResourceManager.getSound(SoundsEnum.HURT).play();
 
@@ -399,6 +398,11 @@ public class LogicManager {
 
                 enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
+                if(enemy.getTimeSinceLastAttack() >= enemy.getAttackCooldown()){
+                    fireballs.add(enemy.launchFireballAtPlayer(player));
+                    enemy.setTimeSinceLastAttack(0f);
+                }
+
                 for (int j = 0; j < items.size; j++){
                     if (items.get(j) instanceof Weight) {
                         Weight weight = (Weight) items.get(j);
@@ -422,14 +426,33 @@ public class LogicManager {
             if (playerEnemyCollisionHitTexture > 0)
                 playerEnemyCollisionHitTexture -= dt;
 
+
+            // Iterate fireball list
+            for(int i = 0; i < fireballs.size; i++){
+                Fireball fireball = fireballs.get(i);
+
+                // Actualizar posición
+                fireball.getPosition().add(fireball.getVelocity().cpy().scl(dt));
+                fireball.getRectangle().setPosition(fireball.getPosition());
+
+                // Colisiones con el jugador
+                if (fireball.getRectangle().overlaps(player.getRectangle())) {
+                    player.reduceLives(2);
+                    fireballs.removeIndex(i);
+                    continue;
+                }
+
+                // Eliminar fireballs que salgan de la pantalla
+                if (fireball.getPosition().x < 0 || fireball.getPosition().x > mapWidth ||
+                    fireball.getPosition().y < 0 || fireball.getPosition().y > mapHeight) {
+                    fireballs.removeIndex(i);
+                }
+            }
+
             for (Item item : items) {
                 item.update(dt);
             }
         }
-    }
-
-    public void setMapWidth(float mapWidth) {
-        this.mapWidth = mapWidth;
     }
 
     public void manageFlyingEnemy(float dt) {
@@ -467,6 +490,14 @@ public class LogicManager {
                 flyingEnemies.removeIndex(i);
             }
         }
+    }
+
+    public void setMapWidth(float mapWidth) {
+        this.mapWidth = mapWidth;
+    }
+
+    public void setMapHeight(float mapHeight) {
+        this.mapHeight = mapHeight;
     }
 
     public void dispose() {

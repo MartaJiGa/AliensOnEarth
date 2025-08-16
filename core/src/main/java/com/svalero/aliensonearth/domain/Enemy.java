@@ -15,8 +15,7 @@ import com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.svalero.aliensonearth.util.Constants.ENEMY_SPEED;
-import static com.svalero.aliensonearth.util.Constants.GRAVITY;
+import static com.svalero.aliensonearth.util.Constants.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -25,7 +24,7 @@ public class Enemy extends Character {
 
     private int lives;
     private boolean isShort, isPlayerNearby;
-    private float enemyDistanceFromPlayer;
+    private float enemyDistanceFromPlayer, attackCooldown, timeSinceLastAttack;
 
     private Boolean isFacingRight, alive;
 
@@ -60,8 +59,11 @@ public class Enemy extends Character {
             formAttackAnimation(EnemyTexturesEnum.BARNACLE_ATTACK_A.getRegionName(), EnemyTexturesEnum.BARNACLE_ATTACK_B.getRegionName());
         }
 
-        if(enemyType.equals(EnemyTypeEnum.BARNACLE))
-            enemyDistanceFromPlayer = 390;
+        if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
+            enemyDistanceFromPlayer = BARNACLE_DISTANCE_FROM_PLAYER;
+            attackCooldown = ENEMY_COLLISION_COOLDOWN_TIME;
+            timeSinceLastAttack = 0f;
+        }
         else
             enemyDistanceFromPlayer = MathUtils.random(150, 350);
     }
@@ -104,7 +106,7 @@ public class Enemy extends Character {
             }
         } else if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
             state = EnemyAnimationStatesEnum.ATTACK;
-            launchFireballAtPlayer();
+            timeSinceLastAttack += dt;
         }
     }
 
@@ -189,8 +191,18 @@ public class Enemy extends Character {
         this.isPlayerNearby = nearby;
     }
 
-    public void launchFireballAtPlayer(){
-//        Item fireball = ResourceManager.getInteractionTexture(InteractionTexturesEnum.FIREBALL.getRegionName());
+    public Fireball launchFireballAtPlayer(Player player){
+        Vector2 fireballPosition = new Vector2(position.x + width / 2, position.y + height / 2);
+        TextureRegion fireballTexture = ResourceManager.getInteractionTexture(InteractionTexturesEnum.FIREBALL.getRegionName());
+
+        Fireball fireball = new Fireball(fireballTexture, fireballPosition);
+
+        Vector2 direction = new Vector2(player.getPosition()).sub(fireballPosition).nor();
+
+        float fireballSpeed = MathUtils.random(200, 300);
+        fireball.setVelocity(direction.scl(fireballSpeed));
+
+        return fireball;
     }
 
     //endregion

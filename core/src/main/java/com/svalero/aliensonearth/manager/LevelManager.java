@@ -71,7 +71,7 @@ public class LevelManager {
             case -1:
             case 1:
                 map = new TmxMapLoader().load(TILE_LEVEL1);
-                setMapWidth();
+                setMapSize();
                 prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                 break;
             case 2:
@@ -79,20 +79,20 @@ public class LevelManager {
                     int lastLevelPlayed = db.getLastLevelPlayed(playerId);
                     if(lastLevelPlayed == 1 && prefs.getInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName()) == 1){
                         map = new TmxMapLoader().load(TILE_LEVEL1);
-                        setMapWidth();
+                        setMapSize();
                         prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                     } else {
                         map = new TmxMapLoader().load(TILE_LEVEL2);
-                        setMapWidth();
+                        setMapSize();
                         prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 2);
                     }
                 } else if(!retryLevel){
                     map = new TmxMapLoader().load(TILE_LEVEL2);
-                    setMapWidth();
+                    setMapSize();
                     prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 2);
                 }else{
                     map = new TmxMapLoader().load(TILE_LEVEL1);
-                    setMapWidth();
+                    setMapSize();
                     prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                 }
 
@@ -241,9 +241,12 @@ public class LevelManager {
         return originalPosition;
     }
 
-    private void setMapWidth(){
+    private void setMapSize(){
         logicManager.setMapWidth(map.getProperties().get("width", Integer.class)
             * map.getProperties().get("tilewidth", Integer.class));
+
+        logicManager.setMapHeight(map.getProperties().get("height", Integer.class)
+            * map.getProperties().get("tileheight", Integer.class));
     }
 
     //endregion
