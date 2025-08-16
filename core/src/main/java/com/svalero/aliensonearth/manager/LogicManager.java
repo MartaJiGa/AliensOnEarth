@@ -368,14 +368,14 @@ public class LogicManager {
 
                 enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
-
-                for (Item item : items) {
-                    if (item instanceof Weight) {
-                        Weight weight = (Weight) item;
+                for (int j = 0; j < items.size; j++){
+                    if (items.get(j) instanceof Weight) {
+                        Weight weight = (Weight) items.get(j);
 
                         if (weight.isFinished()) {
                             if (weight.getRectangle().overlaps(enemy.getRectangle())) {
                                 enemies.removeIndex(i);
+                                items.removeIndex(j);
                                 //TODO: Poner sonido
                                 //ResourceManager.getSound(SoundsEnum.HIT).play();
                                 break;
