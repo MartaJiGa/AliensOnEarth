@@ -214,10 +214,15 @@ public class FinishScreen implements Screen {
         }
 
         table.row().padTop(30);
-        table.add(retryButton).center();
-        table.add(playNextButton).center();
-        table.add(mainMenuButton).center();
-        table.add(exitButton).center();
+        VisTable buttonRow = new VisTable();
+
+        buttonRow.center();
+        buttonRow.add(retryButton).expandX().uniform().padRight(10);
+        buttonRow.add(playNextButton).expandX().uniform().padRight(10);
+        buttonRow.add(mainMenuButton).expandX().uniform().padRight(10);
+        buttonRow.add(exitButton).expandX().uniform();
+
+        table.add(buttonRow).center().fillX();
     }
 
     //endregion
