@@ -17,8 +17,6 @@ public class Weight extends Item {
     private int weightId;
     private Vector2 velocity;
     private boolean finished;
-    private boolean pendingRemoval;
-    private float removalTimer;
 
     //endregion
 
@@ -29,8 +27,6 @@ public class Weight extends Item {
 
         this.weightId = weightId;
         velocity = new Vector2(0, 0);
-        pendingRemoval = false;
-        removalTimer = 1f;
     }
 
     //endregion
@@ -67,23 +63,6 @@ public class Weight extends Item {
                 finished = true;
             }
         }
-    }
-
-    //endregion
-
-    //region Methods
-
-    public void markForRemoval() {
-        pendingRemoval = true;
-        removalTimer = 1f;
-    }
-
-    public boolean shouldRemove(float dt) {
-        if (pendingRemoval) {
-            removalTimer -= dt;
-            return removalTimer <= 0;
-        }
-        return false;
     }
 
     //endregion

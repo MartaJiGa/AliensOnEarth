@@ -74,7 +74,21 @@ public class LogicManager {
         jumping = false;
         climbing = false;
 
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
+        Lever leverNearby;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.V) && Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            leverNearby = getLeverWhenPlayerIsNear();
+            if (leverNearby != null)
+                leverNearby.changeOrientation(LeverOrientationEnum.LEFT);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.V) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            leverNearby = getLeverWhenPlayerIsNear();
+            if (leverNearby != null)
+                leverNearby.changeOrientation(LeverOrientationEnum.RIGHT);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.V) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            leverNearby = getLeverWhenPlayerIsNear();
+            if (leverNearby != null)
+                leverNearby.changeOrientation(LeverOrientationEnum.UP);
+        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
             if (player.isOnClimbTile(player.getPosition())) {
                 player.setState(AlienAnimationStatesEnum.CLIMB);
                 player.climb(+PLAYER_SPEED);
@@ -171,6 +185,20 @@ public class LogicManager {
                 makeItemCollisionConsequences(item);
             }
         }
+    }
+
+    private Lever getLeverWhenPlayerIsNear() {
+        Rectangle playerRect = player.getRectangle();
+
+        for (Item item : items) {
+            if (item instanceof Lever) {
+                Lever lever = (Lever) item;
+                if (lever.getRectangle().overlaps(playerRect)) {
+                    return lever;
+                }
+            }
+        }
+        return null;
     }
 
     public void makeCoinCollisionConsequences(Coin coin){
@@ -353,11 +381,6 @@ public class LogicManager {
                             }
                         }, 0.75f);
                     }
-                } else if(item.getImageName().equals(WEIGHT.getRegionName())){
-                    Weight weight = (Weight) item;
-                    if (weight.shouldRemove(dt)) {
-                        items.removeIndex(i);
-                    }
                 }
             }
 
@@ -383,7 +406,7 @@ public class LogicManager {
                         if (weight.isFinished()) {
                             if (weight.getRectangle().overlaps(enemy.getRectangle())) {
                                 enemies.removeIndex(i);
-                                weight.markForRemoval();
+                                items.removeIndex(j);
                                 //TODO: Poner sonido
                                 //ResourceManager.getSound(SoundsEnum.HIT).play();
                                 break;
