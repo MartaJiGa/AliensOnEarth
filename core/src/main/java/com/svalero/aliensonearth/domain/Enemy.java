@@ -1,17 +1,13 @@
 package com.svalero.aliensonearth.domain;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.states.*;
-import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
-import com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -44,14 +40,6 @@ public class Enemy extends Character {
         alive = true;
         isFacingRight = null;
 
-        if(enemyType.equals(EnemyTypeEnum.BEE)){
-            state = state.FLY_LEFT;
-            formBeeAnimation(EnemyTexturesEnum.BEE_A.getRegionName(), EnemyTexturesEnum.BEE_B.getRegionName());
-        } else if(enemyType.equals(EnemyTypeEnum.FLY)){
-            state = state.FLY_LEFT;
-            formFlyAnimation(EnemyTexturesEnum.FLY_A.getRegionName(), EnemyTexturesEnum.FLY_B.getRegionName());
-        }
-
         enemyDistanceFromPlayer = MathUtils.random(150, 350);
     }
 
@@ -83,27 +71,7 @@ public class Enemy extends Character {
             case REST:
                 textureRegion = ResourceManager.getEnemyTexture(enemyName);
                 break;
-            case FLY_LEFT:
-                if(enemyName.equals(EnemyTypeEnum.BEE.name()))
-                    textureRegion = beeAnimation.getKeyFrame(super.getStateTime(), true);
-                if(enemyName.equals(EnemyTypeEnum.FLY.name()))
-                    textureRegion = flyAnimation.getKeyFrame(super.getStateTime(), true);
-                break;
         }
-    }
-
-    public void formBeeAnimation(String textureA, String textureB) {
-        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
-        frames.addAll(ResourceManager.getEnemyRegions(textureA));
-        frames.addAll(ResourceManager.getEnemyRegions(textureB));
-        beeAnimation = new Animation<>(0.1f, frames);
-    }
-
-    public void formFlyAnimation(String textureA, String textureB) {
-        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
-        frames.addAll(ResourceManager.getEnemyRegions(textureA));
-        frames.addAll(ResourceManager.getEnemyRegions(textureB));
-        flyAnimation = new Animation<>(0.1f, frames);
     }
 
     public void setPlayerNearby(boolean nearby) {
