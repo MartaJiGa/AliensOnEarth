@@ -212,13 +212,6 @@ public class Player extends Character {
         rectangle.setPosition(position);
     }
 
-    public boolean isSolidTileBelow() {
-        float footX = position.x + width / 2f;
-        float footY = position.y - 1f;
-
-        return isSolid(footX, footY);
-    }
-
     public void jump(){
         if(!isJumping()){
             getSpeed().y = PLAYER_JUMPING_SPEED;
@@ -240,8 +233,8 @@ public class Player extends Character {
         this.globalScore += points;
     }
 
-    public void reduceLives(){
-        this.lives -= 1;
+    public void reduceLives(int lives){
+        this.lives -= lives;
     }
 
     public float getX(){

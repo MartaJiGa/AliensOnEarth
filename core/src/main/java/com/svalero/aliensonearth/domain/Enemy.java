@@ -11,11 +11,11 @@ import com.svalero.aliensonearth.manager.ResourceManager;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
 import com.svalero.aliensonearth.util.enums.states.*;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
+import com.svalero.aliensonearth.util.enums.textures.InteractionTexturesEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.svalero.aliensonearth.util.Constants.ENEMY_SPEED;
-import static com.svalero.aliensonearth.util.Constants.GRAVITY;
+import static com.svalero.aliensonearth.util.Constants.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -24,9 +24,9 @@ public class Enemy extends Character {
 
     private int lives;
     private boolean isShort, isPlayerNearby;
-    private float enemyDistanceFromPlayer;
+    private float enemyDistanceFromPlayer, attackCooldown, timeSinceLastAttack;
 
-    private Boolean isFacingRight;
+    private Boolean isFacingRight, alive;
 
     private Animation<TextureRegion> wormLeftAnimation, wormRightAnimation, attackAnimation, beeAnimation, flyAnimation;
     private EnemyAnimationStatesEnum state;
@@ -40,9 +40,8 @@ public class Enemy extends Character {
 
         this.enemyType = enemyType;
 
-        enemyDistanceFromPlayer = MathUtils.random(150, 350);
-
         isPlayerNearby = false;
+        alive = true;
         isFacingRight = null;
 
         if(enemyType.equals(EnemyTypeEnum.WORM)){
@@ -57,8 +56,16 @@ public class Enemy extends Character {
             formFlyAnimation(EnemyTexturesEnum.FLY_A.getRegionName(), EnemyTexturesEnum.FLY_B.getRegionName());
         } else if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
             state = state.REST;
-            //TODO: Crear animación de ataque
+            formAttackAnimation(EnemyTexturesEnum.BARNACLE_ATTACK_A.getRegionName(), EnemyTexturesEnum.BARNACLE_ATTACK_B.getRegionName());
         }
+
+        if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
+            enemyDistanceFromPlayer = BARNACLE_DISTANCE_FROM_PLAYER;
+            attackCooldown = ENEMY_COLLISION_COOLDOWN_TIME;
+            timeSinceLastAttack = 0f;
+        }
+        else
+            enemyDistanceFromPlayer = MathUtils.random(150, 350);
     }
 
     //endregion
@@ -97,6 +104,9 @@ public class Enemy extends Character {
             } else {
                 isFacingRight = !isFacingRight;
             }
+        } else if(enemyType.equals(EnemyTypeEnum.BARNACLE)){
+            state = EnemyAnimationStatesEnum.ATTACK;
+            timeSinceLastAttack += dt;
         }
     }
 
@@ -162,16 +172,37 @@ public class Enemy extends Character {
         flyAnimation = new Animation<>(0.1f, frames);
     }
 
+    public void formAttackAnimation(String textureA, String textureB) {
+        Array<TextureAtlas.AtlasRegion> frames = new Array<>();
+        frames.addAll(ResourceManager.getEnemyRegions(textureA));
+        frames.addAll(ResourceManager.getEnemyRegions(textureB));
+        attackAnimation = new Animation<>(0.1f, frames);
+    }
+
     private boolean canMove(int direction) {
         float nextX = direction > 0 ? position.x + width : position.x - 1;
         float footY = position.y + 5f;
         float headY = position.y + height - 5f;
 
-        return !isSolid(nextX, footY) && !isSolid(nextX, headY);
+        return !isSolidTile(nextX, footY) && !isSolidTile(nextX, headY);
     }
 
     public void setPlayerNearby(boolean nearby) {
         this.isPlayerNearby = nearby;
+    }
+
+    public Fireball launchFireballAtPlayer(Player player){
+        Vector2 fireballPosition = new Vector2(position.x + width / 2, position.y + height / 2);
+        TextureRegion fireballTexture = ResourceManager.getInteractionTexture(InteractionTexturesEnum.FIREBALL.getRegionName());
+
+        Fireball fireball = new Fireball(fireballTexture, fireballPosition);
+
+        Vector2 direction = new Vector2(player.getPosition()).sub(fireballPosition).nor();
+
+        float fireballSpeed = MathUtils.random(200, 300);
+        fireball.setVelocity(direction.scl(fireballSpeed));
+
+        return fireball;
     }
 
     //endregion

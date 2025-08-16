@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.svalero.aliensonearth.domain.Enemy;
+import com.svalero.aliensonearth.domain.Fireball;
 import com.svalero.aliensonearth.domain.FlyingEnemy;
 import com.svalero.aliensonearth.domain.Item;
 import com.svalero.aliensonearth.domain.coin.Coin;
@@ -84,6 +85,9 @@ public class RenderManager {
         }
         for (FlyingEnemy enemy : logicManager.flyingEnemies) {
             batch.draw(enemy.getTextureRegion(), enemy.getPosition().x, enemy.getPosition().y, enemy.getWidth(), enemy.getHeight());
+        }
+        for (Fireball fireball : logicManager.fireballs) {
+            batch.draw(fireball.getTextureRegion(), fireball.getPosition().x, fireball.getPosition().y, fireball.getWidth(), fireball.getHeight());
         }
         batch.draw(logicManager.player.getTextureRegion(), logicManager.player.getX(), logicManager.player.getY(), logicManager.player.getWidth(), logicManager.player.getHeight());
 

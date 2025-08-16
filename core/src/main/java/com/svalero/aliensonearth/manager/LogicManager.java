@@ -9,14 +9,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-import com.svalero.aliensonearth.domain.Enemy;
-import com.svalero.aliensonearth.domain.FlyingEnemy;
-import com.svalero.aliensonearth.domain.Item;
-import com.svalero.aliensonearth.domain.Player;
+import com.svalero.aliensonearth.domain.*;
 import com.svalero.aliensonearth.domain.coin.*;
+import com.svalero.aliensonearth.domain.interactionObject.Lever;
+import com.svalero.aliensonearth.domain.interactionObject.Switch;
+import com.svalero.aliensonearth.domain.interactionObject.Weight;
 import com.svalero.aliensonearth.util.enums.*;
 import com.svalero.aliensonearth.util.enums.states.*;
 import com.svalero.aliensonearth.util.enums.textures.EnemyTexturesEnum;
+
+import java.util.HashMap;
 
 import static com.svalero.aliensonearth.Main.db;
 import static com.svalero.aliensonearth.Main.prefs;
@@ -32,9 +34,11 @@ public class LogicManager {
     protected Array<Item> items;
     protected Array<Enemy> enemies;
     protected Array<FlyingEnemy> flyingEnemies;
+    protected Array<Fireball> fireballs;
     protected Item fullHubHeart, halfHubHeart, emptyHubHeart;
+    protected HashMap<Integer, LeverOrientationEnum> leverOrientations;
     private boolean isPaused, isFinished, isDead, moving, jumping, climbing;
-    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval, mapWidth;
+    private float enemyCollisionCooldown, playerEnemyCollisionHitTexture, spawnTimer, spawnInterval, mapWidth, mapHeight;
     public int currentLevel;
 
     //endregion
@@ -52,6 +56,8 @@ public class LogicManager {
         spawnInterval = 2f;
 
         flyingEnemies = new Array<>();
+        fireballs = new Array<>();
+        leverOrientations = new HashMap<>();
 
         fullHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_FULL.getRegionName()), 30,30);
         halfHubHeart = new Item(ResourceManager.getInteractionTexture(HUB_HEART_HALF.getRegionName()), 30,30);
@@ -67,7 +73,21 @@ public class LogicManager {
         jumping = false;
         climbing = false;
 
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
+        Lever leverNearby;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.V) && Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            leverNearby = getLeverWhenPlayerIsNear();
+            if (leverNearby != null)
+                leverNearby.changeOrientation(LeverOrientationEnum.LEFT);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.V) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            leverNearby = getLeverWhenPlayerIsNear();
+            if (leverNearby != null)
+                leverNearby.changeOrientation(LeverOrientationEnum.RIGHT);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.V) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            leverNearby = getLeverWhenPlayerIsNear();
+            if (leverNearby != null)
+                leverNearby.changeOrientation(LeverOrientationEnum.UP);
+        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.C)){
             if (player.isOnClimbTile(player.getPosition())) {
                 player.setState(AlienAnimationStatesEnum.CLIMB);
                 player.climb(+PLAYER_SPEED);
@@ -166,6 +186,20 @@ public class LogicManager {
         }
     }
 
+    private Lever getLeverWhenPlayerIsNear() {
+        Rectangle playerRect = player.getRectangle();
+
+        for (Item item : items) {
+            if (item instanceof Lever) {
+                Lever lever = (Lever) item;
+                if (lever.getRectangle().overlaps(playerRect)) {
+                    return lever;
+                }
+            }
+        }
+        return null;
+    }
+
     public void makeCoinCollisionConsequences(Coin coin){
         player.changeScore(coin.getPoints());
         ResourceManager.getSound(SoundsEnum.COIN).play();
@@ -174,7 +208,7 @@ public class LogicManager {
     }
 
     public void makeEnemyCollisionConsequences(){
-        player.reduceLives();
+        player.reduceLives(1);
         player.setState(AlienAnimationStatesEnum.HIT);
         ResourceManager.getSound(SoundsEnum.HURT).play();
 
@@ -187,17 +221,75 @@ public class LogicManager {
             isFinished = true;
             saveProgressInDb();
         } else if(item.getImageName().equals(SPRING.getRegionName())){
-            Rectangle playerRect = player.getRectangle();
-            Rectangle itemRect = item.getRectangle();
-
-            float playerBottom = playerRect.y;
-            float itemTop = itemRect.y + itemRect.height;
-
-            boolean isLandingOnSpring = playerBottom >= itemTop - 10f;
-
+            boolean isLandingOnSpring = checkIfPlayerIsLandingOnInteractionObject(item);
             if (isLandingOnSpring && !item.isActivated()) {
                 item.activate();
                 player.bounce(SPRING_JUMP_FORCE);
+            }
+        } else if(item.getImageName().equals(SWITCH.getRegionName())){
+            boolean isLandingOnSwitch = checkIfPlayerIsLandingOnInteractionObject(item);
+            if (isLandingOnSwitch) {
+                checkLeverDirections(item);
+            }
+        }
+    }
+
+    public boolean checkIfPlayerIsLandingOnInteractionObject(Item item){
+        Rectangle playerRect = player.getRectangle();
+        Rectangle itemRect = item.getRectangle();
+
+        float playerBottom = playerRect.y;
+        float itemTop = itemRect.y + itemRect.height;
+
+        return playerBottom >= itemTop - 10f;
+    }
+
+    public void checkLeverDirections(Item item){
+        HashMap<Integer, Boolean> checkedOrientations = new HashMap<>();
+        Switch pressedSwitch = (Switch)item;
+
+        for (Item itemInList : items) {
+            if (itemInList instanceof Lever) {
+                Lever lever = (Lever) itemInList;
+                int id = lever.getLeverID();
+
+                LeverOrientationEnum objectOrientation = lever.getOrientation();
+                LeverOrientationEnum correctOrientation = leverOrientations.get(id);
+
+                if (correctOrientation.equals(objectOrientation))
+                    checkedOrientations.put(id, true);
+                else
+                    checkedOrientations.put(id, false);
+            }
+        }
+
+        if(pressedSwitch.getSwitchId() == 1){
+            Boolean orientation1 = checkedOrientations.get(1);
+            Boolean orientation2 = checkedOrientations.get(2);
+
+            if(orientation1 && orientation2){
+                activateWeight(1);
+            }
+        } else if(pressedSwitch.getSwitchId() == 2){
+            Boolean orientation1 = checkedOrientations.get(3);
+            Boolean orientation2 = checkedOrientations.get(4);
+            Boolean orientation3 = checkedOrientations.get(5);
+
+            if(orientation1 && orientation2 && orientation3){
+                activateWeight(2);
+            }
+        }
+    }
+
+    public void activateWeight(int weightId){
+        for (Item itemInList : items) {
+            if (itemInList instanceof Weight) {
+                Weight weight = (Weight) itemInList;
+                int id = weight.getWeightId();
+
+                if (id == weightId)
+                    weight.activate();
+                break;
             }
         }
     }
@@ -252,7 +344,9 @@ public class LogicManager {
 
             manageCollisions();
 
-            for (Item item : items) {
+            // Iterate item list
+            for (int i = 0; i < items.size; i++) {
+                Item item = items.get(i);
                 if (item.getImageName().equals(SPRING)) {
                     Rectangle springRect = item.getRectangle();
                     Rectangle playerRect = player.getRectangle();
@@ -274,6 +368,26 @@ public class LogicManager {
                             }
                         }, 1.0f);
                     }
+                } else if(item.getImageName().equals(SWITCH.getRegionName())) {
+                    Rectangle interactionObjectRect = item.getRectangle();
+                    Rectangle playerRect = player.getRectangle();
+
+                    boolean landedOnSwitch = interactionObjectRect.overlaps(playerRect) &&
+                        player.getSpeed().y <= 0 &&
+                        player.getPosition().y > item.getPosition().y;
+
+                    if (landedOnSwitch) {
+                        item.setImageName(SWITCH_PRESSED.getRegionName());
+                        item.setTextureRegion(ResourceManager.getInteractionTexture(SWITCH_PRESSED.getRegionName()));
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                item.setImageName(SWITCH.getRegionName());
+                                item.setTextureRegion(ResourceManager.getInteractionTexture(SWITCH.getRegionName()));
+                            }
+                        }, 0.75f);
+                    }
                 }
             }
 
@@ -282,6 +396,7 @@ public class LogicManager {
 
             manageFlyingEnemy(dt);
 
+            // Iterate enemy list
             for(int i = 0; i < enemies.size; i++){
                 Enemy enemy = enemies.get(i);
 
@@ -291,6 +406,26 @@ public class LogicManager {
 
                 enemy.setPlayerNearby(distance < enemy.getEnemyDistanceFromPlayer());
                 enemy.update(dt);
+                if(enemy.getTimeSinceLastAttack() >= enemy.getAttackCooldown()){
+                    fireballs.add(enemy.launchFireballAtPlayer(player));
+                    enemy.setTimeSinceLastAttack(0f);
+                }
+
+                for (int j = 0; j < items.size; j++){
+                    if (items.get(j) instanceof Weight) {
+                        Weight weight = (Weight) items.get(j);
+
+                        if (weight.isFinished()) {
+                            if (weight.getRectangle().overlaps(enemy.getRectangle())) {
+                                enemies.removeIndex(i);
+                                items.removeIndex(j);
+                                //TODO: Poner sonido
+                                //ResourceManager.getSound(SoundsEnum.HIT).play();
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
             if (enemyCollisionCooldown > 0)
@@ -299,14 +434,30 @@ public class LogicManager {
             if (playerEnemyCollisionHitTexture > 0)
                 playerEnemyCollisionHitTexture -= dt;
 
+
+            // Iterate fireball list
+            for(int i = 0; i < fireballs.size; i++){
+                Fireball fireball = fireballs.get(i);
+
+                fireball.getPosition().add(fireball.getVelocity().cpy().scl(dt));
+                fireball.getRectangle().setPosition(fireball.getPosition());
+
+                if (fireball.getRectangle().overlaps(player.getRectangle())) {
+                    player.reduceLives(1);
+                    fireballs.removeIndex(i);
+                    continue;
+                }
+
+                if (fireball.getPosition().x < 0 || fireball.getPosition().x > mapWidth ||
+                    fireball.getPosition().y < 0 || fireball.getPosition().y > mapHeight) {
+                    fireballs.removeIndex(i);
+                }
+            }
+
             for (Item item : items) {
                 item.update(dt);
             }
         }
-    }
-
-    public void setMapWidth(float mapWidth) {
-        this.mapWidth = mapWidth;
     }
 
     public void manageFlyingEnemy(float dt) {
@@ -344,6 +495,14 @@ public class LogicManager {
                 flyingEnemies.removeIndex(i);
             }
         }
+    }
+
+    public void setMapWidth(float mapWidth) {
+        this.mapWidth = mapWidth;
+    }
+
+    public void setMapHeight(float mapHeight) {
+        this.mapHeight = mapHeight;
     }
 
     public void dispose() {

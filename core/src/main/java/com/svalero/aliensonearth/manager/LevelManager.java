@@ -9,11 +9,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.svalero.aliensonearth.domain.Enemy;
 import com.svalero.aliensonearth.domain.Item;
+import com.svalero.aliensonearth.domain.interactionObject.Lever;
 import com.svalero.aliensonearth.domain.Player;
 import com.svalero.aliensonearth.domain.coin.BronzeCoin;
 import com.svalero.aliensonearth.domain.coin.GoldCoin;
 import com.svalero.aliensonearth.domain.coin.SilverCoin;
+import com.svalero.aliensonearth.domain.interactionObject.Switch;
+import com.svalero.aliensonearth.domain.interactionObject.Weight;
 import com.svalero.aliensonearth.util.enums.EnemyTypeEnum;
+import com.svalero.aliensonearth.util.enums.LeverOrientationEnum;
 import com.svalero.aliensonearth.util.enums.PrefsNamesEnum;
 import com.svalero.aliensonearth.util.enums.textures.AlienTexturesEnum;
 import com.svalero.aliensonearth.util.enums.textures.CoinTexturesEnum;
@@ -67,7 +71,7 @@ public class LevelManager {
             case -1:
             case 1:
                 map = new TmxMapLoader().load(TILE_LEVEL1);
-                setMapWidth();
+                setMapSize();
                 prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                 break;
             case 2:
@@ -75,20 +79,20 @@ public class LevelManager {
                     int lastLevelPlayed = db.getLastLevelPlayed(playerId);
                     if(lastLevelPlayed == 1 && prefs.getInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName()) == 1){
                         map = new TmxMapLoader().load(TILE_LEVEL1);
-                        setMapWidth();
+                        setMapSize();
                         prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                     } else {
                         map = new TmxMapLoader().load(TILE_LEVEL2);
-                        setMapWidth();
+                        setMapSize();
                         prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 2);
                     }
                 } else if(!retryLevel){
                     map = new TmxMapLoader().load(TILE_LEVEL2);
-                    setMapWidth();
+                    setMapSize();
                     prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 2);
                 }else{
                     map = new TmxMapLoader().load(TILE_LEVEL1);
-                    setMapWidth();
+                    setMapSize();
                     prefs.putInteger(PrefsNamesEnum.CURRENT_LEVEL.getPrefsName(), 1);
                 }
 
@@ -137,7 +141,7 @@ public class LevelManager {
             if (imageName == null) continue;
 
             Item item = getItem(mapObject, imageName, TILE_LAYER_INTERACTION);
-            addItemToItemList(item, imageName);
+            addItemToItemList(item, imageName, mapObject);
         }
     }
 
@@ -183,12 +187,30 @@ public class LevelManager {
         }
     }
 
-    public void addItemToItemList(Item item, String imageName){
+    public void addItemToItemList(Item item, String imageName, MapObject mapObject){
         if(item.getImageName().equals(UFO.getRegionName())){
             logicManager.items.add(new Item(item.getTextureRegion(), UFO_WIDTH, UFO_HEIGHT, item.getPosition(), imageName, false));
         } else if(item.getImageName().equals(SPRING.getRegionName())){
-            logicManager.items.add(new Item(item.getTextureRegion(), SPRING_WIDTH, SPRING_HEIGHT, item.getPosition(), imageName, true));
+            logicManager.items.add(new Item(item.getTextureRegion(), STANDARD_OBJECT_SIZE, SPRING_HEIGHT, item.getPosition(), imageName, true));
+        } else if(item.getImageName().equals(WEIGHT.getRegionName())){
+            Integer weightId = Integer.parseInt(mapObject.getProperties().get("weightId").toString());
+            logicManager.items.add(new Weight(item.getTextureRegion(), STANDARD_OBJECT_SIZE, STANDARD_OBJECT_SIZE, item.getPosition(), imageName, true, weightId, groundLayer));
+        } else if(item.getImageName().equals(SWITCH.getRegionName())){
+            Integer switchId = Integer.parseInt(mapObject.getProperties().get("switchId").toString());
+            logicManager.items.add(new Switch(item.getTextureRegion(), SWITCH_SIZE, SWITCH_SIZE, item.getPosition(), imageName, true, switchId));
+        } else if(item.getImageName().equals(LEVER.getRegionName())){
+            Integer leverId = Integer.parseInt(mapObject.getProperties().get("leverId").toString());
+            logicManager.items.add(new Lever(item.getTextureRegion(), LEVER_SIZE, LEVER_SIZE, item.getPosition(), imageName, true, leverId));
+            putLeverOrientations(leverId);
         }
+    }
+
+    private void putLeverOrientations(Integer leverId){
+        if(leverId == 1) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.RIGHT);
+        if(leverId == 2) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.UP);
+        if(leverId == 3) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.LEFT);
+        if(leverId == 4) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.RIGHT);
+        if(leverId == 5) logicManager.leverOrientations.put(leverId, LeverOrientationEnum.LEFT);
     }
 
     private Vector2 getInitialPlayerPositionFromObjectLayer() {
@@ -226,9 +248,12 @@ public class LevelManager {
         return originalPosition;
     }
 
-    private void setMapWidth(){
+    private void setMapSize(){
         logicManager.setMapWidth(map.getProperties().get("width", Integer.class)
             * map.getProperties().get("tilewidth", Integer.class));
+
+        logicManager.setMapHeight(map.getProperties().get("height", Integer.class)
+            * map.getProperties().get("tileheight", Integer.class));
     }
 
     //endregion

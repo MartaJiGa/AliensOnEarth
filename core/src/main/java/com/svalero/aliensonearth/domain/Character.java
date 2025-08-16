@@ -16,7 +16,6 @@ import static com.svalero.aliensonearth.util.Constants.*;
 public abstract class Character extends Item {
     //region properties
 
-    private TiledMapTileLayer groundLayer;
     private Vector2 speed;
     private boolean isJumping;
     private float stateTime;
@@ -26,9 +25,8 @@ public abstract class Character extends Item {
     //region constructor
 
     public Character(TextureRegion textureRegion, int width, int height, Vector2 position, TiledMapTileLayer groundLayer) {
-        super(textureRegion, width, height, position);
+        super(textureRegion, width, height, position, groundLayer);
 
-        this.groundLayer = groundLayer;
         speed = new Vector2();
         isJumping = false;
     }
@@ -45,7 +43,7 @@ public abstract class Character extends Item {
         float newY = position.y + speed.y * dt;
 
         if (speed.y < 0) {
-            if (isSolid(position.x + width / 2f, newY)) {
+            if (isSolidTile(position.x + width / 2f, newY)) {
                 position.y = ((int)(newY / TILE_HEIGHT) + 1) * TILE_HEIGHT;
                 speed.y = 0;
                 isJumping = false;
@@ -54,7 +52,7 @@ public abstract class Character extends Item {
                 isJumping = true;
             }
         } else if (speed.y > 0) {
-            if (isSolid(position.x + width / 2f, newY + height)) {
+            if (isSolidTile(position.x + width / 2f, newY + height)) {
                 speed.y = 0;
             } else {
                 position.y = newY;
@@ -62,26 +60,11 @@ public abstract class Character extends Item {
         }
     }
 
-    public boolean isSolid(float worldX, float worldY) {
-        int tileX = (int) (worldX / TILE_WIDTH);
-        int tileY = (int) (worldY / TILE_HEIGHT);
-
-        TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
-        if (cell == null || cell.getTile() == null) return false;
-
-        MapProperties props = cell.getTile().getProperties();
-
-        boolean isSolid = props.containsKey("Solid") && Boolean.parseBoolean(props.get("Solid").toString());
-        boolean isLadder = props.containsKey("Ladder");
-
-        return isSolid && !isLadder;
-    }
-
     public boolean isDeadlyGround(float worldX, float worldY) {
         int tileX = (int) (worldX / TILE_WIDTH);
         int tileY = (int) (worldY / TILE_HEIGHT);
 
-        TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
+        TiledMapTileLayer.Cell cell = getGroundLayer().getCell(tileX, tileY);
         if (cell == null || cell.getTile() == null) return false;
 
         MapProperties props = cell.getTile().getProperties();
@@ -100,7 +83,7 @@ public abstract class Character extends Item {
         int tileX = (int)(centerX / TILE_WIDTH);
         int tileY = (int)(centerY / TILE_HEIGHT);
 
-        TiledMapTileLayer.Cell cell = groundLayer.getCell(tileX, tileY);
+        TiledMapTileLayer.Cell cell = getGroundLayer().getCell(tileX, tileY);
         if (cell != null && cell.getTile() != null) {
             Object climbObject = cell.getTile().getProperties().get("Ladder");
             if(climbObject != null) return true;
@@ -119,7 +102,7 @@ public abstract class Character extends Item {
         float footY = position.y + 5f;
         float headY = position.y + height - 5f;
 
-        if (!isSolid(checkX, footY) && !isSolid(checkX, headY)) {
+        if (!isSolidTile(checkX, footY) && !isSolidTile(checkX, headY)) {
             position.x = newX;
             rectangle.setPosition(position);
         }
